@@ -35,8 +35,8 @@ import com.treasure_data.model.JobResult;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 
-public class TreasureDataResultSet implements ResultSet {
-    private static Logger LOG = Logger.getLogger(TreasureDataResultSet.class.getName());
+public class TreasureDataQueryResultSet implements ResultSet {
+    private static Logger LOG = Logger.getLogger(TreasureDataQueryResultSet.class.getName());
 
     private TreasureDataClient client;
 
@@ -46,7 +46,7 @@ public class TreasureDataResultSet implements ResultSet {
 
     private Job job;
 
-    public TreasureDataResultSet(TreasureDataClient client, int maxRows, Job job) {
+    public TreasureDataQueryResultSet(TreasureDataClient client, int maxRows, Job job) {
         // TODO #MN
         this.client = client;
         this.maxRows = maxRows;
@@ -705,7 +705,7 @@ public class TreasureDataResultSet implements ResultSet {
         {
             GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
             GetJobResultResult result = client.getJobResult(request);
-            arrayValue = (org.msgpack.type.ArrayValue) result.getResult();
+            arrayValue = (org.msgpack.type.ArrayValue) result.getJobResult().getResult();
         }
 
         List<String> ret = new ArrayList<String>();

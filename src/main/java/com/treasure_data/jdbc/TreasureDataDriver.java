@@ -9,84 +9,48 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 /**
+ * TreasureDataDriver.
+ *
  * @see org.apache.hadoop.hive.jdbc.HiveDriver
  */
-public class TreasureDataDriver implements Driver {
-    private static Logger LOG = Logger.getLogger(TreasureDataDriver.class.getName());
-
-    /**
-     * Is this driver JDBC compliant?
-     */
-    static final boolean JDBC_COMPLIANT = false;
-
-    /**
-     * The required prefix for the connection URL.
-     */
-    static final String URL_PREFIX = "jdbc:td://";
-
-    /**
-     * The required prefix for the connection URI.
-     */
-    static final String URI_PREFIX = "jdbc:td://";
-
-    /**
-     * If host is provided, without a port.
-     */
-    private static final String DEFAULT_PORT = "80";
-
-    /**
-     * Property key for the database name.
-     */
-    private static final String DBNAME_PROPERTY_KEY = "DBNAME";
-
-    /**
-     * Property key for the Hive Server host.
-     */
-    private static final String HOST_PROPERTY_KEY = "HOST";
-
-    /**
-     * Property key for the Hive Server port.
-     */
-    private static final String PORT_PROPERTY_KEY = "PORT";
-
-    private static final int MAJOR_VERSION = 0;
-
-    private static final int MINOR_VERSION = 1;
+public class TreasureDataDriver implements Driver, TDConstants {
+    private static Logger LOG = Logger.getLogger(
+            TreasureDataDriver.class.getName());
 
     static {
         try {
             java.sql.DriverManager.registerDriver(new TreasureDataDriver());
         } catch (SQLException e) {
-            LOG.severe(String.format("%s: %s", e.getClass().getName(), e.getMessage()));
+            LOG.severe(String.format("%s: %s",
+                    e.getClass().getName(), e.getMessage()));
             e.printStackTrace();
         }
     }
 
     public TreasureDataDriver() {
-        super();
+        SecurityManager security = System.getSecurityManager();
+        if (security != null) {
+            security.checkWrite("foobah");
+        }
     }
 
-    @Override
     public boolean acceptsURL(String url) throws SQLException {
         return Pattern.matches(URL_PREFIX + ".*", url);
     }
 
-    @Override
-    public Connection connect(String url, Properties info) throws SQLException {
+    public Connection connect(String url, Properties info)
+            throws SQLException {
         return new TreasureDataConnection(url, info);
     }
 
-    @Override
     public int getMajorVersion() {
         return MAJOR_VERSION;
     }
 
-    @Override
     public int getMinorVersion() {
         return MINOR_VERSION;
     }
 
-    @Override
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
             throws SQLException {
         if (info == null) {
@@ -121,9 +85,13 @@ public class TreasureDataDriver implements Driver {
         return dpi;
     }
 
+    public boolean jdbcCompliant() {
+        return JDBC_COMPLIANT;
+    }
+
     /**
      * Takes a url in the form of jdbc:td://[hostname]:[port]/[db_name] and
-     * parses it. Everything after jdbc:hive// is optional.
+     * parses it. Everything after jdbc:td// is optional.
      * 
      * @param url
      * @param defaults
@@ -132,7 +100,8 @@ public class TreasureDataDriver implements Driver {
      */
     private Properties parseURL(String url, Properties defaults)
             throws SQLException {
-        Properties urlProps = (defaults != null) ? new Properties(defaults) : new Properties();
+        Properties urlProps = (defaults != null) ? new Properties(defaults)
+                : new Properties();
 
         if (url == null || !url.startsWith(URL_PREFIX)) {
             throw new SQLException("Invalid connection url: " + url);
@@ -166,11 +135,4 @@ public class TreasureDataDriver implements Driver {
 
         return urlProps;
     }
-
-    @Override
-    public boolean jdbcCompliant() {
-        return JDBC_COMPLIANT;
-    }
-
-
 }

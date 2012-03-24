@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import com.treasure_data.client.Config;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.model.Database;
 
@@ -34,7 +35,7 @@ public class TreasureDataConnection implements Connection, TDConstants {
 
     private SQLWarning warningChain = null;
 
-    public TreasureDataConnection(String uri, Properties info)
+    public TreasureDataConnection(String uri, Properties props)
             throws SQLException {
         // TODO #MN
         if (!uri.startsWith(URI_PREFIX)) {
@@ -45,23 +46,25 @@ public class TreasureDataConnection implements Connection, TDConstants {
         uri = uri.substring(TreasureDataDriver.URI_PREFIX.length());
 
         if (uri.isEmpty()) {
-            /**
-             * If uri is not specified, use local mode.
-             */
-            throw new SQLException("Error accessing Treasure Data Cloud");
-//            try {
-//                client = new HiveServer.HiveServerHandler();
-//            } catch (MetaException e) {
-//                String msg = String.format("");
-//                throw new SQLException("Error accessing Hive metastore: "
-//                        + e.getMessage(), "08S01", e);
-//            }
+            // TODO #MN
+            throw new SQLException("Error accessing Treasure Data Cloud", "08S01");
         } else {
-            /**
-             * parse uri form: host:port/databasename
-             */
-            // TODO #MN needed parsing something and error handling
-            client = new TreasureDataClient();
+            // parse uri form: host:port/db
+            String[] parts = uri.split("/");
+            String[] hostport = parts[0].split(":");
+            int port = 80;
+            String host = hostport[0];
+            try {
+                port = Integer.parseInt(hostport[1]);
+            } catch (Exception e) {
+            }
+            props.setProperty(com.treasure_data.client.Config.TD_API_SERVER_HOST,
+                    host + ":" + port);
+            client = new TreasureDataClient(props);
+
+            if (parts.length > 1) {
+                database = new Database(parts[1]);
+            }
         }
         isClosed = false;
         //configureConnection();

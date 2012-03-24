@@ -30,6 +30,7 @@ public class TreasureDataDriver implements Driver, TDConstants {
     public TreasureDataDriver() {
         SecurityManager security = System.getSecurityManager();
         if (security != null) {
+            // TODO #MN
             security.checkWrite("foobah");
         }
     }

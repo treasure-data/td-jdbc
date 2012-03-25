@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
@@ -17,7 +18,10 @@ import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils;
+import org.apache.hadoop.hive.serde2.objectinspector.StructField;
+import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils.ObjectInspectorCopyOption;
+import org.apache.hadoop.io.BytesWritable;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
@@ -62,6 +66,9 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         this(client, 0, job);
     }
 
+    /**
+     * Instantiate the serde used to deserialize the result rows.
+     */
     private void initSerDe() throws SQLException {
         // TODO #MN
         try {
@@ -118,7 +125,6 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
      * @throws SQLException     if a database access error occurs.
      */
     public boolean next() throws SQLException {
-        // TODO #MN
         if (maxRows > 0 && rowsFetched >= maxRows) {
             return false;
         }
@@ -126,7 +132,6 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         try {
             if (fetchedRows == null || !fetchedRowsItr.hasNext()) {
                 fetchedRows = getJobResult(fetchSize);
-                //fetchedRows = client.fetchN(fetchSize);
                 fetchedRowsItr = fetchedRows.iterator();
             }
 
@@ -138,14 +143,34 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
             }
 
             rowsFetched++;
-            LOG.fine("Fetched row string: " + rowStr);
-            // TODO #MN
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("Fetched row string: " + rowStr);
+            }
+            /* TODO
+            StructObjectInspector soi =
+                (StructObjectInspector) serde.getObjectInspector();
+            List<? extends StructField> fieldRefs = soi.getAllStructFieldRefs();
+            Object data = serde.deserialize(new BytesWritable(rowStr.getBytes()));
+
+            assert row.size() == fieldRefs.size() :
+                String.format("%d, %d", row.size(), fieldRefs.size());
+
+            for (int i = 0; i < fieldRefs.size(); i++) {
+                StructField fieldRef = fieldRefs.get(i);
+                ObjectInspector oi = fieldRef.getFieldObjectInspector();
+                Object obj = soi.getStructFieldData(data, fieldRef);
+                row.set(i, convertLazyToJava(obj, oi));
+            }
+
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine(String.format("Deserialized row: %s", row.toString()));
+            }
+            */
         } catch (ClientException e) {
             throw new SQLException("Error retriving next row", e);
         } catch (Exception e) {
             throw new SQLException("Error retrieving next row", e);
         }
-        // TODO #MN
         // NOTE: fetchOne dosn't throw new SQLException("Method not supported").
         return true;
     }

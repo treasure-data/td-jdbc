@@ -1,5 +1,6 @@
 package com.treasure_data.jdbc;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,8 @@ import org.apache.hadoop.hive.serde2.objectinspector.StructField;
 import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils.ObjectInspectorCopyOption;
 import org.apache.hadoop.io.BytesWritable;
+import org.msgpack.type.ArrayValue;
+import org.msgpack.type.Value;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
@@ -176,32 +179,31 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
     }
 
     private List<String> getJobResult(int fetchSize) throws ClientException {
-        {
-            while (true) {
-                ShowJobRequest request = new ShowJobRequest(job);
-                ShowJobResult result = client.showJob(request);
-                System.out.println(result.getJob().getStatus());
-                if (result.getJob().getStatus() == Job.Status.SUCCESS) {
-                    break;
-                }
+        while (true) {
+            ShowJobRequest request = new ShowJobRequest(job);
+            ShowJobResult result = client.showJob(request);
+            System.out.println(result.getJob().getStatus());
+            if (result.getJob().getStatus() == Job.Status.SUCCESS) {
+                break;
+            }
 
-                try {
-                    Thread.sleep(2 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            try {
+                Thread.sleep(2 * 1000);
+            } catch (InterruptedException e) { // ignore
             }
         }
 
-        org.msgpack.type.ArrayValue arrayValue = null; 
-        {
+        ArrayValue value = null;
+        try {
             GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
             GetJobResultResult result = client.getJobResult(request);
-            arrayValue = (org.msgpack.type.ArrayValue) result.getJobResult().getResult();
+            value = (ArrayValue) result.getJobResult().getResult().readValue();
+        } catch (IOException e) {
+            throw new ClientException(e);
         }
 
         List<String> ret = new ArrayList<String>();
-        Iterator<org.msgpack.type.Value> iter = arrayValue.iterator();
+        Iterator<Value> iter = value.iterator();
 
         // TODO #MN
         while (iter.hasNext()) {

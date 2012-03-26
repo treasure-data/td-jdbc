@@ -28,6 +28,7 @@ import org.msgpack.type.Value;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.hadoop.msgpack.MessagePackWritable;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
@@ -49,9 +50,9 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
 
     private int fetchSize = 50;
 
-    private List<String> fetchedRows;
+    private List<Value> fetchedRows;
 
-    private Iterator<String> fetchedRowsItr;
+    private Iterator<Value> fetchedRowsItr;
 
     private Job job;
 
@@ -134,11 +135,11 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
 
         try {
             if (fetchedRows == null || !fetchedRowsItr.hasNext()) {
-                fetchedRows = getJobResult(fetchSize);
+                fetchedRows = fetchRows(fetchSize);
                 fetchedRowsItr = fetchedRows.iterator();
             }
 
-            String rowStr = "";
+            Value rowStr = null;
             if (fetchedRowsItr.hasNext()) {
                 rowStr = fetchedRowsItr.next();
             } else {
@@ -147,13 +148,14 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
 
             rowsFetched++;
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Fetched row string: " + rowStr);
+                LOG.fine("Fetched row: " + rowStr);
             }
-            /* TODO
+
             StructObjectInspector soi =
                 (StructObjectInspector) serde.getObjectInspector();
             List<? extends StructField> fieldRefs = soi.getAllStructFieldRefs();
-            Object data = serde.deserialize(new BytesWritable(rowStr.getBytes()));
+            // TODO not specify using MessagePackSerDe
+            Object data = serde.deserialize(new MessagePackWritable(rowStr));
 
             assert row.size() == fieldRefs.size() :
                 String.format("%d, %d", row.size(), fieldRefs.size());
@@ -168,7 +170,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(String.format("Deserialized row: %s", row.toString()));
             }
-            */
+
         } catch (ClientException e) {
             throw new SQLException("Error retriving next row", e);
         } catch (Exception e) {
@@ -178,7 +180,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         return true;
     }
 
-    private List<String> getJobResult(int fetchSize) throws ClientException {
+    private List<Value> fetchRows(int fetchSize) throws ClientException {
         while (true) {
             ShowJobRequest request = new ShowJobRequest(job);
             ShowJobResult result = client.showJob(request);
@@ -193,25 +195,13 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
             }
         }
 
-        ArrayValue value = null;
         try {
             GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
             GetJobResultResult result = client.getJobResult(request);
-            value = (ArrayValue) result.getJobResult().getResult().readValue();
+            return (ArrayValue) result.getJobResult().getResult().readValue();
         } catch (IOException e) {
             throw new ClientException(e);
         }
-
-        List<String> ret = new ArrayList<String>();
-        Iterator<Value> iter = value.iterator();
-
-        // TODO #MN
-        while (iter.hasNext()) {
-            org.msgpack.type.Value v = iter.next();
-            ret.add("" + v.asIntegerValue().intValue());
-        }
-
-        return ret;
     }
 
     @Override

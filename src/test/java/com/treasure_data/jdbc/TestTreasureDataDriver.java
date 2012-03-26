@@ -7,6 +7,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
 
+import org.junit.Ignore;
+
+@Ignore
 public class TestTreasureDataDriver {
 
     public static void loadSystemProperties() throws IOException {

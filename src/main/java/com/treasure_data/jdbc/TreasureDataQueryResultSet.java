@@ -1,6 +1,5 @@
 package com.treasure_data.jdbc;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +16,7 @@ import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.msgpack.type.ArrayValue;
 import org.msgpack.type.Value;
+import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
@@ -41,7 +41,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
 
     private int fetchSize = 50;
 
-    private List<Value> fetchedRows;
+    private Unpacker fetchedRows;
 
     private Iterator<Value> fetchedRowsItr;
 
@@ -125,29 +125,26 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         }
 
         try {
-            if (fetchedRows == null || !fetchedRowsItr.hasNext()) {
+            if (fetchedRows == null) {
                 fetchedRows = fetchRows(fetchSize);
                 fetchedRowsItr = fetchedRows.iterator();
             }
 
-            if (fetchedRowsItr.hasNext()) {
-                // TODO #MN temporal impl.
-                Value v = fetchedRowsItr.next();
-                ArrayValue vs = (ArrayValue) v;
-                row = new ArrayList<Object>(vs.size());
-                for (int i = 0; i < vs.size(); i++) {
-                    row.add(i, vs.get(i));
-                }
-                rowsFetched++;
-            } else {
+            if (!fetchedRowsItr.hasNext()) {
                 return false;
             }
+
+            // TODO #MN temporal impl.
+            ArrayValue vs = (ArrayValue) fetchedRowsItr.next();
+            row = new ArrayList<Object>(vs.size());
+            for (int i = 0; i < vs.size(); i++) {
+                row.add(i, vs.get(i));
+            }
+            rowsFetched++;
 
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine("Fetched row: " + row);
             }
-        } catch (ClientException e) {
-            throw new SQLException("Error retriving next row", e);
         } catch (Exception e) {
             throw new SQLException("Error retrieving next row", e);
         }
@@ -155,11 +152,13 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         return true;
     }
 
-    private List<Value> fetchRows(int fetchSize) throws ClientException {
+    private Unpacker fetchRows(int fetchSize) throws ClientException {
         while (true) {
             ShowJobRequest request = new ShowJobRequest(job);
             ShowJobResult result = client.showJob(request);
-            System.out.println(result.getJob().getStatus());
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("Job status: " + result.getJob().getStatus());
+            }
             if (result.getJob().getStatus() == Job.Status.SUCCESS) {
                 break;
             }
@@ -173,8 +172,8 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         try {
             GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
             GetJobResultResult result = client.getJobResult(request);
-            return (ArrayValue) result.getJobResult().getResult().readValue();
-        } catch (IOException e) {
+            return result.getJobResult().getResult();
+        } catch (Exception e) {
             throw new ClientException(e);
         }
     }

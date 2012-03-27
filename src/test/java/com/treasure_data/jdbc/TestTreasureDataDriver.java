@@ -32,12 +32,13 @@ public class TestTreasureDataDriver {
                 "jdbc:td://localhost:9999/mugadb", "", "");
         Statement stmt = conn.createStatement();
 
-        //String sql = "select count(*) from mugatbl";
-        String sql = "select v['uid'] from mugatbl";
+        String sql = "select count(*) from mugatbl";
+        //String sql = "select v['uid'] from mugatbl";
+        //String sql = "select * from mugatbl";
         System.out.println("Running: " + sql);
         ResultSet res = stmt.executeQuery(sql);
         while (res.next()) {
-            System.out.println(String.valueOf(res.getString(1)));
+            System.out.println(String.valueOf(res.getObject(1)));
         }
     }
 }

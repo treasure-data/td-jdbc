@@ -22,7 +22,9 @@ import junit.framework.TestCase;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.conf.HiveConf;
+import org.junit.Ignore;
 
+@Ignore
 public class TestJdbcDriver extends TestCase {
   private static final String driverName = "org.apache.hadoop.hive.jdbc.HiveDriver";
   private static final String tableName = "testHiveJdbcDriver_Table";

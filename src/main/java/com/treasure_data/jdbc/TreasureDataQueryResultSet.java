@@ -3,7 +3,6 @@ package com.treasure_data.jdbc;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -11,24 +10,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.jdbc.HiveResultSetMetaData;
 import org.apache.hadoop.hive.metastore.api.FieldSchema;
 import org.apache.hadoop.hive.metastore.api.Schema;
 import org.apache.hadoop.hive.serde.Constants;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
-import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
-import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils;
-import org.apache.hadoop.hive.serde2.objectinspector.StructField;
-import org.apache.hadoop.hive.serde2.objectinspector.StructObjectInspector;
-import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorUtils.ObjectInspectorCopyOption;
-import org.apache.hadoop.io.BytesWritable;
 import org.msgpack.type.ArrayValue;
 import org.msgpack.type.Value;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
-import com.treasure_data.hadoop.msgpack.MessagePackWritable;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
@@ -61,8 +52,8 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         this.client = client;
         this.maxRows = maxRows;
         this.job = job;
-        initSerDe();
-        row = Arrays.asList(new Object[columnNames.size()]);
+        //initSerDe(); // TODO #MN
+        //row = Arrays.asList(new Object[columnNames.size()]); // TODO #MN
     }
 
     public TreasureDataQueryResultSet(TreasureDataClient client, Job job)
@@ -77,7 +68,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         // TODO #MN
         try {
             Schema fullSchema = null;
-            //Schema fullSchema = client.getSchema(); // TODO
+            //Schema fullSchema = client.getSchema(); // TODO #MN
             List<FieldSchema> schema = fullSchema.getFieldSchemas();
             columnNames = new ArrayList<String>();
             columnTypes = new ArrayList<String>();
@@ -139,38 +130,22 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
                 fetchedRowsItr = fetchedRows.iterator();
             }
 
-            Value rowStr = null;
             if (fetchedRowsItr.hasNext()) {
-                rowStr = fetchedRowsItr.next();
+                // TODO #MN temporal impl.
+                Value v = fetchedRowsItr.next();
+                ArrayValue vs = (ArrayValue) v;
+                row = new ArrayList<Object>(vs.size());
+                for (int i = 0; i < vs.size(); i++) {
+                    row.add(i, vs.get(i));
+                }
+                rowsFetched++;
             } else {
                 return false;
             }
 
-            rowsFetched++;
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Fetched row: " + rowStr);
+                LOG.fine("Fetched row: " + row);
             }
-
-            StructObjectInspector soi =
-                (StructObjectInspector) serde.getObjectInspector();
-            List<? extends StructField> fieldRefs = soi.getAllStructFieldRefs();
-            // TODO not specify using MessagePackSerDe
-            Object data = serde.deserialize(new MessagePackWritable(rowStr));
-
-            assert row.size() == fieldRefs.size() :
-                String.format("%d, %d", row.size(), fieldRefs.size());
-
-            for (int i = 0; i < fieldRefs.size(); i++) {
-                StructField fieldRef = fieldRefs.get(i);
-                ObjectInspector oi = fieldRef.getFieldObjectInspector();
-                Object obj = soi.getStructFieldData(data, fieldRef);
-                row.set(i, convertLazyToJava(obj, oi));
-            }
-
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine(String.format("Deserialized row: %s", row.toString()));
-            }
-
         } catch (ClientException e) {
             throw new SQLException("Error retriving next row", e);
         } catch (Exception e) {
@@ -212,24 +187,6 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
     @Override
     public int getFetchSize() throws SQLException {
         return fetchSize;
-    }
-
-    /**
-     * Convert a LazyObject to a standard Java object in compliance with JDBC 3.0 (see JDBC 3.0
-     * Specification, Table B-3: Mapping from JDBC Types to Java Object Types).
-     *
-     * This method is kept consistent with {@link HiveResultSetMetaData#hiveTypeToSqlType}.
-     */
-    private static Object convertLazyToJava(Object o, ObjectInspector oi) {
-        Object obj = ObjectInspectorUtils.copyToStandardObject(o, oi, ObjectInspectorCopyOption.JAVA);
-
-        // for now, expose non-primitive as a string
-        // TODO: expose non-primitive as a structured object while maintaining JDBC compliance
-        if (obj != null && oi.getCategory() != ObjectInspector.Category.PRIMITIVE) {
-            obj = obj.toString();
-        }
-
-        return obj;
     }
 
 }

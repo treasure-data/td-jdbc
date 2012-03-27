@@ -23,6 +23,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.msgpack.type.Value;
+
 /**
  * Data independed base class which implements the common part of all
  * resultsets.
@@ -122,18 +124,14 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     }
 
     public boolean getBoolean(int columnIndex) throws SQLException {
-        Object obj = getObject(columnIndex);
-        if (Boolean.class.isInstance(obj)) {
-            return (Boolean) obj;
-        } else if (obj == null) {
-            return false;
-        } else if (Number.class.isInstance(obj)) {
-            return ((Number) obj).intValue() != 0;
-        } else if (String.class.isInstance(obj)) {
-            return !((String) obj).equals("0");
+        try {
+            Object obj = getObject(columnIndex);
+            Value v = (Value) obj;
+            return v.asBooleanValue().getBoolean();
+        } catch (Exception e) {
+            throw new SQLException("Cannot convert column " + columnIndex
+                    + " to boolean");
         }
-        throw new SQLException("Cannot convert column " + columnIndex
-                + " to boolean");
     }
 
     public boolean getBoolean(String columnName) throws SQLException {
@@ -141,14 +139,14 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     }
 
     public byte getByte(int columnIndex) throws SQLException {
-        Object obj = getObject(columnIndex);
-        if (Number.class.isInstance(obj)) {
-            return ((Number) obj).byteValue();
-        } else if (obj == null) {
-            return 0;
+        try {
+            Object obj = getObject(columnIndex);
+            Value v = (Value) obj;
+            return v.asIntegerValue().getByte();
+        } catch (Exception e) {
+            throw new SQLException("Cannot convert column " + columnIndex
+                    + " to byte");
         }
-        throw new SQLException("Cannot convert column " + columnIndex
-                + " to byte");
     }
 
     public byte getByte(String columnName) throws SQLException {
@@ -194,7 +192,8 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
         }
 
         try {
-            return Date.valueOf((String) obj);
+            Value v = (Value) obj;
+            return Date.valueOf(v.asRawValue().getString());
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
                     + " to date: " + e.toString());
@@ -216,14 +215,8 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     public double getDouble(int columnIndex) throws SQLException {
         try {
             Object obj = getObject(columnIndex);
-            if (Number.class.isInstance(obj)) {
-                return ((Number) obj).doubleValue();
-            } else if (obj == null) {
-                return 0;
-            } else if (String.class.isInstance(obj)) {
-                return Double.valueOf((String) obj);
-            }
-            throw new Exception("Illegal conversion");
+            Value v = (Value) obj;
+            return v.asFloatValue().getDouble();
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
                     + " to double: " + e.toString());
@@ -245,14 +238,8 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     public float getFloat(int columnIndex) throws SQLException {
         try {
             Object obj = getObject(columnIndex);
-            if (Number.class.isInstance(obj)) {
-                return ((Number) obj).floatValue();
-            } else if (obj == null) {
-                return 0;
-            } else if (String.class.isInstance(obj)) {
-                return Float.valueOf((String) obj);
-            }
-            throw new Exception("Illegal conversion");
+            Value v = (Value) obj;
+            return v.asFloatValue().getFloat();
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
                     + " to float: " + e.toString());
@@ -270,14 +257,8 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     public int getInt(int columnIndex) throws SQLException {
         try {
             Object obj = getObject(columnIndex);
-            if (Number.class.isInstance(obj)) {
-                return ((Number) obj).intValue();
-            } else if (obj == null) {
-                return 0;
-            } else if (String.class.isInstance(obj)) {
-                return Integer.valueOf((String) obj);
-            }
-            throw new Exception("Illegal conversion");
+            Value v = (Value) obj;
+            return v.asIntegerValue().getInt();
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
                     + " to integer" + e.toString());
@@ -291,14 +272,8 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     public long getLong(int columnIndex) throws SQLException {
         try {
             Object obj = getObject(columnIndex);
-            if (Number.class.isInstance(obj)) {
-                return ((Number) obj).longValue();
-            } else if (obj == null) {
-                return 0;
-            } else if (String.class.isInstance(obj)) {
-                return Long.valueOf((String) obj);
-            }
-            throw new Exception("Illegal conversion");
+            Value v = (Value) obj;
+            return v.asIntegerValue().getLong();
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
                     + " to long: " + e.toString());
@@ -403,14 +378,8 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
     public short getShort(int columnIndex) throws SQLException {
         try {
             Object obj = getObject(columnIndex);
-            if (Number.class.isInstance(obj)) {
-                return ((Number) obj).shortValue();
-            } else if (obj == null) {
-                return 0;
-            } else if (String.class.isInstance(obj)) {
-                return Short.valueOf((String) obj);
-            }
-            throw new Exception("Illegal conversion");
+            Value v = (Value) obj;
+            return v.asIntegerValue().getShort();
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
                     + " to short: " + e.toString());
@@ -438,7 +407,13 @@ public abstract class TreasureDataBaseResultSet implements ResultSet {
             return null;
         }
 
-        return obj.toString();
+        try {
+            Value v = (Value) obj;
+            return v.asRawValue().getString();
+        } catch (Exception e) {
+            throw new SQLException("Cannot convert column " + columnIndex
+                    + " to string: " + e.toString());
+        }
     }
 
     public String getString(String columnName) throws SQLException {

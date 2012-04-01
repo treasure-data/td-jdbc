@@ -11,6 +11,8 @@ public interface TDConstants {
      */
     String URL_PREFIX = "jdbc:td://";
 
+    String URL_PREFIX0 = "jdbc:td:";
+
     /**
      * The required prefix for the connection URI.
      */

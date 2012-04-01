@@ -7,6 +7,13 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 public class TreasureDataDataSource implements DataSource {
+    private String password;
+
+    private String user;
+
+    private int loginTimeout;
+
+    private PrintWriter printer;
 
     public TreasureDataDataSource() {
     }
@@ -17,7 +24,7 @@ public class TreasureDataDataSource implements DataSource {
      * @see javax.sql.DataSource#getConnection()
      */
     public Connection getConnection() throws SQLException {
-        return getConnection("", "");
+        return getConnection(getUser(), getPassword());
     }
 
     /*
@@ -28,12 +35,29 @@ public class TreasureDataDataSource implements DataSource {
      */
     public Connection getConnection(String username, String password)
             throws SQLException {
+        // TODO #MN
         try {
             return new TreasureDataConnection("", null);
-        } catch (Exception ex) {
-            throw new SQLException("Error in getting TreasureDataConnection",
-                    ex);
+        } catch (Exception e) {
+            throw new SQLException(
+                    "Error in getting TreasureDataConnection", e);
         }
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     /*
@@ -42,7 +66,7 @@ public class TreasureDataDataSource implements DataSource {
      * @see javax.sql.CommonDataSource#getLogWriter()
      */
     public PrintWriter getLogWriter() throws SQLException {
-        throw new SQLException("Method not supported");
+        return printer;
     }
 
     /*
@@ -51,7 +75,7 @@ public class TreasureDataDataSource implements DataSource {
      * @see javax.sql.CommonDataSource#getLoginTimeout()
      */
     public int getLoginTimeout() throws SQLException {
-        throw new SQLException("Method not supported");
+        return loginTimeout;
     }
 
     /*
@@ -59,8 +83,8 @@ public class TreasureDataDataSource implements DataSource {
      * 
      * @see javax.sql.CommonDataSource#setLogWriter(java.io.PrintWriter)
      */
-    public void setLogWriter(PrintWriter arg0) throws SQLException {
-        throw new SQLException("Method not supported");
+    public void setLogWriter(PrintWriter out) throws SQLException {
+        printer = out;
     }
 
     /*
@@ -68,26 +92,42 @@ public class TreasureDataDataSource implements DataSource {
      * 
      * @see javax.sql.CommonDataSource#setLoginTimeout(int)
      */
-    public void setLoginTimeout(int arg0) throws SQLException {
-        throw new SQLException("Method not supported");
+    public void setLoginTimeout(int seconds) throws SQLException {
+        loginTimeout = seconds;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Returns false unless <code>interfaces</code> is implemented 
      * 
-     * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
+     * @param  interfaces             a Class defining an interface.
+     * @return true                   if this implements the interface or 
+     *                                directly or indirectly wraps an object 
+     *                                that does.
+     * @throws java.sql.SQLException  if an error occurs while determining 
+     *                                whether this is a wrapper for an object 
+     *                                with the given interface.
      */
-    public boolean isWrapperFor(Class<?> arg0) throws SQLException {
-        throw new SQLException("Method not supported");
+    public boolean isWrapperFor(Class<?> interfaces) throws SQLException {
+        return interfaces.isInstance(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Wrapper#unwrap(java.lang.Class)
+    /**
+     * Returns <code>this</code> if this class implements the interface
+     *
+     * @param  interfaces a Class defining an interface
+     * @return an object that implements the interface
+     * @throws java.sql.SQLExption if no object if found that implements the 
+     * interface
      */
-    public <T> T unwrap(Class<T> arg0) throws SQLException {
-        throw new SQLException("Method not supported");
+    public <T> T unwrap(Class<T> interfaces) throws SQLException {
+        //does not implement non-standard methods on JDBC objects 
+        //hence return this if this class implements the interface 
+        //or throw an SQLException
+        try {
+            return interfaces.cast(this);
+        } catch (ClassCastException e) {
+            throw new SQLException(e);
+        }
     }
 
 }

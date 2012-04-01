@@ -2,16 +2,18 @@ package com.treasure_data.jdbc;
 
 import java.sql.Connection;
 import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * TreasureDataDriver.
  *
  * @see org.apache.hadoop.hive.jdbc.HiveDriver
+ * @see org.apache.derby.jdbc.ClientDriver
+ * @see org.hsqldb.jdbcDriver
  */
 public class TreasureDataDriver implements Driver, TDConstants {
     private static Logger LOG = Logger.getLogger(
@@ -19,8 +21,8 @@ public class TreasureDataDriver implements Driver, TDConstants {
 
     static {
         try {
-            java.sql.DriverManager.registerDriver(new TreasureDataDriver());
-        } catch (SQLException e) {
+            DriverManager.registerDriver(new TreasureDataDriver());
+        } catch (Exception e) {
             LOG.severe(String.format("%s: %s",
                     e.getClass().getName(), e.getMessage()));
             e.printStackTrace();
@@ -28,15 +30,11 @@ public class TreasureDataDriver implements Driver, TDConstants {
     }
 
     public TreasureDataDriver() {
-        SecurityManager security = System.getSecurityManager();
-        if (security != null) {
-            // TODO #MN
-            security.checkWrite("foobah");
-        }
     }
 
     public boolean acceptsURL(String url) throws SQLException {
-        return Pattern.matches(URL_PREFIX + ".*", url);
+        return url != null && url.regionMatches(
+                true, 0, URL_PREFIX0, 0, URL_PREFIX0.length());
     }
 
     public Connection connect(String url, Properties info)
@@ -52,88 +50,29 @@ public class TreasureDataDriver implements Driver, TDConstants {
         return MINOR_VERSION;
     }
 
-    public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
+    public DriverPropertyInfo[] getPropertyInfo(String url, Properties props)
             throws SQLException {
-        if (info == null) {
-            info = new Properties();
+        if (props == null) {
+            props = System.getProperties();
         }
 
-        if ((url != null) && url.startsWith(URL_PREFIX)) {
-            info = parseURL(url, info);
-        }
+        DriverPropertyInfo[] ret = new DriverPropertyInfo[2];
 
-        DriverPropertyInfo hostProp = new DriverPropertyInfo(HOST_PROPERTY_KEY,
-                info.getProperty(HOST_PROPERTY_KEY, ""));
-        hostProp.required = false;
-        hostProp.description = "Hostname of Treasure Data Cloud";
+        ret[0] = new DriverPropertyInfo("user", null);
+        ret[0].value = props.getProperty("user", "");
+        ret[0].required = true;
+        ret[0].description = "user's email address for accessing TreasureData Cloud";
 
-        DriverPropertyInfo portProp = new DriverPropertyInfo(PORT_PROPERTY_KEY,
-                info.getProperty(PORT_PROPERTY_KEY, ""));
-        portProp.required = false;
-        portProp.description = "Port number of Treasure Data Cloud";
+        ret[1] = new DriverPropertyInfo("host", null);
+        ret[1].value = props.getProperty("host", "");
+        ret[1].required = true;
+        ret[1].description = "host name of TreasureData Cloud";
 
-        DriverPropertyInfo dbProp = new DriverPropertyInfo(DBNAME_PROPERTY_KEY,
-                info.getProperty(DBNAME_PROPERTY_KEY, "default"));
-        dbProp.required = false;
-        dbProp.description = "Database name";
-
-        DriverPropertyInfo[] dpi = new DriverPropertyInfo[3];
-
-        dpi[0] = hostProp;
-        dpi[1] = portProp;
-        dpi[2] = dbProp;
-
-        return dpi;
+        return ret;
     }
 
     public boolean jdbcCompliant() {
         return JDBC_COMPLIANT;
     }
 
-    /**
-     * Takes a url in the form of jdbc:td://[hostname]:[port]/[db_name] and
-     * parses it. Everything after jdbc:td// is optional.
-     * 
-     * @param url
-     * @param defaults
-     * @return
-     * @throws java.sql.SQLException
-     */
-    private Properties parseURL(String url, Properties defaults)
-            throws SQLException {
-        Properties urlProps = (defaults != null) ? new Properties(defaults)
-                : new Properties();
-
-        if (url == null || !url.startsWith(URL_PREFIX)) {
-            throw new SQLException("Invalid connection url: " + url);
-        }
-
-        if (url.length() <= URL_PREFIX.length()) {
-            return urlProps;
-        }
-
-        // [hostname]:[port]/[db_name]
-        String connectionInfo = url.substring(URL_PREFIX.length());
-
-        // [hostname]:[port] [db_name]
-        String[] hostPortAndDatabase = connectionInfo.split("/", 2);
-
-        // [hostname]:[port]
-        if (hostPortAndDatabase[0].length() > 0) {
-            String[] hostAndPort = hostPortAndDatabase[0].split(":", 2);
-            urlProps.put(HOST_PROPERTY_KEY, hostAndPort[0]);
-            if (hostAndPort.length > 1) {
-                urlProps.put(PORT_PROPERTY_KEY, hostAndPort[1]);
-            } else {
-                urlProps.put(PORT_PROPERTY_KEY, DEFAULT_PORT);
-            }
-        }
-
-        // [db_name]
-        if (hostPortAndDatabase.length > 1) {
-            urlProps.put(DBNAME_PROPERTY_KEY, hostPortAndDatabase[1]);
-        }
-
-        return urlProps;
-    }
 }

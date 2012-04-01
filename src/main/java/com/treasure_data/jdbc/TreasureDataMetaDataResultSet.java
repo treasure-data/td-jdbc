@@ -4,8 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TreasureDataMetaDataResultSet<M> extends
-        TreasureDataBaseResultSet {
+public abstract class TreasureDataMetaDataResultSet<M> extends TreasureDataBaseResultSet {
     protected final List<M> data;
 
     public TreasureDataMetaDataResultSet(final List<String> columnNames,

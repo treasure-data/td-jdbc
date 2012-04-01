@@ -159,6 +159,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
         }
 
         // submit a job
+        // FIXME #MN
         try {
             SubmitJobRequest request = new SubmitJobRequest(job);
             SubmitJobResult result = client.submitJob(request);

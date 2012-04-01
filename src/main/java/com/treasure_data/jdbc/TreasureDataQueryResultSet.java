@@ -1,5 +1,9 @@
 package com.treasure_data.jdbc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,8 +18,12 @@ import org.apache.hadoop.hive.metastore.api.Schema;
 import org.apache.hadoop.hive.serde.Constants;
 import org.apache.hadoop.hive.serde2.SerDe;
 import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
+import org.json.simple.JSONValue;
+import org.mortbay.util.ajax.JSON;
+import org.msgpack.packer.Packer;
 import org.msgpack.type.ArrayValue;
 import org.msgpack.type.Value;
+import org.msgpack.type.ValueFactory;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
@@ -134,7 +142,6 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
                 return false;
             }
 
-            // TODO #MN temporal impl.
             ArrayValue vs = (ArrayValue) fetchedRowsItr.next();
             row = new ArrayList<Object>(vs.size());
             for (int i = 0; i < vs.size(); i++) {
@@ -152,7 +159,59 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         return true;
     }
 
+    @Override
+    public ResultSetMetaData getMetaData() throws SQLException {
+//        // FIXME #MN for debug
+//        columnNames = new ArrayList<String>();
+//        columnTypes = new ArrayList<String>();
+//        columnNames.add("id");
+//        columnNames.add("name");
+//        columnNames.add("score");
+//        columnTypes.add("string");
+//        columnTypes.add("string");
+//        columnTypes.add("string");
+//        return super.getMetaData();
+        while (true) {
+            try {
+                ShowJobRequest request = new ShowJobRequest(job);
+                ShowJobResult result = client.showJob(request);
+                if (LOG.isLoggable(Level.FINE)) {
+                    LOG.fine("Job status: " + result.getJob().getStatus());
+                }
+                if (result.getJob().getStatus() == Job.Status.SUCCESS) {
+                    initColumnNamesAndTypes(result.getJob());
+                    break;
+                }
+            } catch (ClientException e) {
+                throw new SQLException(e);
+            }
+
+            try {
+                Thread.sleep(2 * 1000);
+            } catch (InterruptedException e) { // ignore
+            }
+        }
+        return super.getMetaData();
+    }
+
     private Unpacker fetchRows(int fetchSize) throws ClientException {
+//        // FIXME #MN for debug
+//        org.msgpack.MessagePack msgpack = new org.msgpack.MessagePack();
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        Packer packer = msgpack.createPacker(out);
+//        for (int i = 0; i < 30; i++) {
+//            List<String> row = new ArrayList<String>();
+//            row.add("" + i);
+//            row.add("muga:" + i);
+//            row.add("" + ((int) (Math.random() * i * 1000)) % 100);
+//            try {
+//                packer.write(row);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        byte[] bytes = out.toByteArray();
+//        return msgpack.createUnpacker(new ByteArrayInputStream(bytes));
         while (true) {
             ShowJobRequest request = new ShowJobRequest(job);
             ShowJobResult result = client.showJob(request);
@@ -160,6 +219,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
                 LOG.fine("Job status: " + result.getJob().getStatus());
             }
             if (result.getJob().getStatus() == Job.Status.SUCCESS) {
+                initColumnNamesAndTypes(result.getJob());
                 break;
             }
 
@@ -175,6 +235,20 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
             return result.getJobResult().getResult();
         } catch (Exception e) {
             throw new ClientException(e);
+        }
+    }
+
+    private void initColumnNamesAndTypes(Job job) {
+        String resultSchema = job.getResultSchema();
+        List<List<String>> cols = (List<List<String>>) JSONValue.parse(resultSchema);
+        if (cols == null) {
+            return;
+        }
+        columnNames = new ArrayList<String>(cols.size());
+        columnTypes = new ArrayList<String>(cols.size());
+        for (List<String> col : cols) {
+            columnNames.add(col.get(0));
+            columnTypes.add(col.get(1));
         }
     }
 

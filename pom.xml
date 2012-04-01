@@ -14,11 +14,6 @@
       <version>0.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.18</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <version>10.8.2.2</version>
@@ -29,10 +24,17 @@
       <version>10.8.2.2</version>
     </dependency>
     <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.10</version>
+    </dependency>
+    <!-- hive-jdbc should be deleted later -->
+    <dependency>
       <groupId>org.apache.hive</groupId>
       <artifactId>hive-jdbc</artifactId>
       <version>0.8.0-cdh4b1</version>
     </dependency>
+    <!-- hadoop-common should be deleted later -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
@@ -47,7 +49,7 @@
   </dependencies>
 
   <description>JDBC Driver for Treasure Data Cloud.</description>
-  <url>https://github.com/treasure-data/td-client-java</url>
+  <url>https://github.com/treasure-data/td-jdbc-driver</url>
   <build>
     <resources>
       <resource>
@@ -89,6 +91,22 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals><goal>attached</goal></goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import com.treasure_data.client.Config;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.model.Database;
 

@@ -4,8 +4,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.apache.hadoop.hive.serde.Constants;
-
 public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData {
     private final List<String> columnNames;
     private final List<String> columnTypes;
@@ -73,27 +71,27 @@ public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData
         // TODO: this would be better handled in an enum
         String type = columnTypes.get(column - 1);
         if ("string".equalsIgnoreCase(type)) {
-            return Constants.STRING_TYPE_NAME;
+            return TDConstants.STRING_TYPE_NAME;
         } else if ("float".equalsIgnoreCase(type)) {
-            return Constants.FLOAT_TYPE_NAME;
+            return TDConstants.FLOAT_TYPE_NAME;
         } else if ("double".equalsIgnoreCase(type)) {
-            return Constants.DOUBLE_TYPE_NAME;
+            return TDConstants.DOUBLE_TYPE_NAME;
         } else if ("boolean".equalsIgnoreCase(type)) {
-            return Constants.BOOLEAN_TYPE_NAME;
+            return TDConstants.BOOLEAN_TYPE_NAME;
         } else if ("tinyint".equalsIgnoreCase(type)) {
-            return Constants.TINYINT_TYPE_NAME;
+            return TDConstants.TINYINT_TYPE_NAME;
         } else if ("smallint".equalsIgnoreCase(type)) {
-            return Constants.SMALLINT_TYPE_NAME;
+            return TDConstants.SMALLINT_TYPE_NAME;
         } else if ("int".equalsIgnoreCase(type)) {
-            return Constants.INT_TYPE_NAME;
+            return TDConstants.INT_TYPE_NAME;
         } else if ("bigint".equalsIgnoreCase(type)) {
-            return Constants.BIGINT_TYPE_NAME;
+            return TDConstants.BIGINT_TYPE_NAME;
         } else if (type.startsWith("map<")) {
-            return Constants.STRING_TYPE_NAME;
+            return TDConstants.STRING_TYPE_NAME;
         } else if (type.startsWith("array<")) {
-            return Constants.STRING_TYPE_NAME;
+            return TDConstants.STRING_TYPE_NAME;
         } else if (type.startsWith("struct<")) {
-            return Constants.STRING_TYPE_NAME;
+            return TDConstants.STRING_TYPE_NAME;
         }
 
         throw new SQLException("Unrecognized column type: " + type);

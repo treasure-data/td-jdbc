@@ -11,12 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.hadoop.hive.metastore.TableType;
-import org.apache.hadoop.hive.metastore.api.FieldSchema;
-import org.apache.hadoop.hive.metastore.api.Table;
-import org.apache.hadoop.hive.service.HiveInterface;
-import org.apache.thrift.TException;
-
 import com.treasure_data.client.TreasureDataClient;
 
 public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, TDConstants {

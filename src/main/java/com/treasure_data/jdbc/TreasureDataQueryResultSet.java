@@ -1,29 +1,16 @@
 package com.treasure_data.jdbc;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hive.metastore.api.FieldSchema;
-import org.apache.hadoop.hive.metastore.api.Schema;
-import org.apache.hadoop.hive.serde.Constants;
-import org.apache.hadoop.hive.serde2.SerDe;
-import org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe;
 import org.json.simple.JSONValue;
-import org.mortbay.util.ajax.JSON;
-import org.msgpack.packer.Packer;
 import org.msgpack.type.ArrayValue;
 import org.msgpack.type.Value;
-import org.msgpack.type.ValueFactory;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
@@ -40,8 +27,6 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
             TreasureDataQueryResultSet.class.getName());
 
     private TreasureDataClient client;
-
-    private SerDe serde;
 
     private int maxRows = 0;
 
@@ -60,60 +45,12 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         this.client = client;
         this.maxRows = maxRows;
         this.job = job;
-        //initSerDe(); // TODO #MN
         //row = Arrays.asList(new Object[columnNames.size()]); // TODO #MN
     }
 
     public TreasureDataQueryResultSet(TreasureDataClient client, Job job)
             throws SQLException {
         this(client, 0, job);
-    }
-
-    /**
-     * Instantiate the serde used to deserialize the result rows.
-     */
-    private void initSerDe() throws SQLException {
-        // TODO #MN
-        try {
-            Schema fullSchema = null;
-            //Schema fullSchema = client.getSchema(); // TODO #MN
-            List<FieldSchema> schema = fullSchema.getFieldSchemas();
-            columnNames = new ArrayList<String>();
-            columnTypes = new ArrayList<String>();
-            StringBuilder namesSb = new StringBuilder();
-            StringBuilder typesSb = new StringBuilder();
-
-            if ((schema != null) && (!schema.isEmpty())) {
-                for (int pos = 0; pos < schema.size(); pos++) {
-                    if (pos != 0) {
-                        namesSb.append(",");
-                        typesSb.append(",");
-                    }
-                    columnNames.add(schema.get(pos).getName());
-                    columnTypes.add(schema.get(pos).getType());
-                    namesSb.append(schema.get(pos).getName());
-                    typesSb.append(schema.get(pos).getType());
-                }
-            }
-            String names = namesSb.toString();
-            String types = typesSb.toString();
-
-            serde = new LazySimpleSerDe();
-            Properties props = new Properties();
-            if (names.length() > 0) {
-                LOG.fine("Column names: " + names);
-                props.setProperty(Constants.LIST_COLUMNS, names);
-            }
-            if (types.length() > 0) {
-                LOG.fine("Column types: " + types);
-                props.setProperty(Constants.LIST_COLUMN_TYPES, types);
-            }
-            serde.initialize(new Configuration(), props);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new SQLException("Could not create ResultSet: "
-                    + e.getMessage(), e);
-        }
     }
 
     @Override
@@ -240,6 +177,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
 
     private void initColumnNamesAndTypes(Job job) {
         String resultSchema = job.getResultSchema();
+        @SuppressWarnings("unchecked")
         List<List<String>> cols = (List<List<String>>) JSONValue.parse(resultSchema);
         if (cols == null) {
             return;

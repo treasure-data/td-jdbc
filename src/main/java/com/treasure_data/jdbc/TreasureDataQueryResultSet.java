@@ -19,6 +19,7 @@ import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobResult;
+import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 
@@ -115,7 +116,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
                 if (LOG.isLoggable(Level.FINE)) {
                     LOG.fine("Job status: " + result.getJob().getStatus());
                 }
-                if (result.getJob().getStatus() == Job.Status.SUCCESS) {
+                if (result.getJob().getStatus() == JobSummary.Status.SUCCESS) {
                     initColumnNamesAndTypes(result.getJob());
                     break;
                 }
@@ -155,7 +156,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine("Job status: " + result.getJob().getStatus());
             }
-            if (result.getJob().getStatus() == Job.Status.SUCCESS) {
+            if (result.getJob().getStatus() == JobSummary.Status.SUCCESS) {
                 initColumnNamesAndTypes(result.getJob());
                 break;
             }
@@ -175,7 +176,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         }
     }
 
-    private void initColumnNamesAndTypes(Job job) {
+    private void initColumnNamesAndTypes(JobSummary job) {
         String resultSchema = job.getResultSchema();
         @SuppressWarnings("unchecked")
         List<List<String>> cols = (List<List<String>>) JSONValue.parse(resultSchema);

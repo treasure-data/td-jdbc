@@ -29,6 +29,7 @@
       <version>1.8.0.10</version>
     </dependency>
     <!-- hive-jdbc and hadoop-common should be deleted later -->
+    <!-- 
     <dependency>
       <groupId>org.apache.hive</groupId>
       <artifactId>hive-jdbc</artifactId>
@@ -39,11 +40,7 @@
       <artifactId>hadoop-common</artifactId>
       <version>0.23.0-cdh4b1</version>
     </dependency>
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr-runtime</artifactId>
-      <version>3.4</version>
-    </dependency>
+     -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -135,16 +132,6 @@
         <configuration>
           <argLine>-Xmx512M</argLine>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr3-maven-plugin</artifactId>
-        <version>3.4</version>
-        <executions>
-          <execution>
-            <goals><goal>antlr</goal></goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

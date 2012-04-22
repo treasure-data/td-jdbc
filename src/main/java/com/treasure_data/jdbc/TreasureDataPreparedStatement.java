@@ -57,15 +57,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      */
     private int maxRows = 0;
 
-    /**
-     * Add SQLWarnings to the warningChain if needed.
-     */
-    private SQLWarning warningChain = null;
-
-    /**
-     * Keep state so we can fail certain calls made after close().
-     */
-    private boolean isClosed = false;
+    private SQLWarning warnings = null;
 
     /**
      * keep the current ResultRet update count
@@ -146,11 +138,6 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      */
 
     protected ResultSet executeImmediate(String sql) throws SQLException {
-        if (isClosed) {
-            throw new SQLException(
-                    "Can't execute after statement has been closed");
-        }
-
         Job job = new Job(database, sql);
         clearWarnings();
         resultSet = null;
@@ -180,9 +167,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @param parameters
      * @return updated SQL string
      */
-    private String updateSql(final String sql,
-            HashMap<Integer, String> parameters) {
-
+    private String updateSql(final String sql, HashMap<Integer, String> parameters) {
         StringBuffer newSql = new StringBuffer(sql);
 
         int paramLoc = 1;
@@ -264,30 +249,25 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream)
      */
-    public void setAsciiStream(int parameterIndex, InputStream x)
-            throws SQLException {
+    public void setAsciiStream(int i, InputStream in) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream,
-     * int)
+     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream, int)
      */
-    public void setAsciiStream(int parameterIndex, InputStream x, int length)
-            throws SQLException {
+    public void setAsciiStream(int i, InputStream in, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream,
-     * long)
+     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream, long)
      */
-    public void setAsciiStream(int parameterIndex, InputStream x, long length)
-            throws SQLException {
+    public void setAsciiStream(int i, InputStream in, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -306,30 +286,25 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream)
      */
-    public void setBinaryStream(int parameterIndex, InputStream x)
-            throws SQLException {
+    public void setBinaryStream(int i, InputStream x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream,
-     * int)
+     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream, int)
      */
-    public void setBinaryStream(int parameterIndex, InputStream x, int length)
-            throws SQLException {
+    public void setBinaryStream(int i, InputStream in, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream,
-     * long)
+     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream, long)
      */
-    public void setBinaryStream(int parameterIndex, InputStream x, long length)
-            throws SQLException {
+    public void setBinaryStream(int i, InputStream in, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -347,8 +322,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setBlob(int, java.io.InputStream)
      */
-    public void setBlob(int parameterIndex, InputStream inputStream)
-            throws SQLException {
+    public void setBlob(int i, InputStream inputStream) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -357,8 +331,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setBlob(int, java.io.InputStream, long)
      */
-    public void setBlob(int parameterIndex, InputStream inputStream, long length)
-            throws SQLException {
+    public void setBlob(int i, InputStream inputStream, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -376,8 +349,8 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setByte(int, byte)
      */
-    public void setByte(int parameterIndex, byte x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+    public void setByte(int i, byte x) throws SQLException {
+        this.parameters.put(i, "" + x);
     }
 
     /*
@@ -385,7 +358,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setBytes(int, byte[])
      */
-    public void setBytes(int parameterIndex, byte[] x) throws SQLException {
+    public void setBytes(int i, byte[] x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -394,30 +367,25 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader)
      */
-    public void setCharacterStream(int parameterIndex, Reader reader)
-            throws SQLException {
+    public void setCharacterStream(int i, Reader reader) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader,
-     * int)
+     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader, int)
      */
-    public void setCharacterStream(int parameterIndex, Reader reader, int length)
-            throws SQLException {
+    public void setCharacterStream(int i, Reader reader, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader,
-     * long)
+     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader, long)
      */
-    public void setCharacterStream(int parameterIndex, Reader reader,
-            long length) throws SQLException {
+    public void setCharacterStream(int i, Reader reader, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -435,7 +403,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setClob(int, java.io.Reader)
      */
-    public void setClob(int parameterIndex, Reader reader) throws SQLException {
+    public void setClob(int i, Reader reader) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -444,8 +412,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setClob(int, java.io.Reader, long)
      */
-    public void setClob(int parameterIndex, Reader reader, long length)
-            throws SQLException {
+    public void setClob(int i, Reader reader, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -454,7 +421,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setDate(int, java.sql.Date)
      */
-    public void setDate(int parameterIndex, Date x) throws SQLException {
+    public void setDate(int i, Date x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -464,8 +431,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.PreparedStatement#setDate(int, java.sql.Date,
      * java.util.Calendar)
      */
-    public void setDate(int parameterIndex, Date x, Calendar cal)
-            throws SQLException {
+    public void setDate(int i, Date x, Calendar cal) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -474,8 +440,8 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setDouble(int, double)
      */
-    public void setDouble(int parameterIndex, double x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+    public void setDouble(int i, double x) throws SQLException {
+        parameters.put(i, "" + x);
     }
 
     /*
@@ -483,8 +449,8 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setFloat(int, float)
      */
-    public void setFloat(int parameterIndex, float x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+    public void setFloat(int i, float x) throws SQLException {
+        parameters.put(i, "" + x);
     }
 
     /*
@@ -492,8 +458,8 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setInt(int, int)
      */
-    public void setInt(int parameterIndex, int x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+    public void setInt(int i, int x) throws SQLException {
+        parameters.put(i, "" + x);
     }
 
     /*
@@ -501,8 +467,8 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setLong(int, long)
      */
-    public void setLong(int parameterIndex, long x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+    public void setLong(int i, long x) throws SQLException {
+        parameters.put(i, "" + x);
     }
 
     /*
@@ -510,19 +476,17 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader)
      */
-    public void setNCharacterStream(int parameterIndex, Reader value)
-            throws SQLException {
+    public void setNCharacterStream(int i, Reader value) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader,
-     * long)
+     * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader, long)
      */
-    public void setNCharacterStream(int parameterIndex, Reader value,
-            long length) throws SQLException {
+    public void setNCharacterStream(int i, Reader value, long length)
+            throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -531,7 +495,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNClob(int, java.sql.NClob)
      */
-    public void setNClob(int parameterIndex, NClob value) throws SQLException {
+    public void setNClob(int i, NClob value) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -540,7 +504,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader)
      */
-    public void setNClob(int parameterIndex, Reader reader) throws SQLException {
+    public void setNClob(int i, Reader reader) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -549,7 +513,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader, long)
      */
-    public void setNClob(int parameterIndex, Reader reader, long length)
+    public void setNClob(int i, Reader reader, long length)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
@@ -559,7 +523,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNString(int, java.lang.String)
      */
-    public void setNString(int parameterIndex, String value)
+    public void setNString(int i, String value)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
@@ -569,7 +533,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNull(int, int)
      */
-    public void setNull(int parameterIndex, int sqlType) throws SQLException {
+    public void setNull(int i, int sqlType) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -578,8 +542,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setNull(int, int, java.lang.String)
      */
-    public void setNull(int paramIndex, int sqlType, String typeName)
-            throws SQLException {
+    public void setNull(int i, int sqlType, String typeName) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -588,7 +551,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setObject(int, java.lang.Object)
      */
-    public void setObject(int parameterIndex, Object x) throws SQLException {
+    public void setObject(int i, Object x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -597,19 +560,17 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setObject(int, java.lang.Object, int)
      */
-    public void setObject(int parameterIndex, Object x, int targetSqlType)
-            throws SQLException {
+    public void setObject(int i, Object x, int targetSqlType) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see java.sql.PreparedStatement#setObject(int, java.lang.Object, int,
-     * int)
+     * @see java.sql.PreparedStatement#setObject(int, java.lang.Object, int, int)
      */
-    public void setObject(int parameterIndex, Object x, int targetSqlType,
-            int scale) throws SQLException {
+    public void setObject(int i, Object x, int targetSqlType, int scale)
+            throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -627,7 +588,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setRowId(int, java.sql.RowId)
      */
-    public void setRowId(int parameterIndex, RowId x) throws SQLException {
+    public void setRowId(int i, RowId x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -636,7 +597,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setSQLXML(int, java.sql.SQLXML)
      */
-    public void setSQLXML(int parameterIndex, SQLXML xmlObject)
+    public void setSQLXML(int i, SQLXML xmlObject)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
@@ -646,8 +607,8 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setShort(int, short)
      */
-    public void setShort(int parameterIndex, short x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+    public void setShort(int i, short x) throws SQLException {
+        this.parameters.put(i, "" + x);
     }
 
     /*
@@ -655,9 +616,9 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setString(int, java.lang.String)
      */
-    public void setString(int parameterIndex, String x) throws SQLException {
+    public void setString(int i, String x) throws SQLException {
         x = x.replace("'", "\\'");
-        this.parameters.put(parameterIndex, "'" + x + "'");
+        this.parameters.put(i, "'" + x + "'");
     }
 
     /*
@@ -665,7 +626,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setTime(int, java.sql.Time)
      */
-    public void setTime(int parameterIndex, Time x) throws SQLException {
+    public void setTime(int i, Time x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -675,8 +636,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.PreparedStatement#setTime(int, java.sql.Time,
      * java.util.Calendar)
      */
-    public void setTime(int parameterIndex, Time x, Calendar cal)
-            throws SQLException {
+    public void setTime(int i, Time x, Calendar cal) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -685,8 +645,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp)
      */
-    public void setTimestamp(int parameterIndex, Timestamp x)
-            throws SQLException {
+    public void setTimestamp(int i, Timestamp x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -696,8 +655,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp,
      * java.util.Calendar)
      */
-    public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal)
-            throws SQLException {
+    public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -706,7 +664,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * 
      * @see java.sql.PreparedStatement#setURL(int, java.net.URL)
      */
-    public void setURL(int parameterIndex, URL x) throws SQLException {
+    public void setURL(int i, URL x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -716,8 +674,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.PreparedStatement#setUnicodeStream(int,
      * java.io.InputStream, int)
      */
-    public void setUnicodeStream(int parameterIndex, InputStream x, int length)
-            throws SQLException {
+    public void setUnicodeStream(int i, InputStream x, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
@@ -754,7 +711,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.Statement#clearWarnings()
      */
     public void clearWarnings() throws SQLException {
-        warningChain = null;
+        warnings = null;
     }
 
     /**
@@ -768,7 +725,6 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
             resultSet.close();
             resultSet = null;
         }
-        isClosed = true;
     }
 
     /*
@@ -954,7 +910,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.Statement#getResultSet()
      */
     public ResultSet getResultSet() throws SQLException {
-        return this.resultSet;
+        return resultSet;
     }
 
     /*
@@ -999,7 +955,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.Statement#getWarnings()
      */
     public SQLWarning getWarnings() throws SQLException {
-        return warningChain;
+        return warnings;
     }
 
     /*
@@ -1008,7 +964,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      * @see java.sql.Statement#isClosed()
      */
     public boolean isClosed() throws SQLException {
-        return isClosed;
+        return true;
     }
 
     /*

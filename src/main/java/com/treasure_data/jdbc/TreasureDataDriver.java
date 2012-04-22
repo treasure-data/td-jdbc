@@ -39,7 +39,25 @@ public class TreasureDataDriver implements Driver, TDConstants {
 
     public Connection connect(String url, Properties info)
             throws SQLException {
-        return new TreasureDataConnection(url, info);
+        // A Connection object is not singleton
+        if (supportsJDBC40()) {
+            throw new SQLException("JDBC 4.0 not supported");
+        } else {
+            return new TreasureDataConnection(url, info);
+        }
+    }
+
+    /**
+     * Check to see if the jvm version is such that JDBC 4.0 is supported
+     */
+    private static boolean supportsJDBC40() {
+        // use reflection to identify whether we support JDBC40
+        try {
+            Class.forName("java.sql.SQLXML");
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public int getMajorVersion() {

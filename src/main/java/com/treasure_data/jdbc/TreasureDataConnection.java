@@ -26,13 +26,11 @@ public class TreasureDataConnection implements Connection, TDConstants {
     private static Logger LOG = Logger.getLogger(
             TreasureDataConnection.class.getName());
 
-    private boolean isClosed = true;
-
     private TreasureDataClient client;
 
     private Database database;
 
-    private SQLWarning warningChain = null;
+    private SQLWarning warnings = null;
 
     public TreasureDataConnection(String uri, Properties props)
             throws SQLException {
@@ -45,8 +43,10 @@ public class TreasureDataConnection implements Connection, TDConstants {
         uri = uri.substring(TreasureDataDriver.URI_PREFIX.length());
 
         if (uri.isEmpty()) {
-            // TODO #MN
-            throw new SQLException("Error accessing Treasure Data Cloud", "08S01");
+            SQLException e = new SQLException(
+                    "Error accessing Treasure Data Cloud", "08S01");
+            warnings.setNextException(e);
+            throw e;
         } else {
             // parse uri form: host:port/db
             String[] parts = uri.split("/");
@@ -65,14 +65,6 @@ public class TreasureDataConnection implements Connection, TDConstants {
                 database = new Database(parts[1]);
             }
         }
-        isClosed = false;
-        //configureConnection();
-    }
-
-    private void configureConnection() throws SQLException {
-        Statement stmt = createStatement();
-        stmt.execute("set hive.fetch.output.serde = org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe");
-        stmt.close();
     }
 
     /*
@@ -81,7 +73,7 @@ public class TreasureDataConnection implements Connection, TDConstants {
      * @see java.sql.Connection#clearWarnings()
      */
     public void clearWarnings() throws SQLException {
-        warningChain = null;
+        warnings = null;
     }
 
     /*
@@ -90,9 +82,6 @@ public class TreasureDataConnection implements Connection, TDConstants {
      * @see java.sql.Connection#close()
      */
     public void close() throws SQLException {
-        if (!isClosed) {
-            isClosed = true;
-        }
     }
 
     /*
@@ -158,9 +147,6 @@ public class TreasureDataConnection implements Connection, TDConstants {
      * @see java.sql.Connection#createStatement()
      */
     public Statement createStatement() throws SQLException {
-        if (isClosed) {
-            throw new SQLException("Can't create Statement, connection is closed");
-        }
         if (database == null) {
             throw new SQLException("Can't create Statement, database is not specified");
         }
@@ -275,7 +261,7 @@ public class TreasureDataConnection implements Connection, TDConstants {
      * @see java.sql.Connection#getWarnings()
      */
     public SQLWarning getWarnings() throws SQLException {
-        return warningChain;
+        return warnings;
     }
 
     /*
@@ -284,7 +270,7 @@ public class TreasureDataConnection implements Connection, TDConstants {
      * @see java.sql.Connection#isClosed()
      */
     public boolean isClosed() throws SQLException {
-        return isClosed;
+        return true;
     }
 
     /*

@@ -147,7 +147,7 @@ public class TreasureDataConnection implements Connection, TDConstants {
      * @see java.sql.Connection#createStatement()
      */
     public Statement createStatement() throws SQLException {
-        if (database == null) {
+        if (database == null) {// TODO #MN
             throw new SQLException("Can't create Statement, database is not specified");
         }
         return new TreasureDataStatement(client, database);

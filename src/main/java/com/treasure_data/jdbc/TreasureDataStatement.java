@@ -21,6 +21,8 @@ public class TreasureDataStatement implements Statement {
 
     private int fetchSize = 50;
 
+    private boolean isEscapeProcessing = true;
+
     /**
      * We need to keep a reference to the result set to support the following:
      * <code>
@@ -154,10 +156,19 @@ public class TreasureDataStatement implements Statement {
      * @see java.sql.Statement#executeQuery(java.lang.String)
      */
     public ResultSet executeQuery(String sql) throws SQLException {
-        if (isClosed) {
-            throw new SQLException("Can't execute after statement has been closed");
+        fetchData(sql);
+        return new TreasureDataResultSet(client);
+    }
+
+    private void fetchData(String sql) throws SQLException {
+        if (isEscapeProcessing) {
+            sql = nativeSQL(sql);
         }
 
+
+    }
+
+    public ResultSet executeQuery0(String sql) throws SQLException { // TODO
         Job job = new Job(database, sql);
 
         // submit a job
@@ -457,5 +468,153 @@ public class TreasureDataStatement implements Statement {
      */
     public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new SQLException("Method not supported");
+    }
+
+    public synchronized String nativeSQL(final String sql) throws SQLException {
+        // boucherb@users 20030405
+        // FIXME: does not work properly for nested escapes
+        //       e.g.  {call ...(...,{ts '...'},....)} does not work
+        // boucherb@users 20030817
+        // TESTME: First kick at the FIXME cat done.  Now lots of testing
+        // and refinment
+
+        // CHECKME:  Thow or return null if input is null?
+        if (sql == null || sql.length() == 0 || sql.indexOf('{') == -1) {
+            return sql;
+        }
+
+        // boolean   changed = false;
+        int state = 0;
+        int len   = sql.length();
+        int nest  = 0;
+        StringBuffer sb = new StringBuffer(sql.length());    //avoid 16 extra
+        String msg;
+
+        //--
+        final int outside_all                         = 0;
+        final int outside_escape_inside_single_quotes = 1;
+        final int outside_escape_inside_double_quotes = 2;
+
+        //--
+        final int inside_escape                      = 3;
+        final int inside_escape_inside_single_quotes = 4;
+        final int inside_escape_inside_double_quotes = 5;
+
+        // TODO:
+        // final int inside_single_line_comment          = 6;
+        // final int inside_multi_line_comment           = 7;
+        // Better than old way for large inputs and for avoiding GC overhead;
+        // toString() reuses internal char[], reducing memory requirment
+        // and garbage items 3:2
+        sb.append(sql);
+
+        for (int i = 0; i < len; i++) {
+            char c = sb.charAt(i);
+
+            switch (state) {
+
+                case outside_all :                            // Not inside an escape or quotes
+                    if (c == '\'') {
+                        state = outside_escape_inside_single_quotes;
+                    } else if (c == '"') {
+                        state = outside_escape_inside_double_quotes;
+                    } else if (c == '{') {
+                        i = onStartEscapeSequence(sql, sb, i);
+
+                        // changed = true;
+                        nest++;
+
+                        state = inside_escape;
+                    }
+                    break;
+
+                case outside_escape_inside_single_quotes :    // inside ' ' only
+                case inside_escape_inside_single_quotes :     // inside { } and ' '
+                    if (c == '\'') {
+                        state -= 1;
+                    }
+                    break;
+
+                case outside_escape_inside_double_quotes :    // inside " " only
+                case inside_escape_inside_double_quotes :     // inside { } and " "
+                    if (c == '"') {
+                        state -= 2;
+                    }
+                    break;
+
+                case inside_escape :                          // inside { }
+                    if (c == '\'') {
+                        state = inside_escape_inside_single_quotes;
+                    } else if (c == '"') {
+                        state = inside_escape_inside_double_quotes;
+                    } else if (c == '}') {
+                        sb.setCharAt(i, ' ');
+
+                        // changed = true;
+                        nest--;
+
+                        state = (nest == 0) ? outside_all
+                                            : inside_escape;
+                    } else if (c == '{') {
+                        i = onStartEscapeSequence(sql, sb, i);
+
+                        // changed = true;
+                        nest++;
+
+                        state = inside_escape;
+                    }
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * is called from within nativeSQL when the start of an JDBC escape
+     * sequence is encountered
+     */
+    private int onStartEscapeSequence(String sql, StringBuffer sb, int i)
+            throws SQLException {
+        sb.setCharAt(i++, ' ');
+
+        i = skipSpaces(sql, i);
+
+        if (sql.regionMatches(true, i, "fn ", 0, 3)
+                || sql.regionMatches(true, i, "oj ", 0, 3)
+                || sql.regionMatches(true, i, "ts ", 0, 3)) {
+            sb.setCharAt(i++, ' ');
+            sb.setCharAt(i++, ' ');
+        } else if (sql.regionMatches(true, i, "d ", 0, 2)
+                   || sql.regionMatches(true, i, "t ", 0, 2)) {
+            sb.setCharAt(i++, ' ');
+        } else if (sql.regionMatches(true, i, "call ", 0, 5)) {
+            i += 4;
+        } else if (sql.regionMatches(true, i, "?= call ", 0, 8)) {
+            sb.setCharAt(i++, ' ');
+            sb.setCharAt(i++, ' ');
+
+            i += 5;
+        } else if (sql.regionMatches(true, i, "escape ", 0, 7)) {
+            i += 6;
+        } else {
+            i--;
+
+            throw new SQLException("invalid JDBC argument", "S0010");
+        }
+
+        return i;
+    }
+
+    private static int skipSpaces(String s, int start) {
+        int limit = s.length();
+        int i = start;
+
+        for (; i < limit; i++) {
+            if (s.charAt(i) != ' ') {
+                break;
+            }
+        }
+
+        return i;
     }
 }

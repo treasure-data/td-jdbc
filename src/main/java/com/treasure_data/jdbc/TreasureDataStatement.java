@@ -23,6 +23,10 @@ public class TreasureDataStatement implements Statement {
 
     private boolean isEscapeProcessing = true;
 
+    private TreasureDataRequest request;
+
+    private TreasureDataResult result;
+
     /**
      * We need to keep a reference to the result set to support the following:
      * <code>
@@ -156,8 +160,8 @@ public class TreasureDataStatement implements Statement {
      * @see java.sql.Statement#executeQuery(java.lang.String)
      */
     public ResultSet executeQuery(String sql) throws SQLException {
-        fetchData(sql);
-        return new TreasureDataResultSet(client);
+        fetchData(new TreasureDataResultSet(client), sql);
+        return new TreasureDataResultSet(resultData, client);
     }
 
     private void fetchData(String sql) throws SQLException {
@@ -165,7 +169,13 @@ public class TreasureDataStatement implements Statement {
             sql = nativeSQL(sql);
         }
 
+        request.setMainString(sql);
+        request.setMaxRows(maxRows);
 
+        TreasureDataResult result = executeQuery1(request);
+        if (result.isError()) {
+            throw new SQLException(result.getErrorMessage());
+        }
     }
 
     public ResultSet executeQuery0(String sql) throws SQLException { // TODO
@@ -187,6 +197,23 @@ public class TreasureDataStatement implements Statement {
         return resultSet;
     }
 
+    private TreasureDataResult executeQuery1(TreasureDataRequest request) {
+        switch (request.getMode()) {
+        case TDConstants.SQLEXECUTE:
+            return executeSQL(request);
+        default:
+            throw new RuntimeException("");
+        }
+    }
+
+    private TreasureDataResult executeSQL(TreasureDataRequest request) {
+        compileSQL(request);
+        return request.execute();
+    }
+
+    private void compileSQL(TreasureDataRequest request) {
+        
+    }
 
     /*
      * (non-Javadoc)

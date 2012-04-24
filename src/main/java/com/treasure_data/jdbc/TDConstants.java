@@ -35,6 +35,8 @@ public interface TDConstants {
 
     String UNION_TYPE_NAME = "uniontype";
 
+    int SQLEXECUTE = 0;
+
     /**
      * Is this driver JDBC compliant?
      */

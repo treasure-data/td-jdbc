@@ -11,22 +11,12 @@
     <dependency>
       <groupId>com.treasure_data</groupId>
       <artifactId>td-client</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
+      <version>0.1.0</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.8.2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derbyclient</artifactId>
-      <version>10.8.2.2</version>
-    </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
+      <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
-      <version>1.8.0.10</version>
+      <version>2.2.8</version>
     </dependency>
     <!-- hive-jdbc and hadoop-common should be deleted later -->
     <!-- 
@@ -150,6 +140,11 @@
       <id>fluentd.org</id>
       <name>Fluent Maven2 Repository</name>
       <url>http://fluentd.org/maven2</url>
+    </repository>
+    <repository>
+      <id>treasure-data.com</id>
+      <name>Treasure Data Maven2 Repository</name>
+      <url>http://treasure-data.com/maven2/</url>
     </repository>
     <repository>
       <id>local-repo</id>

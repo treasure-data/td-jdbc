@@ -1,6 +1,6 @@
 package com.treasure_data.jdbc;
 
-public interface TDConstants {
+public interface Constants extends com.treasure_data.client.Constants {
     String VOID_TYPE_NAME = "void";
 
     String BOOLEAN_TYPE_NAME = "boolean";
@@ -35,7 +35,7 @@ public interface TDConstants {
 
     String UNION_TYPE_NAME = "uniontype";
 
-    int SQLEXECUTE = 0;
+    int RESULT_EXECDIRECT = 0;
 
     /**
      * Is this driver JDBC compliant?

@@ -1,9 +1,15 @@
 package com.treasure_data.jdbc;
 
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Types;
 
-public class TDUtils {
+public class Utils {
+
+    public static SQLWarning sqlWarning(String reason,
+            String state, Throwable t) {
+        return new SQLWarning(reason, state, t);
+    }
 
     /**
      * Convert hive types to sql types.

@@ -5,13 +5,13 @@ import java.sql.SQLException;
 /**
  * Table metadata.
  */
-public class JdbcTable {
+public class JDBCTable {
     private String tableCatalog;
     private String tableName;
     private String type;
     private String comment;
 
-    public JdbcTable(String tableCatalog, String tableName, String type,
+    public JDBCTable(String tableCatalog, String tableName, String type,
             String comment) {
         this.tableCatalog = tableCatalog;
         this.tableName = tableName;

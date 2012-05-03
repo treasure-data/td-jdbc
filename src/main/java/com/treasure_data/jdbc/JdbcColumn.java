@@ -6,7 +6,7 @@ import java.sql.Types;
 /**
  * Column metadata.
  */
-public class JdbcColumn {
+public class JDBCColumn {
     private final String columnName;
     private final String tableName;
     private final String tableCatalog;
@@ -14,7 +14,7 @@ public class JdbcColumn {
     private final String comment;
     private final int ordinalPos;
 
-    JdbcColumn(String columnName, String tableName, String tableCatalog,
+    JDBCColumn(String columnName, String tableName, String tableCatalog,
             String type, String comment, int ordinalPos) {
         this.columnName = columnName;
         this.tableName = tableName;

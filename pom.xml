@@ -123,6 +123,18 @@
           <argLine>-Xmx512M</argLine>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>javacc</id>
+            <phase>generate-sources</phase>
+            <goals><goal>javacc</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

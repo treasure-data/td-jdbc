@@ -15,6 +15,9 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.internal.Result;
+import com.treasure_data.jdbc.internal.ResultMetaData;
+import com.treasure_data.jdbc.internal.TreasureDataResult;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
@@ -52,6 +55,13 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
     public TreasureDataQueryResultSet(TreasureDataClient client, Job job)
             throws SQLException {
         this(client, 0, job);
+    }
+
+    public TreasureDataQueryResultSet(TreasureDataClient client,
+            Result resultIn, ResultMetaData metaData)
+            throws SQLException {
+            this.client = client;
+            throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

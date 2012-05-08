@@ -13,46 +13,51 @@ import java.util.logging.Logger;
  *
  * @see org.apache.hadoop.hive.jdbc.HiveDriver
  * @see org.apache.derby.jdbc.ClientDriver
- * @see org.hsqldb.jdbcDriver
+ * @see org.hsqldb.jdbc.JDBCDriver
  */
-public class TreasureDataDriver implements Driver, TDConstants {
+public class TreasureDataDriver implements Driver {
     private static Logger LOG = Logger.getLogger(
             TreasureDataDriver.class.getName());
 
+    public static TreasureDataDriver driverInstance;
+
     static {
         try {
-            DriverManager.registerDriver(new TreasureDataDriver());
+            driverInstance = new TreasureDataDriver();
+            DriverManager.registerDriver(driverInstance);
         } catch (Exception e) {
             LOG.severe(String.format("%s: %s",
                     e.getClass().getName(), e.getMessage()));
-            e.printStackTrace();
         }
     }
 
     public TreasureDataDriver() {
     }
 
-    public boolean acceptsURL(String url) throws SQLException {
-        return url != null && url.regionMatches(
-                true, 0, URL_PREFIX0, 0, URL_PREFIX0.length());
-    }
-
-    public Connection connect(String url, Properties info)
+    public Connection connect(String url, Properties props)
             throws SQLException {
-        // A Connection object is not singleton
         if (supportsJDBC40()) {
             throw new SQLException("JDBC 4.0 not supported");
         } else {
-            return new TreasureDataConnection(url, info);
+            return getConnection(url, props);
         }
     }
 
-    /**
-     * Check to see if the jvm version is such that JDBC 4.0 is supported
-     */
+    public static Connection getConnection(String url, Properties props)
+            throws SQLException {
+        if (props == null) {
+            throw new SQLException("invalid arguments: properties is null");
+        }
+
+        // a connection object is not singleton
+        return new JDBCConnection(url, props);
+    }
+
     private static boolean supportsJDBC40() {
-        // use reflection to identify whether we support JDBC40
+        // check to see if the JVM version is such that JDBC 4.0
+        // is supported
         try {
+            // use reflection to identify whether we support JDBC40
             Class.forName("java.sql.SQLXML");
             return true;
         } catch (Exception e) {
@@ -60,37 +65,57 @@ public class TreasureDataDriver implements Driver, TDConstants {
         }
     }
 
-    public int getMajorVersion() {
-        return MAJOR_VERSION;
-    }
+    public boolean acceptsURL(String url) throws SQLException {
+        if (url == null) {
+            return false;
+        }
 
-    public int getMinorVersion() {
-        return MINOR_VERSION;
+        if (url.regionMatches(true, 0, Constants.URL_PREFIX0, 0,
+                Constants.URL_PREFIX0.length())) {
+            return true;
+        }
+
+        return false;
     }
 
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties props)
             throws SQLException {
-        if (props == null) {
-            props = System.getProperties();
+        if (!acceptsURL(url)) {
+            return new DriverPropertyInfo[0];
         }
 
-        DriverPropertyInfo[] ret = new DriverPropertyInfo[2];
+        DriverPropertyInfo[] props0   = new DriverPropertyInfo[2];
+        DriverPropertyInfo p;
 
-        ret[0] = new DriverPropertyInfo("user", null);
-        ret[0].value = props.getProperty("user", "");
-        ret[0].required = true;
-        ret[0].description = "user's email address for accessing TreasureData Cloud";
+        if (props == null) {
+            props = new Properties();
+        }
 
-        ret[1] = new DriverPropertyInfo("host", null);
-        ret[1].value = props.getProperty("host", "");
-        ret[1].required = true;
-        ret[1].description = "host name of TreasureData Cloud";
+        p = new DriverPropertyInfo("user", null);
+        p.value = props.getProperty("user");
+        p.required = true;
+        p.description = "user's email address for accessing TreasureData Cloud";
+        props0[0] = p;
 
-        return ret;
+        p = new DriverPropertyInfo("host", null);
+        p.value = props.getProperty("host");
+        p.required = true;
+        p.description = "host name of TreasureData Cloud";
+        props0[1] = p;
+
+        return props0;
+    }
+
+    public int getMajorVersion() {
+        return Constants.MAJOR_VERSION;
+    }
+
+    public int getMinorVersion() {
+        return Constants.MINOR_VERSION;
     }
 
     public boolean jdbcCompliant() {
-        return JDBC_COMPLIANT;
+        return Constants.JDBC_COMPLIANT;
     }
 
 }

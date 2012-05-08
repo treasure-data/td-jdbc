@@ -29,7 +29,7 @@ public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData
     public int getColumnDisplaySize(int column) throws SQLException {
         int columnType = getColumnType(column);
 
-        return JdbcColumn.columnDisplaySize(columnType);
+        return JDBCColumn.columnDisplaySize(columnType);
     }
 
     public String getColumnLabel(int column) throws SQLException {
@@ -54,7 +54,7 @@ public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData
         String type = columnTypes.get(column - 1);
 
         // we need to convert the thrift type to the SQL type
-        return TDUtils.hiveTypeToSqlType(type);
+        return Utils.hiveTypeToSqlType(type);
     }
 
     public String getColumnTypeName(int column) throws SQLException {
@@ -71,27 +71,27 @@ public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData
         // TODO: this would be better handled in an enum
         String type = columnTypes.get(column - 1);
         if ("string".equalsIgnoreCase(type)) {
-            return TDConstants.STRING_TYPE_NAME;
+            return Constants.STRING_TYPE_NAME;
         } else if ("float".equalsIgnoreCase(type)) {
-            return TDConstants.FLOAT_TYPE_NAME;
+            return Constants.FLOAT_TYPE_NAME;
         } else if ("double".equalsIgnoreCase(type)) {
-            return TDConstants.DOUBLE_TYPE_NAME;
+            return Constants.DOUBLE_TYPE_NAME;
         } else if ("boolean".equalsIgnoreCase(type)) {
-            return TDConstants.BOOLEAN_TYPE_NAME;
+            return Constants.BOOLEAN_TYPE_NAME;
         } else if ("tinyint".equalsIgnoreCase(type)) {
-            return TDConstants.TINYINT_TYPE_NAME;
+            return Constants.TINYINT_TYPE_NAME;
         } else if ("smallint".equalsIgnoreCase(type)) {
-            return TDConstants.SMALLINT_TYPE_NAME;
+            return Constants.SMALLINT_TYPE_NAME;
         } else if ("int".equalsIgnoreCase(type)) {
-            return TDConstants.INT_TYPE_NAME;
+            return Constants.INT_TYPE_NAME;
         } else if ("bigint".equalsIgnoreCase(type)) {
-            return TDConstants.BIGINT_TYPE_NAME;
+            return Constants.BIGINT_TYPE_NAME;
         } else if (type.startsWith("map<")) {
-            return TDConstants.STRING_TYPE_NAME;
+            return Constants.STRING_TYPE_NAME;
         } else if (type.startsWith("array<")) {
-            return TDConstants.STRING_TYPE_NAME;
+            return Constants.STRING_TYPE_NAME;
         } else if (type.startsWith("struct<")) {
-            return TDConstants.STRING_TYPE_NAME;
+            return Constants.STRING_TYPE_NAME;
         }
 
         throw new SQLException("Unrecognized column type: " + type);
@@ -100,13 +100,13 @@ public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData
     public int getPrecision(int column) throws SQLException {
         int columnType = getColumnType(column);
 
-        return JdbcColumn.columnPrecision(columnType);
+        return JDBCColumn.columnPrecision(columnType);
     }
 
     public int getScale(int column) throws SQLException {
         int columnType = getColumnType(column);
 
-        return JdbcColumn.columnScale(columnType);
+        return JDBCColumn.columnScale(columnType);
     }
 
     public String getSchemaName(int column) throws SQLException {

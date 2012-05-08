@@ -6,31 +6,27 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
+import org.hsqldb.StatementTypes;
+import org.hsqldb.jdbc.JDBCResultSet;
+import org.hsqldb.result.Result;
+
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
-import com.treasure_data.jdbc.internal.Executor;
-import com.treasure_data.jdbc.internal.TreasureDataRequest;
-import com.treasure_data.jdbc.internal.TreasureDataResult;
+import com.treasure_data.jdbc.internal.CommandExecutor;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
-public class JDBCStatement implements Statement {
+public class JDBCStatement extends JDBCAbstractStatement implements Statement {
 
     private TreasureDataClient client;
 
     private Database database;
 
+    private CommandExecutor exec;
+
     private int fetchSize = 50;
-
-    private boolean isEscapeProcessing = true;
-
-    private Executor exec;
-
-    private TreasureDataRequest request;
-
-    private TreasureDataResult result;
 
     /**
      * We need to keep a reference to the result set to support the following:
@@ -59,41 +55,20 @@ public class JDBCStatement implements Statement {
     public JDBCStatement(TreasureDataClient client, Database database) {
         this.client = client;
         this.database = database;
-        this.exec = new Executor();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#addBatch(java.lang.String)
-     */
     public void addBatch(String sql) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#cancel()
-     */
     public void cancel() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#clearBatch()
-     */
     public void clearBatch() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#clearWarnings()
-     */
     public void clearWarnings() throws SQLException {
         warningChain = null;
     }
@@ -133,85 +108,40 @@ public class JDBCStatement implements Statement {
         return getResultSet();
     }
 
-    private void fetchResult(String sql) throws SQLException {
-        closeResultData();
+    private void fetchResult(String sql) throws SQLException { // TODO
+        closeResultData(); // TODO
 
         if (isEscapeProcessing) {
             sql = nativeSQL(sql);
         }
-        request.setMainString(sql);
-        request.setMaxRows(maxRows);
 
         try {
-            result = executeQuery1(request);
+            Result out = Result.newExecuteDirectRequest();
+            out.setPrepareOrExecuteProperties(sql, maxRows, fetchSize,
+                    StatementTypes.RETURN_RESULT,
+                    queryTimeout, rsProperties,
+                    JDBCAbstractStatement.NO_GENERATED_KEYS, null, null);
+            Result in = exec.execute(out);
+            //resultIn = exec.execute(resultOut);
             performPostExecute();
         } catch (Exception e) { // TODO
             throw new SQLException(e);
         }
 
-        if (result.isError()) {
+        if (resultIn.isError()) {
             throw new SQLException("in fetchResult"); // TODO
         }
 
-        currentResultSet = new TreasureDataQueryResultSet(client, result);
-        /**
-        checkClosed();
-        closeResultData();
-
-        if (isEscapeProcessing) {
-            sql = connection.nativeSQL(sql);
-        }
-        resultOut.setPrepareOrExecuteProperties(sql, maxRows, fetchSize,
-                statementRetType, queryTimeout, rsProperties, generatedKeys,
-                generatedIndexes, generatedNames);
-
-        try {
-            resultIn = connection.sessionProxy.execute(resultOut);
-
-            performPostExecute();
-        } catch (HsqlException e) {
-            throw Util.sqlException(e);
-        }
-
-        if (resultIn.isError()) {
-            throw Util.sqlException(resultIn);
-        }
-
         if (resultIn.isData()) {
-            currentResultSet = new JDBCResultSet(connection, this, resultIn,
-                    resultIn.metaData);
-        } else if (resultIn.getStatementType()
-                   == StatementTypes.RETURN_RESULT) {
+            currentResultSet = new TreasureDataQueryResultSet(
+                    client, resultIn, resultIn.metaData); // TODO
+        } else if (resultIn.getStatementType() == StatementTypes.RETURN_RESULT) {
             getMoreResults();
         }
-         */
     }
 
     private void closeResultData() throws SQLException {
-        /**
-        if (currentResultSet != null) {
-            currentResultSet.close();
-        }
-
-        if (generatedResultSet != null) {
-            generatedResultSet.close();
-        }
-
-        generatedResultSet = null;
-        generatedResult    = null;
-        resultIn           = null;
-        currentResultSet   = null;
-         */
-    }
-
-    private void performPostExecute() throws SQLException {
         // TODO
-    }
-
-    private TreasureDataResult performPostExecute(TreasureDataRequest request,
-            TreasureDataResult result) throws SQLException {
-        // TODO
-        return result;
     }
 
     public ResultSet executeQuery0(String sql) throws SQLException {
@@ -234,261 +164,112 @@ public class JDBCStatement implements Statement {
         return currentResultSet;
     }
 
-    private TreasureDataResult executeQuery1(TreasureDataRequest request)
-            throws SQLException {
-        // @see org.hsqldb.Session#execute(Result)
-        switch (request.getMode()) {
-        case Constants.RESULT_EXECDIRECT:
-            TreasureDataResult result = exec.executeDirectStatement(request);
-            result = performPostExecute(request, result);
-            return result;
-        default:
-            throw new RuntimeException("fatal error");
-        }
-        // TODO
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#executeUpdate(java.lang.String)
-     */
     public int executeUpdate(String sql) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#executeUpdate(java.lang.String, int)
-     */
     public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#executeUpdate(java.lang.String, int[])
-     */
     public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#executeUpdate(java.lang.String, java.lang.String[])
-     */
     public int executeUpdate(String sql, String[] columnNames) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getConnection()
-     */
     public Connection getConnection() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getFetchDirection()
-     */
     public int getFetchDirection() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getFetchSize()
-     */
     public int getFetchSize() throws SQLException {
         return fetchSize;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getGeneratedKeys()
-     */
     public ResultSet getGeneratedKeys() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getMaxFieldSize()
-     */
     public int getMaxFieldSize() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getMaxRows()
-     */
     public int getMaxRows() throws SQLException {
         return maxRows;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getMoreResults()
-     */
     public boolean getMoreResults() throws SQLException {
-        throw new SQLException("Method not supported");
+        return getMoreResults(JDBCAbstractStatement.CLOSE_CURRENT_RESULT);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getMoreResults(int)
-     */
     public boolean getMoreResults(int current) throws SQLException {
-        throw new SQLException("Method not supported");
+        return super.getMoreResults(current);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getQueryTimeout()
-     */
     public int getQueryTimeout() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getResultSet()
-     */
     public ResultSet getResultSet() throws SQLException {
         ResultSet result = currentResultSet;
         currentResultSet = null;
         return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getResultSetConcurrency()
-     */
     public int getResultSetConcurrency() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getResultSetHoldability()
-     */
     public int getResultSetHoldability() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getResultSetType()
-     */
     public int getResultSetType() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getUpdateCount()
-     */
     public int getUpdateCount() throws SQLException {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#getWarnings()
-     */
     public SQLWarning getWarnings() throws SQLException {
         return warningChain;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#isClosed()
-     */
     public boolean isClosed() throws SQLException {
         return isClosed;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#isPoolable()
-     */
     public boolean isPoolable() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setCursorName(java.lang.String)
-     */
     public void setCursorName(String name) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setEscapeProcessing(boolean)
-     */
     public void setEscapeProcessing(boolean enable) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setFetchDirection(int)
-     */
     public void setFetchDirection(int direction) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setFetchSize(int)
-     */
     public void setFetchSize(int rows) throws SQLException {
         fetchSize = rows;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setMaxFieldSize(int)
-     */
     public void setMaxFieldSize(int max) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setMaxRows(int)
-     */
     public void setMaxRows(int max) throws SQLException {
         if (max < 0) {
             throw new SQLException("max must be >= 0");
@@ -496,42 +277,23 @@ public class JDBCStatement implements Statement {
         maxRows = max;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setPoolable(boolean)
-     */
     public void setPoolable(boolean poolable) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#setQueryTimeout(int)
-     */
     public void setQueryTimeout(int seconds) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
-     */
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Wrapper#unwrap(java.lang.Class)
-     */
     public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
+    // TODO implementing
     public synchronized String nativeSQL(final String sql) throws SQLException {
         // boucherb@users 20030405
         // FIXME: does not work properly for nested escapes

@@ -41,7 +41,7 @@ public class JDBCColumn {
     }
 
     public Integer getSqlType() throws SQLException {
-        return TDUtils.hiveTypeToSqlType(type);
+        return Utils.hiveTypeToSqlType(type);
     }
 
     static int columnDisplaySize(int columnType) throws SQLException {
@@ -114,13 +114,13 @@ public class JDBCColumn {
     }
 
     public Integer getColumnSize() throws SQLException {
-        int precision = columnPrecision(TDUtils.hiveTypeToSqlType(type));
+        int precision = columnPrecision(Utils.hiveTypeToSqlType(type));
 
         return precision == 0 ? null : precision;
     }
 
     public Integer getDecimalDigits() throws SQLException {
-        return columnScale(TDUtils.hiveTypeToSqlType(type));
+        return columnScale(Utils.hiveTypeToSqlType(type));
     }
 
     public Integer getNumPrecRadix() {

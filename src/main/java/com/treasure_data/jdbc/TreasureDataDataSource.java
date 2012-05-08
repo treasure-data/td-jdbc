@@ -37,7 +37,7 @@ public class TreasureDataDataSource implements DataSource {
             throws SQLException {
         // TODO #MN
         try {
-            return new TreasureDataConnection("", null);
+            return new JDBCConnection("", null);
         } catch (Exception e) {
             throw new SQLException(
                     "Error in getting TreasureDataConnection", e);

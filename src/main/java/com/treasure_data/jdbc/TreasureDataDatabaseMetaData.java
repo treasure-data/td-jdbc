@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.treasure_data.client.TreasureDataClient;
 
-public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, TDConstants {
+public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, Constants {
 
     private final TreasureDataClient client;
 
@@ -164,7 +164,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
             final String tableNamePattern, final String columnNamePattern)
             throws SQLException {
         // TODO #MN
-        List<JdbcColumn> columns = new ArrayList<JdbcColumn>();
+        List<JDBCColumn> columns = new ArrayList<JDBCColumn>();
         try {
             if (catalog == null) {
                 catalog = "default";
@@ -192,7 +192,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
 //            }
             Collections.sort(columns, new GetColumnsComparator());
 
-            return new TreasureDataMetaDataResultSet<JdbcColumn>(Arrays.asList(
+            return new TreasureDataMetaDataResultSet<JDBCColumn>(Arrays.asList(
                     "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME",
                     "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH",
                     "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS",
@@ -210,7 +210,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
                 public boolean next() throws SQLException {
                     if (cnt < data.size()) {
                         List<Object> a = new ArrayList<Object>(20);
-                        JdbcColumn column = data.get(cnt);
+                        JDBCColumn column = data.get(cnt);
                         a.add(column.getTableCatalog()); // TABLE_CAT String =>
                                                          // table catalog (may
                                                          // be null)
@@ -267,9 +267,9 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
      * We sort the output of getColumns to guarantee jdbc compliance. First
      * check by table name then by ordinal position
      */
-    private class GetColumnsComparator implements Comparator<JdbcColumn> {
+    private class GetColumnsComparator implements Comparator<JDBCColumn> {
 
-        public int compare(JdbcColumn o1, JdbcColumn o2) {
+        public int compare(JDBCColumn o1, JDBCColumn o2) {
             int compareName = o1.getTableName().compareTo(o2.getTableName());
             if (compareName == 0) {
                 if (o1.getOrdinalPos() > o2.getOrdinalPos()) {
@@ -569,7 +569,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
             String tableNamePattern, String[] types) throws SQLException {
         // TODO #MN
         final List<String> tablesstr;
-        final List<JdbcTable> resultTables = new ArrayList<JdbcTable>();
+        final List<JDBCTable> resultTables = new ArrayList<JDBCTable>();
         final String resultCatalog;
         if (catalog == null) { // On jdbc the default catalog is null but on
                                // hive it's "default"
@@ -606,7 +606,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
         } catch (Exception e) {
             throw new SQLException(e);
         }
-        ResultSet result = new TreasureDataMetaDataResultSet<JdbcTable>(Arrays.asList(
+        ResultSet result = new TreasureDataMetaDataResultSet<JDBCTable>(Arrays.asList(
                 "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE",
                 "REMARKS"), Arrays.asList("STRING", "STRING", "STRING",
                 "STRING", "STRING"), resultTables) {
@@ -615,7 +615,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
             public boolean next() throws SQLException {
                 if (cnt < data.size()) {
                     List<Object> a = new ArrayList<Object>(5);
-                    JdbcTable table = data.get(cnt);
+                    JDBCTable table = data.get(cnt);
                     // TABLE_CAT String => table catalog (may be null)
                     a.add(table.getTableCatalog());
                     // TABLE_SCHEM String => table schema (may be null)
@@ -646,8 +646,8 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
      * We sort the output of getTables to guarantee jdbc compliance. First check
      * by table type then by table name
      */
-    private class GetTablesComparator implements Comparator<JdbcTable> {
-        public int compare(JdbcTable o1, JdbcTable o2) {
+    private class GetTablesComparator implements Comparator<JDBCTable> {
+        public int compare(JDBCTable o1, JDBCTable o2) {
             int compareType = o1.getType().compareTo(o2.getType());
             if (compareType == 0) {
                 return o1.getTableName().compareTo(o2.getTableName());

@@ -18,13 +18,15 @@ import org.msgpack.type.ArrayValue;
 import org.msgpack.type.Value;
 import org.msgpack.unpacker.Unpacker;
 
+import com.treasure_data.jdbc.JDBCConnection;
+
 public class TestTreasureDataPreparedStatement {
 
     @Test @Ignore
     public void testSimple() throws Exception {
         Properties props = new Properties();
-        TreasureDataConnection conn =
-            new TreasureDataConnection("jdbc:td://localhost:9999/mugadb", props);
+        JDBCConnection conn =
+            new JDBCConnection("jdbc:td://localhost:9999/mugadb", props);
         PreparedStatement ps = conn.prepareStatement("select v['uid'] as uid from mugatbl;");
         ResultSet rs = ps.executeQuery();
         System.out.println("rs: " + rs);
@@ -40,8 +42,8 @@ public class TestTreasureDataPreparedStatement {
     @Test @Ignore
     public void testSimple02() throws Exception {
         Properties props = new Properties();
-        TreasureDataConnection conn =
-            new TreasureDataConnection("jdbc:td://localhost:9999/mugadb", props);
+        JDBCConnection conn =
+            new JDBCConnection("jdbc:td://localhost:9999/mugadb", props);
         PreparedStatement ps = conn.prepareStatement(
                 "select v['id'] as id, v['name'] as name, v['score'] as score from score order by score desc;");
 

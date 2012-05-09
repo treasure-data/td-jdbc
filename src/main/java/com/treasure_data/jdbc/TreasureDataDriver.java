@@ -36,11 +36,7 @@ public class TreasureDataDriver implements Driver {
 
     public Connection connect(String url, Properties props)
             throws SQLException {
-        if (supportsJDBC40()) {
-            throw new SQLException("JDBC 4.0 not supported");
-        } else {
-            return getConnection(url, props);
-        }
+        return getConnection(url, props);
     }
 
     public static Connection getConnection(String url, Properties props)
@@ -51,18 +47,6 @@ public class TreasureDataDriver implements Driver {
 
         // a connection object is not singleton
         return new JDBCConnection(url, props);
-    }
-
-    private static boolean supportsJDBC40() {
-        // check to see if the JVM version is such that JDBC 4.0
-        // is supported
-        try {
-            // use reflection to identify whether we support JDBC40
-            Class.forName("java.sql.SQLXML");
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     public boolean acceptsURL(String url) throws SQLException {

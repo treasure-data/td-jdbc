@@ -12,7 +12,7 @@ import org.hsqldb.result.ResultConstants;
 import org.hsqldb.store.ValuePool;
 
 import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.TreasureDataQueryResultSet;
+import com.treasure_data.jdbc.JDBCQueryResultSet;
 import com.treasure_data.jdbc.compiler.expr.DateValue;
 import com.treasure_data.jdbc.compiler.expr.DoubleValue;
 import com.treasure_data.jdbc.compiler.expr.Expression;

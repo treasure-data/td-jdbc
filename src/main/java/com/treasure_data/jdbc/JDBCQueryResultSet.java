@@ -26,9 +26,9 @@ import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 
-public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
+public class JDBCQueryResultSet extends JDBCBaseResultSet {
     private static Logger LOG = Logger.getLogger(
-            TreasureDataQueryResultSet.class.getName());
+            JDBCQueryResultSet.class.getName());
 
     private TreasureDataClient client;
 
@@ -44,7 +44,7 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
 
     private Job job;
 
-    public TreasureDataQueryResultSet(TreasureDataClient client, int maxRows, Job job)
+    public JDBCQueryResultSet(TreasureDataClient client, int maxRows, Job job)
             throws SQLException {
         this.client = client;
         this.maxRows = maxRows;
@@ -52,12 +52,12 @@ public class TreasureDataQueryResultSet extends TreasureDataBaseResultSet {
         //row = Arrays.asList(new Object[columnNames.size()]); // TODO #MN
     }
 
-    public TreasureDataQueryResultSet(TreasureDataClient client, Job job)
+    public JDBCQueryResultSet(TreasureDataClient client, Job job)
             throws SQLException {
         this(client, 0, job);
     }
 
-    public TreasureDataQueryResultSet(TreasureDataClient client,
+    public JDBCQueryResultSet(TreasureDataClient client,
             Result resultIn, ResultMetaData metaData)
             throws SQLException {
             this.client = client;

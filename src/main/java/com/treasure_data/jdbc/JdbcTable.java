@@ -32,7 +32,7 @@ public class JDBCTable {
     }
 
     public String getSqlTableType() throws SQLException {
-        return TreasureDataDatabaseMetaData.toJdbcTableType(type);
+        return JDBCDatabaseMetaData.toJdbcTableType(type);
     }
 
     public String getComment() {

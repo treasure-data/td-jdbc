@@ -31,7 +31,7 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
-public class TreasureDataPreparedStatement implements PreparedStatement {
+public class JDBCPreparedStatement implements PreparedStatement {
     private final String sql;
 
     private TreasureDataClient client;
@@ -64,7 +64,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
      */
     private final int updateCount = 0;
 
-    public TreasureDataPreparedStatement(TreasureDataClient client,
+    public JDBCPreparedStatement(TreasureDataClient client,
             Database database, String sql) {
         this.client = client;
         this.database = database;
@@ -155,7 +155,7 @@ public class TreasureDataPreparedStatement implements PreparedStatement {
             throw new SQLException(e.toString(), "08S01");
         }
 
-        resultSet = new TreasureDataQueryResultSet(client, maxRows, job);
+        resultSet = new JDBCQueryResultSet(client, maxRows, job);
         return resultSet;
     }
 

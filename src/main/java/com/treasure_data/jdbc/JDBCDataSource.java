@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-public class TreasureDataDataSource implements DataSource {
+public class JDBCDataSource implements DataSource {
     private String password;
 
     private String user;
@@ -15,7 +15,7 @@ public class TreasureDataDataSource implements DataSource {
 
     private PrintWriter printer;
 
-    public TreasureDataDataSource() {
+    public JDBCDataSource() {
     }
 
     /*

@@ -32,7 +32,7 @@ public class JDBCConnection implements Connection, Constants {
     public JDBCConnection(String uri, Properties props)
             throws SQLException {
         if (uri == null || uri.isEmpty() || !uri.startsWith(URI_PREFIX)) {
-            throw new SQLException("Invalid URL: " + uri);
+            throw new SQLException("Invalid URI: " + uri);
         }
 
         // remove prefix
@@ -54,14 +54,16 @@ public class JDBCConnection implements Connection, Constants {
         }
         props.setProperty(Config.TD_API_SERVER_HOST, host + ":" + port);
 
+        // create a TreasureDataClient object
+        client = new TreasureDataClient(props);
+
+        // create a Database object
         if (fragments.length > 1) {
             database = new Database(fragments[1]);
         } else {
             throw new SQLException(
-            "Can't create a connection because database is not specified");
+            "Cannot create a connection because database is not specified");
         }
-
-        client = new TreasureDataClient(props);
     }
 
     public void clearWarnings() throws SQLException {
@@ -85,34 +87,36 @@ public class JDBCConnection implements Connection, Constants {
     }
 
     public void close() throws SQLException {
+        // ignore
     }
 
     public boolean isClosed() throws SQLException {
-        return true;
+        return true; // ignore
     }
 
     public void commit() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    public Array createArrayOf(String arg0, Object[] arg1) throws SQLException {
-        throw new SQLException("Method not supported");
+    public Array createArrayOf(String typeName, Object[] elements)
+            throws SQLException {
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public Blob createBlob() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public Clob createClob() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public NClob createNClob() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public SQLXML createSQLXML() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     /**
@@ -126,22 +130,22 @@ public class JDBCConnection implements Connection, Constants {
     public Statement createStatement() throws SQLException {
         // *skip* checking if database is null or not. It is because
         // it was processed when creating a connection.
-        return new JDBCStatement(client, database); // TODO
+        return new JDBCStatement(client, database);
     }
 
     public Statement createStatement(int resultSetType, int resultSetConcurrency)
             throws SQLException {
-        return new JDBCStatement(client, database); // TODO
+        return createStatement();
     }
 
     public Statement createStatement(int resultSetType, int resultSetConcurrency,
             int resultSetHoldability) throws SQLException {
-        return new JDBCStatement(client, database); // TODO
+        return createStatement();
     }
 
     public Struct createStruct(String typeName, Object[] attributes)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean getAutoCommit() throws SQLException {
@@ -153,19 +157,19 @@ public class JDBCConnection implements Connection, Constants {
     }
 
     public Properties getClientInfo() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public String getClientInfo(String name) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public int getHoldability() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
-        return new TreasureDataDatabaseMetaData(client);
+        return new JDBCDatabaseMetaData(client);
     }
 
     public int getTransactionIsolation() throws SQLException {
@@ -173,7 +177,7 @@ public class JDBCConnection implements Connection, Constants {
     }
 
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean isReadOnly() throws SQLException {
@@ -181,190 +185,119 @@ public class JDBCConnection implements Connection, Constants {
     }
 
     public boolean isValid(int timeout) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public String nativeSQL(String sql) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    public CallableStatement prepareCall(String sql) throws SQLException {
-        throw new SQLException("Method not supported");
+    public CallableStatement prepareCall(String sql)
+            throws SQLException {
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public CallableStatement prepareCall(String sql, int resultSetType,
             int resultSetConcurrency) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        throw new SQLException("Method not supported");
+            int resultSetConcurrency, int resultSetHoldability)
+            throws SQLException {
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return new TreasureDataPreparedStatement(client, database, sql); // TODO
+    public PreparedStatement prepareStatement(String sql)
+            throws SQLException {
+        return new JDBCPreparedStatement(client, database, sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
             throws SQLException {
-        return new TreasureDataPreparedStatement(client, database, sql); // TODO
+        return new JDBCPreparedStatement(client, database, sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
             throws SQLException {
-        return new TreasureDataPreparedStatement(client, database, sql); // TODO
+        return new JDBCPreparedStatement(client, database, sql);
     }
 
     public PreparedStatement prepareStatement(String sql, String[] columnNames)
             throws SQLException {
-        return new TreasureDataPreparedStatement(client, database, sql); // TODO
+        return new JDBCPreparedStatement(client, database, sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int resultSetType,
         int resultSetConcurrency) throws SQLException {
-        return new TreasureDataPreparedStatement(client, database, sql); // TODO
+        return new JDBCPreparedStatement(client, database, sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
             throws SQLException {
-        return new TreasureDataPreparedStatement(client, database, sql); // TODO
+        return new JDBCPreparedStatement(client, database, sql);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#releaseSavepoint(java.sql.Savepoint)
-     */
     public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#rollback()
-     */
     public void rollback() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#rollback(java.sql.Savepoint)
-     */
     public void rollback(Savepoint savepoint) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setAutoCommit(boolean)
-     */
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setCatalog(java.lang.String)
-     */
     public void setCatalog(String catalog) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setClientInfo(java.util.Properties)
-     */
     public void setClientInfo(Properties properties)
             throws SQLClientInfoException {
         throw new SQLClientInfoException("Method not supported", null);
     }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setClientInfo(java.lang.String, java.lang.String)
-     */
+
     public void setClientInfo(String name, String value)
             throws SQLClientInfoException {
         throw new SQLClientInfoException("Method not supported", null);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setHoldability(int)
-     */
     public void setHoldability(int holdability) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setReadOnly(boolean)
-     */
     public void setReadOnly(boolean readOnly) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setSavepoint()
-     */
     public Savepoint setSavepoint() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setSavepoint(java.lang.String)
-     */
     public Savepoint setSavepoint(String name) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setTransactionIsolation(int)
-     */
+
     public void setTransactionIsolation(int level) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Connection#setTypeMap(java.util.Map)
-     */
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Wrapper#isWrapperFor(java.lang.Class)
-     */
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Wrapper#unwrap(java.lang.Class)
-     */
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 }

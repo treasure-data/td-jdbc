@@ -4,11 +4,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TreasureDataResultSetMetaData implements java.sql.ResultSetMetaData {
+public class JDBCResultSetMetaData implements java.sql.ResultSetMetaData {
     private final List<String> columnNames;
     private final List<String> columnTypes;
 
-    public TreasureDataResultSetMetaData(List<String> columnNames,
+    public JDBCResultSetMetaData(List<String> columnNames,
             List<String> columnTypes) {
         this.columnNames = columnNames;
         this.columnTypes = columnTypes;

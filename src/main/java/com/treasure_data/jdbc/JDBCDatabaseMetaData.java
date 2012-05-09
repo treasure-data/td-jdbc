@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.treasure_data.client.TreasureDataClient;
 
-public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, Constants {
+public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constants {
 
     private final TreasureDataClient client;
 
@@ -21,14 +21,12 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
 
     private static final char SEARCH_STRING_ESCAPE = '\\';
 
-    // The maximum column length = MFieldSchema.FNAME in
-    // metastore/src/model/package.jdo
     private static final int maxColumnNameLength = 128;
 
     /**
    *
    */
-    public TreasureDataDatabaseMetaData(TreasureDataClient client) {
+    public JDBCDatabaseMetaData(TreasureDataClient client) {
         this.client = client;
     }
 
@@ -85,7 +83,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
             // implemented
             final List<String> catalogs = new ArrayList<String>();
             catalogs.add("default");
-            return new TreasureDataMetaDataResultSet<String>(
+            return new JDBCMetaDataResultSet<String>(
                     Arrays.asList("TABLE_CAT"), Arrays.asList("STRING"),
                     catalogs) {
                 private int cnt = 0;
@@ -192,7 +190,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
 //            }
             Collections.sort(columns, new GetColumnsComparator());
 
-            return new TreasureDataMetaDataResultSet<JDBCColumn>(Arrays.asList(
+            return new JDBCMetaDataResultSet<JDBCColumn>(Arrays.asList(
                     "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME",
                     "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH",
                     "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS",
@@ -506,7 +504,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
 
     public ResultSet getSchemas(String catalog, String schemaPattern)
             throws SQLException {
-        return new TreasureDataMetaDataResultSet(Arrays.asList("TABLE_SCHEM",
+        return new JDBCMetaDataResultSet(Arrays.asList("TABLE_SCHEM",
                 "TABLE_CATALOG"), Arrays.asList("STRING", "STRING"), null) {
 
             public boolean next() throws SQLException {
@@ -545,7 +543,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
 
     public ResultSet getTableTypes() throws SQLException {
         final TableType[] tt = TableType.values();
-        ResultSet result = new TreasureDataMetaDataResultSet<TableType>(
+        ResultSet result = new JDBCMetaDataResultSet<TableType>(
                 Arrays.asList("TABLE_TYPE"), Arrays.asList("STRING"),
                 new ArrayList<TableType>(Arrays.asList(tt))) {
             private int cnt = 0;
@@ -606,7 +604,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
         } catch (Exception e) {
             throw new SQLException(e);
         }
-        ResultSet result = new TreasureDataMetaDataResultSet<JDBCTable>(Arrays.asList(
+        ResultSet result = new JDBCMetaDataResultSet<JDBCTable>(Arrays.asList(
                 "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE",
                 "REMARKS"), Arrays.asList("STRING", "STRING", "STRING",
                 "STRING", "STRING"), resultTables) {
@@ -688,7 +686,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
     public ResultSet getUDTs(String catalog, String schemaPattern,
             String typeNamePattern, int[] types) throws SQLException {
 
-        return new TreasureDataMetaDataResultSet(Arrays.asList("TYPE_CAT",
+        return new JDBCMetaDataResultSet(Arrays.asList("TYPE_CAT",
                 "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE",
                 "REMARKS", "BASE_TYPE"), Arrays.asList("STRING", "STRING",
                 "STRING", "STRING", "INT", "STRING", "INT"), null) {
@@ -1091,7 +1089,7 @@ public class TreasureDataDatabaseMetaData implements java.sql.DatabaseMetaData, 
     }
 
     public static void main(String[] args) throws SQLException {
-        TreasureDataDatabaseMetaData meta = new TreasureDataDatabaseMetaData(null);
+        JDBCDatabaseMetaData meta = new JDBCDatabaseMetaData(null);
         System.out.println("DriverName: " + meta.getDriverName());
         System.out.println("DriverVersion: " + meta.getDriverVersion());
     }

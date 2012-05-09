@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TreasureDataMetaDataResultSet<M> extends TreasureDataBaseResultSet {
+public abstract class JDBCMetaDataResultSet<M> extends JDBCBaseResultSet {
     protected final List<M> data;
 
-    public TreasureDataMetaDataResultSet(final List<String> columnNames,
+    public JDBCMetaDataResultSet(final List<String> columnNames,
             final List<String> columnTypes, final List<M> data)
             throws SQLException {
         if (data != null) {

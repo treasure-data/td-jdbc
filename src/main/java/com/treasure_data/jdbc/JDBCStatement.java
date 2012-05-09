@@ -6,19 +6,13 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
-import org.hsqldb.StatementTypes;
-import org.hsqldb.jdbc.JDBCResultSet;
-import org.hsqldb.result.Result;
 import org.hsqldb.result.ResultConstants;
 
-import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.internal.CommandExecutor;
 import com.treasure_data.jdbc.internal.TreasureDataClientAdaptor;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
-import com.treasure_data.model.SubmitJobRequest;
-import com.treasure_data.model.SubmitJobResult;
 
 public class JDBCStatement extends JDBCAbstractStatement implements Statement {
 
@@ -119,7 +113,7 @@ public class JDBCStatement extends JDBCAbstractStatement implements Statement {
             Job job = exec.execute(ResultConstants.EXECDIRECT, sql);
             if (job != null) {
                 // get the result of the job
-                currentResultSet = new TreasureDataQueryResultSet(client, maxRows, job);
+                currentResultSet = new JDBCQueryResultSet(client, maxRows, job);
                 currentResultSet.setFetchSize(fetchSize);
             }
         } catch (Throwable t) {

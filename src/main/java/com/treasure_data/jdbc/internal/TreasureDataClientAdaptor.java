@@ -1,12 +1,9 @@
 package com.treasure_data.jdbc.internal;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
-import com.treasure_data.jdbc.TreasureDataQueryResultSet;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;

@@ -115,24 +115,24 @@ public class JDBCStatement extends JDBCAbstractStatement implements Statement {
             sql = nativeSQL(sql);
         }
 
+        Result in = null;
         try {
             Result out = Result.newExecuteDirectRequest();
             out.setPrepareOrExecuteProperties(sql, maxRows, fetchSize,
                     StatementTypes.RETURN_RESULT,
                     queryTimeout, rsProperties,
                     JDBCAbstractStatement.NO_GENERATED_KEYS, null, null);
-            Result in = exec.execute(out);
-            //resultIn = exec.execute(resultOut);
+            in = exec.execute(out);
             performPostExecute();
         } catch (Exception e) { // TODO
             throw new SQLException(e);
         }
 
-        if (resultIn.isError()) {
+        if (in.isError()) {
             throw new SQLException("in fetchResult"); // TODO
         }
 
-        if (resultIn.isData()) {
+        if (in.isData()) {
             currentResultSet = new TreasureDataQueryResultSet(
                     client, resultIn, resultIn.metaData); // TODO
         } else if (resultIn.getStatementType() == StatementTypes.RETURN_RESULT) {

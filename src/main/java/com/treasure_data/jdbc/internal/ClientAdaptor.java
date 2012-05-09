@@ -5,7 +5,9 @@ import java.util.Map;
 public interface ClientAdaptor {
     boolean createTable(String table);
 
-    boolean insertData(Map<String, Object> record);
+    boolean insertData(String tableName, Map<String, Object> record);
+
+    boolean flush(); // for debugging
 
     boolean select(String sql);
 }

@@ -22,7 +22,9 @@ import com.treasure_data.jdbc.compiler.parser.CCSQLParser;
 import com.treasure_data.jdbc.compiler.parser.ParseException;
 import com.treasure_data.jdbc.compiler.schema.Column;
 import com.treasure_data.jdbc.compiler.schema.Table;
+import com.treasure_data.jdbc.compiler.stat.ColumnDefinition;
 import com.treasure_data.jdbc.compiler.stat.CreateTable;
+import com.treasure_data.jdbc.compiler.stat.Index;
 import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
 
@@ -67,34 +69,6 @@ public class CommandExecutor {
         }
     }
 
-    public synchronized Result execute(Result cmd) {
-        switch (cmd.mode) {
-        case ResultConstants.LARGE_OBJECT_OP:
-        case ResultConstants.EXECUTE:
-        case ResultConstants.BATCHEXECUTE:
-            throw new UnsupportedOperationException();
-
-        case ResultConstants.EXECDIRECT:
-            Result result = executeDirectStatement(cmd);
-            result = performPostExecute(cmd, result);
-            return result;
-
-        case ResultConstants.BATCHEXECDIRECT:
-        case ResultConstants.PREPARE:
-        case ResultConstants.CLOSE_RESULT:
-        case ResultConstants.UPDATE_RESULT:
-        case ResultConstants.FREESTMT:
-        case ResultConstants.GETSESSIONATTR:
-        case ResultConstants.SETSESSIONATTR:
-        case ResultConstants.ENDTRAN:
-        case ResultConstants.SETCONNECTATTR:
-        case ResultConstants.REQUESTDATA:
-        case ResultConstants.DISCONNECT:
-        default:
-            throw new UnsupportedOperationException();
-        }
-    }
-
     public org.hsqldb.result.Result executeDirectStatement(
             org.hsqldb.result.Result cmd) {
         String sql = cmd.getMainString();
@@ -111,11 +85,6 @@ public class CommandExecutor {
             executeCompiledStatement(stat, ValuePool.emptyObjectArray);
 
         return result;
-    }
-
-    public Result executeDirectStatement(Result cmd) {
-        // TODO
-        return null;
     }
 
     public org.hsqldb.result.Result executeCompiledStatement(
@@ -136,7 +105,8 @@ public class CommandExecutor {
 
     public org.hsqldb.result.Result executeCompiledSelect(Select stat,
             Object[] pvals) {
-        System.out.println("call executeCompiledSelect");
+        String sql = stat.toString();
+        clientAdaptor.select(sql);
         return null;
     }
 
@@ -204,7 +174,9 @@ public class CommandExecutor {
                 Expression expr = expr_iter.next();
                 record.put(col.getColumnName(), toValue(expr));
             }
-            clientAdaptor.insertData(record);
+            System.out.println("table : " + table.getName());
+            System.out.println("record: " + record);
+            clientAdaptor.insertData(table.getName(), record);
         } catch (Exception e) {
             return org.hsqldb.result.Result.newErrorResult(
                     new UnsupportedOperationException(),
@@ -216,7 +188,43 @@ public class CommandExecutor {
 
     public org.hsqldb.result.Result executeCompiledCreateTable(CreateTable stat,
             Object[] pvals) {
-        System.out.println("call executeCompiledCreateTable");
+        /**
+         * SQL:
+         * create table table01(c0 varchar(255), c1 int)
+         *
+         * ret:
+         * table => table02
+         */
+
+        // table validation
+        Table table = stat.getTable();
+        if (table == null
+                || table.getName() == null
+                || table.getName().isEmpty()) {
+            return org.hsqldb.result.Result.newErrorResult(
+                    new UnsupportedOperationException(),
+                    stat.toString());
+        }
+
+        // column definition validation
+        List<ColumnDefinition> def = stat.getColumnDefinitions();
+        if (def == null || def.size() == 0) {
+            return org.hsqldb.result.Result.newErrorResult(
+                    new UnsupportedOperationException(),
+                    stat.toString());
+        }
+
+        // this variable is not used
+        List<Index> indexes = stat.getIndexes();
+
+        try {
+            clientAdaptor.createTable(table.getName());
+        } catch (Exception e) {
+            return org.hsqldb.result.Result.newErrorResult(
+                    new UnsupportedOperationException(),
+                    stat.toString());
+        }
+
         return null;
     }
 
@@ -225,14 +233,10 @@ public class CommandExecutor {
         return result; // TODO
     }
 
-    private Result performPostExecute(Result cmd, Result result) {
-        return result; // TODO
-    }
-
     private static Object toValue(Expression expr) {
         if (expr instanceof DateValue) {
             DateValue v = (DateValue) expr;
-            return v.getValue().getTime(); // TODO  ? / 1000
+            return v.getValue().getTime() / 1000;
         } else if (expr instanceof DoubleValue) {
             DoubleValue v = (DoubleValue) expr;
             return v.getValue();
@@ -246,7 +250,7 @@ public class CommandExecutor {
             return v.getValue();
         } else if (expr instanceof TimeValue) {
             TimeValue v = (TimeValue) expr;
-            return v.getValue().getTime(); // TODO ? / 1000
+            return v.getValue().getTime() / 1000;
         } else {
             return org.hsqldb.result.Result.newErrorResult(
                     new UnsupportedOperationException(),

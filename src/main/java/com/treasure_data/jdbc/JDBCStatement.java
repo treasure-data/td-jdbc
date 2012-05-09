@@ -9,10 +9,12 @@ import java.sql.Statement;
 import org.hsqldb.StatementTypes;
 import org.hsqldb.jdbc.JDBCResultSet;
 import org.hsqldb.result.Result;
+import org.hsqldb.result.ResultConstants;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.internal.CommandExecutor;
+import com.treasure_data.jdbc.internal.TreasureDataClientAdaptor;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.SubmitJobRequest;
@@ -55,6 +57,9 @@ public class JDBCStatement extends JDBCAbstractStatement implements Statement {
     public JDBCStatement(TreasureDataClient client, Database database) {
         this.client = client;
         this.database = database;
+        TreasureDataClientAdaptor clientAdaptor =
+            new TreasureDataClientAdaptor(this.client, this.database);
+        this.exec = new CommandExecutor(clientAdaptor);
     }
 
     public void addBatch(String sql) throws SQLException {
@@ -109,59 +114,17 @@ public class JDBCStatement extends JDBCAbstractStatement implements Statement {
     }
 
     private void fetchResult(String sql) throws SQLException { // TODO
-        closeResultData(); // TODO
-
-        if (isEscapeProcessing) {
-            sql = nativeSQL(sql);
-        }
-
-        Result in = null;
-        try {
-            Result out = Result.newExecuteDirectRequest();
-            out.setPrepareOrExecuteProperties(sql, maxRows, fetchSize,
-                    StatementTypes.RETURN_RESULT,
-                    queryTimeout, rsProperties,
-                    JDBCAbstractStatement.NO_GENERATED_KEYS, null, null);
-            in = exec.execute(out);
-            performPostExecute();
-        } catch (Exception e) { // TODO
-            throw new SQLException(e);
-        }
-
-        if (in.isError()) {
-            throw new SQLException("in fetchResult"); // TODO
-        }
-
-        if (in.isData()) {
-            currentResultSet = new TreasureDataQueryResultSet(
-                    client, resultIn, resultIn.metaData); // TODO
-        } else if (resultIn.getStatementType() == StatementTypes.RETURN_RESULT) {
-            getMoreResults();
-        }
-    }
-
-    private void closeResultData() throws SQLException {
-        // TODO
-    }
-
-    public ResultSet executeQuery0(String sql) throws SQLException {
-        // TODO
-        Job job = new Job(database, sql);
-
-        // submit a job
         try {
             currentResultSet = null;
-            SubmitJobRequest request = new SubmitJobRequest(job);
-            SubmitJobResult result = client.submitJob(request);
-            job = result.getJob();
-        } catch (ClientException e) {
-            throw new SQLException(e.toString(), "08S01");
+            Job job = exec.execute(ResultConstants.EXECDIRECT, sql);
+            if (job != null) {
+                // get the result of the job
+                currentResultSet = new TreasureDataQueryResultSet(client, maxRows, job);
+                currentResultSet.setFetchSize(fetchSize);
+            }
+        } catch (Throwable t) {
+            throw new SQLException(t);
         }
-
-        // get the result of the job
-        currentResultSet = new TreasureDataQueryResultSet(client, maxRows, job);
-        currentResultSet.setFetchSize(fetchSize);
-        return currentResultSet;
     }
 
     public int executeUpdate(String sql) throws SQLException {
@@ -291,154 +254,5 @@ public class JDBCStatement extends JDBCAbstractStatement implements Statement {
 
     public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new SQLException("Method not supported");
-    }
-
-    // TODO implementing
-    public synchronized String nativeSQL(final String sql) throws SQLException {
-        // boucherb@users 20030405
-        // FIXME: does not work properly for nested escapes
-        //       e.g.  {call ...(...,{ts '...'},....)} does not work
-        // boucherb@users 20030817
-        // TESTME: First kick at the FIXME cat done.  Now lots of testing
-        // and refinment
-
-        // CHECKME:  Thow or return null if input is null?
-        if (sql == null || sql.length() == 0 || sql.indexOf('{') == -1) {
-            return sql;
-        }
-
-        // boolean   changed = false;
-        int state = 0;
-        int len   = sql.length();
-        int nest  = 0;
-        StringBuffer sb = new StringBuffer(sql.length());    //avoid 16 extra
-        String msg;
-
-        //--
-        final int outside_all                         = 0;
-        final int outside_escape_inside_single_quotes = 1;
-        final int outside_escape_inside_double_quotes = 2;
-
-        //--
-        final int inside_escape                      = 3;
-        final int inside_escape_inside_single_quotes = 4;
-        final int inside_escape_inside_double_quotes = 5;
-
-        // TODO:
-        // final int inside_single_line_comment          = 6;
-        // final int inside_multi_line_comment           = 7;
-        // Better than old way for large inputs and for avoiding GC overhead;
-        // toString() reuses internal char[], reducing memory requirment
-        // and garbage items 3:2
-        sb.append(sql);
-
-        for (int i = 0; i < len; i++) {
-            char c = sb.charAt(i);
-
-            switch (state) {
-
-                case outside_all :                            // Not inside an escape or quotes
-                    if (c == '\'') {
-                        state = outside_escape_inside_single_quotes;
-                    } else if (c == '"') {
-                        state = outside_escape_inside_double_quotes;
-                    } else if (c == '{') {
-                        i = onStartEscapeSequence(sql, sb, i);
-
-                        // changed = true;
-                        nest++;
-
-                        state = inside_escape;
-                    }
-                    break;
-
-                case outside_escape_inside_single_quotes :    // inside ' ' only
-                case inside_escape_inside_single_quotes :     // inside { } and ' '
-                    if (c == '\'') {
-                        state -= 1;
-                    }
-                    break;
-
-                case outside_escape_inside_double_quotes :    // inside " " only
-                case inside_escape_inside_double_quotes :     // inside { } and " "
-                    if (c == '"') {
-                        state -= 2;
-                    }
-                    break;
-
-                case inside_escape :                          // inside { }
-                    if (c == '\'') {
-                        state = inside_escape_inside_single_quotes;
-                    } else if (c == '"') {
-                        state = inside_escape_inside_double_quotes;
-                    } else if (c == '}') {
-                        sb.setCharAt(i, ' ');
-
-                        // changed = true;
-                        nest--;
-
-                        state = (nest == 0) ? outside_all
-                                            : inside_escape;
-                    } else if (c == '{') {
-                        i = onStartEscapeSequence(sql, sb, i);
-
-                        // changed = true;
-                        nest++;
-
-                        state = inside_escape;
-                    }
-            }
-        }
-
-        return sb.toString();
-    }
-
-    /**
-     * is called from within nativeSQL when the start of an JDBC escape
-     * sequence is encountered
-     */
-    private int onStartEscapeSequence(String sql, StringBuffer sb, int i)
-            throws SQLException {
-        sb.setCharAt(i++, ' ');
-
-        i = skipSpaces(sql, i);
-
-        if (sql.regionMatches(true, i, "fn ", 0, 3)
-                || sql.regionMatches(true, i, "oj ", 0, 3)
-                || sql.regionMatches(true, i, "ts ", 0, 3)) {
-            sb.setCharAt(i++, ' ');
-            sb.setCharAt(i++, ' ');
-        } else if (sql.regionMatches(true, i, "d ", 0, 2)
-                   || sql.regionMatches(true, i, "t ", 0, 2)) {
-            sb.setCharAt(i++, ' ');
-        } else if (sql.regionMatches(true, i, "call ", 0, 5)) {
-            i += 4;
-        } else if (sql.regionMatches(true, i, "?= call ", 0, 8)) {
-            sb.setCharAt(i++, ' ');
-            sb.setCharAt(i++, ' ');
-
-            i += 5;
-        } else if (sql.regionMatches(true, i, "escape ", 0, 7)) {
-            i += 6;
-        } else {
-            i--;
-
-            throw new SQLException("invalid JDBC argument", "S0010");
-        }
-
-        return i;
-    }
-
-    private static int skipSpaces(String s, int start) {
-        int limit = s.length();
-        int i = start;
-
-        for (; i < limit; i++) {
-            if (s.charAt(i) != ' ') {
-                break;
-            }
-        }
-
-        return i;
     }
 }

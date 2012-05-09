@@ -2,6 +2,8 @@ package com.treasure_data.jdbc.internal;
 
 import java.util.Map;
 
+import com.treasure_data.model.Job;
+
 public class NullClientAdaptor implements ClientAdaptor {
 
     public boolean createTable(String table) {
@@ -16,7 +18,7 @@ public class NullClientAdaptor implements ClientAdaptor {
         return true;
     }
 
-    public boolean select(String sql) {
-        return false;
+    public Job select(String sql) {
+        return null;
     }
 }

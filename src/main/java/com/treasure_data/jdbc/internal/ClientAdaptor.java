@@ -2,6 +2,8 @@ package com.treasure_data.jdbc.internal;
 
 import java.util.Map;
 
+import com.treasure_data.model.Job;
+
 public interface ClientAdaptor {
     boolean createTable(String table);
 
@@ -9,5 +11,5 @@ public interface ClientAdaptor {
 
     boolean flush(); // for debugging
 
-    boolean select(String sql);
+    Job select(String sql);
 }

@@ -47,6 +47,10 @@ public class CommandExecutor {
         this.clientAdaptor = clientAdaptor;
     }
 
+    public ClientAdaptor getClientAdaptor() {
+        return clientAdaptor;
+    }
+
     public synchronized Job execute(int mode, String sql) {
         switch (mode) {
         case ResultConstants.LARGE_OBJECT_OP:

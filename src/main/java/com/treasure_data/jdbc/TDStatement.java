@@ -8,28 +8,12 @@ import java.sql.Statement;
 
 import org.hsqldb.result.ResultConstants;
 
-import com.treasure_data.jdbc.internal.ClientAdaptor;
+import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.internal.CommandExecutor;
 import com.treasure_data.jdbc.internal.TreasureDataClientAdaptor;
 import com.treasure_data.model.Job;
 
 public class TDStatement implements Statement {
-    public static final int CLOSE_CURRENT_RESULT  = 1;
-
-    public static final int KEEP_CURRENT_RESULT   = 2;
-
-    public static final int CLOSE_ALL_RESULTS     = 3;
-
-    public static final int SUCCESS_NO_INFO       = -2;
-
-    public static final int EXECUTE_FAILED        = -3;
-
-    public static final int RETURN_GENERATED_KEYS = 1;
-
-    public static final int NO_GENERATED_KEYS     = 2;
-
-    private TDConnection conn;
-
     private CommandExecutor exec;
 
     private int fetchSize = 50;
@@ -59,10 +43,7 @@ public class TDStatement implements Statement {
     private boolean isClosed = false;
 
     public TDStatement(TDConnection conn) {
-        this.conn = conn;
-        ClientAdaptor clientAdaptor =
-            new TreasureDataClientAdaptor(conn.getTreasureDataClient(), conn.getDatabase());
-        this.exec = new CommandExecutor(clientAdaptor);
+        this.exec = new CommandExecutor(new TreasureDataClientAdaptor(conn));
     }
 
     public void addBatch(String sql) throws SQLException {
@@ -122,12 +103,16 @@ public class TDStatement implements Statement {
             if (job != null) {
                 // get the result of the job
                 currentResultSet = new TDQueryResultSet(
-                        conn.getTreasureDataClient(), maxRows, job);
+                        toClient(exec), maxRows, job);
                 currentResultSet.setFetchSize(fetchSize);
             }
         } catch (Throwable t) {
             throw new SQLException(t);
         }
+    }
+
+    private static TreasureDataClient toClient(CommandExecutor exec) {
+        return ((TreasureDataClientAdaptor) exec.getClientAdaptor()).getTreasureDataClient();
     }
 
     public int executeUpdate(String sql) throws SQLException {
@@ -183,9 +168,9 @@ public class TDStatement implements Statement {
     }
 
     public ResultSet getResultSet() throws SQLException {
-        ResultSet result = currentResultSet;
+        ResultSet tmp = currentResultSet;
         currentResultSet = null;
-        return result;
+        return tmp;
     }
 
     public int getResultSetConcurrency() throws SQLException {

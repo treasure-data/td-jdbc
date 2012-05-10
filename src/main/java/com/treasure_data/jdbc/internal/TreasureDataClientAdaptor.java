@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
@@ -11,14 +12,25 @@ import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
 public class TreasureDataClientAdaptor implements ClientAdaptor {
-
     private TreasureDataClient client;
 
     private Database database;
 
+    public TreasureDataClientAdaptor(TDConnection conn) {
+        this(conn.getTreasureDataClient(), conn.getDatabase());
+    }
+
     public TreasureDataClientAdaptor(TreasureDataClient client, Database database) {
         this.client = client;
         this.database = database;
+    }
+
+    public TreasureDataClient getTreasureDataClient() {
+        return client;
+    }
+
+    public Database getDatabase() {
+        return database;
     }
 
     public boolean createTable(String table) {

@@ -7,8 +7,6 @@ import java.sql.Statement;
 
 import org.hsqldb.result.ResultConstants;
 
-import com.treasure_data.jdbc.command.Wrapper;
-
 public class TDStatement extends TDStatementBase implements Statement {
     private int fetchSize = 50;
 
@@ -115,19 +113,11 @@ public class TDStatement extends TDStatementBase implements Statement {
         throw new SQLException(new UnsupportedOperationException());
     }
 
-    public int getUpdateCount() throws SQLException {
-        return 0;
-    }
-
     public boolean isPoolable() throws SQLException {
         throw new SQLException(new UnsupportedOperationException());
     }
 
     public void setCursorName(String name) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
-    }
-
-    public void setEscapeProcessing(boolean enable) throws SQLException {
         throw new SQLException(new UnsupportedOperationException());
     }
 

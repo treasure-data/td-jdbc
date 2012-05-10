@@ -22,6 +22,13 @@ public abstract class TDStatementBase implements Statement {
      */
     protected SQLWarning warningChain = null;
 
+    /**
+     * keep the current ResultRet update count
+     */
+    private int updateCount = 0;
+
+    private boolean isEscapeProcessing;
+
     protected TDStatementBase(TDConnection conn) {
         exec = new CommandExecutor(new TreasureDataClientAdaptor(conn));
     }
@@ -34,6 +41,14 @@ public abstract class TDStatementBase implements Statement {
         ResultSet tmp = currentResultSet;
         currentResultSet = null;
         return tmp;
+    }
+
+    public int getUpdateCount() throws SQLException {
+        return updateCount;
+    }
+
+    public void setEscapeProcessing(boolean enable) throws SQLException {
+        isEscapeProcessing = enable;
     }
 
     public boolean isClosed() throws SQLException {
@@ -58,7 +73,6 @@ public abstract class TDStatementBase implements Statement {
         }
         maxRows = max;
     }
-
 
     protected Wrapper fetchResult(String sql, int mode) throws SQLException {
         Wrapper w = new Wrapper();

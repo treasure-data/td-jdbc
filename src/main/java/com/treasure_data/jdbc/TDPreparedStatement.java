@@ -26,16 +26,11 @@ import org.hsqldb.result.ResultConstants;
 
 import com.treasure_data.jdbc.command.Wrapper;
 
-public class TDPreparedStatement extends TDStatement
-        implements PreparedStatement {
+public class TDPreparedStatement extends TDStatement implements PreparedStatement {
+
     private Wrapper w;
 
     private final HashMap<Integer, String> parameters = new HashMap<Integer, String>();
-
-    /**
-     * keep the current ResultRet update count
-     */
-    private final int updateCount = 0;
 
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
@@ -43,12 +38,12 @@ public class TDPreparedStatement extends TDStatement
         w = fetchResult(sql, ResultConstants.PREPARE);
     }
 
-    public void addBatch() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
-    }
-
     public void clearParameters() throws SQLException {
         parameters.clear();
+    }
+
+    public void addBatch() throws SQLException {
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean execute() throws SQLException {
@@ -58,12 +53,11 @@ public class TDPreparedStatement extends TDStatement
     public synchronized ResultSet executeQuery() throws SQLException {
         fetchResult(w);
         return getResultSet();
-        
     }
 
     public int executeUpdate() throws SQLException {
         executeQuery();
-        return updateCount;
+        return getUpdateCount();
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {

@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class JDBCMetaDataResultSet<M> extends JDBCBaseResultSet {
+public abstract class TDMetaDataResultSet<M> extends TDBaseResultSet {
     protected final List<M> data;
 
-    public JDBCMetaDataResultSet(final List<String> columnNames,
+    public TDMetaDataResultSet(final List<String> columnNames,
             final List<String> columnTypes, final List<M> data)
             throws SQLException {
         if (data != null) {

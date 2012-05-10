@@ -4,11 +4,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-public class JDBCResultSetMetaData implements java.sql.ResultSetMetaData {
+public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
     private final List<String> columnNames;
     private final List<String> columnTypes;
 
-    public JDBCResultSetMetaData(List<String> columnNames,
+    public TDResultSetMetaData(List<String> columnNames,
             List<String> columnTypes) {
         this.columnNames = columnNames;
         this.columnTypes = columnTypes;
@@ -29,7 +29,7 @@ public class JDBCResultSetMetaData implements java.sql.ResultSetMetaData {
     public int getColumnDisplaySize(int column) throws SQLException {
         int columnType = getColumnType(column);
 
-        return JDBCColumn.columnDisplaySize(columnType);
+        return TDColumn.columnDisplaySize(columnType);
     }
 
     public String getColumnLabel(int column) throws SQLException {
@@ -100,13 +100,13 @@ public class JDBCResultSetMetaData implements java.sql.ResultSetMetaData {
     public int getPrecision(int column) throws SQLException {
         int columnType = getColumnType(column);
 
-        return JDBCColumn.columnPrecision(columnType);
+        return TDColumn.columnPrecision(columnType);
     }
 
     public int getScale(int column) throws SQLException {
         int columnType = getColumnType(column);
 
-        return JDBCColumn.columnScale(columnType);
+        return TDColumn.columnScale(columnType);
     }
 
     public String getSchemaName(int column) throws SQLException {

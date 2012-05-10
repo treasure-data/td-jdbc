@@ -5,13 +5,13 @@ import java.sql.SQLException;
 /**
  * Table metadata.
  */
-public class JDBCTable {
+public class TDTable {
     private String tableCatalog;
     private String tableName;
     private String type;
     private String comment;
 
-    public JDBCTable(String tableCatalog, String tableName, String type,
+    public TDTable(String tableCatalog, String tableName, String type,
             String comment) {
         this.tableCatalog = tableCatalog;
         this.tableName = tableName;
@@ -32,7 +32,7 @@ public class JDBCTable {
     }
 
     public String getSqlTableType() throws SQLException {
-        return JDBCDatabaseMetaData.toJdbcTableType(type);
+        return TDDatabaseMetaData.toTDTableType(type);
     }
 
     public String getComment() {

@@ -46,7 +46,7 @@ public class TreasureDataDriver implements Driver {
         }
 
         // a connection object is not singleton
-        return new JDBCConnection(url, props);
+        return new TDConnection(url, props);
     }
 
     public boolean acceptsURL(String url) throws SQLException {

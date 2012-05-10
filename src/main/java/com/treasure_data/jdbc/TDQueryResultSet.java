@@ -15,9 +15,6 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
-import com.treasure_data.jdbc.internal.Result;
-import com.treasure_data.jdbc.internal.ResultMetaData;
-import com.treasure_data.jdbc.internal.TreasureDataResult;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
@@ -26,9 +23,9 @@ import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 
-public class JDBCQueryResultSet extends JDBCBaseResultSet {
+public class TDQueryResultSet extends TDBaseResultSet {
     private static Logger LOG = Logger.getLogger(
-            JDBCQueryResultSet.class.getName());
+            TDQueryResultSet.class.getName());
 
     private TreasureDataClient client;
 
@@ -44,7 +41,7 @@ public class JDBCQueryResultSet extends JDBCBaseResultSet {
 
     private Job job;
 
-    public JDBCQueryResultSet(TreasureDataClient client, int maxRows, Job job)
+    public TDQueryResultSet(TreasureDataClient client, int maxRows, Job job)
             throws SQLException {
         this.client = client;
         this.maxRows = maxRows;
@@ -52,16 +49,9 @@ public class JDBCQueryResultSet extends JDBCBaseResultSet {
         //row = Arrays.asList(new Object[columnNames.size()]); // TODO #MN
     }
 
-    public JDBCQueryResultSet(TreasureDataClient client, Job job)
+    public TDQueryResultSet(TreasureDataClient client, Job job)
             throws SQLException {
         this(client, 0, job);
-    }
-
-    public JDBCQueryResultSet(TreasureDataClient client,
-            Result resultIn, ResultMetaData metaData)
-            throws SQLException {
-            this.client = client;
-            throw new UnsupportedOperationException(); // TODO
     }
 
     @Override

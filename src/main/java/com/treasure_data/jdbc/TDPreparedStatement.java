@@ -31,7 +31,7 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
-public class JDBCPreparedStatement implements PreparedStatement {
+public class TDPreparedStatement implements PreparedStatement {
     private final String sql;
 
     private TreasureDataClient client;
@@ -64,27 +64,17 @@ public class JDBCPreparedStatement implements PreparedStatement {
      */
     private final int updateCount = 0;
 
-    public JDBCPreparedStatement(TreasureDataClient client,
+    public TDPreparedStatement(TreasureDataClient client,
             Database database, String sql) {
         this.client = client;
         this.database = database;
         this.sql = sql;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#addBatch()
-     */
     public void addBatch() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#clearParameters()
-     */
     public void clearParameters() throws SQLException {
         this.parameters.clear();
     }
@@ -155,7 +145,7 @@ public class JDBCPreparedStatement implements PreparedStatement {
             throw new SQLException(e.toString(), "08S01");
         }
 
-        resultSet = new JDBCQueryResultSet(client, maxRows, job);
+        resultSet = new TDQueryResultSet(client, maxRows, job);
         return resultSet;
     }
 

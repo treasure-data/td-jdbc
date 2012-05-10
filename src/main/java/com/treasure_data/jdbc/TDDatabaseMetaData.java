@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.treasure_data.client.TreasureDataClient;
 
-public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constants {
+public class TDDatabaseMetaData implements java.sql.DatabaseMetaData, Constants {
 
     private final TreasureDataClient client;
 
@@ -26,7 +26,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
     /**
    *
    */
-    public JDBCDatabaseMetaData(TreasureDataClient client) {
+    public TDDatabaseMetaData(TreasureDataClient client) {
         this.client = client;
     }
 
@@ -83,7 +83,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
             // implemented
             final List<String> catalogs = new ArrayList<String>();
             catalogs.add("default");
-            return new JDBCMetaDataResultSet<String>(
+            return new TDMetaDataResultSet<String>(
                     Arrays.asList("TABLE_CAT"), Arrays.asList("STRING"),
                     catalogs) {
                 private int cnt = 0;
@@ -162,7 +162,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
             final String tableNamePattern, final String columnNamePattern)
             throws SQLException {
         // TODO #MN
-        List<JDBCColumn> columns = new ArrayList<JDBCColumn>();
+        List<TDColumn> columns = new ArrayList<TDColumn>();
         try {
             if (catalog == null) {
                 catalog = "default";
@@ -190,7 +190,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
 //            }
             Collections.sort(columns, new GetColumnsComparator());
 
-            return new JDBCMetaDataResultSet<JDBCColumn>(Arrays.asList(
+            return new TDMetaDataResultSet<TDColumn>(Arrays.asList(
                     "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME",
                     "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH",
                     "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS",
@@ -208,7 +208,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
                 public boolean next() throws SQLException {
                     if (cnt < data.size()) {
                         List<Object> a = new ArrayList<Object>(20);
-                        JDBCColumn column = data.get(cnt);
+                        TDColumn column = data.get(cnt);
                         a.add(column.getTableCatalog()); // TABLE_CAT String =>
                                                          // table catalog (may
                                                          // be null)
@@ -265,9 +265,9 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
      * We sort the output of getColumns to guarantee jdbc compliance. First
      * check by table name then by ordinal position
      */
-    private class GetColumnsComparator implements Comparator<JDBCColumn> {
+    private class GetColumnsComparator implements Comparator<TDColumn> {
 
-        public int compare(JDBCColumn o1, JDBCColumn o2) {
+        public int compare(TDColumn o1, TDColumn o2) {
             int compareName = o1.getTableName().compareTo(o2.getTableName());
             if (compareName == 0) {
                 if (o1.getOrdinalPos() > o2.getOrdinalPos()) {
@@ -504,7 +504,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
 
     public ResultSet getSchemas(String catalog, String schemaPattern)
             throws SQLException {
-        return new JDBCMetaDataResultSet(Arrays.asList("TABLE_SCHEM",
+        return new TDMetaDataResultSet(Arrays.asList("TABLE_SCHEM",
                 "TABLE_CATALOG"), Arrays.asList("STRING", "STRING"), null) {
 
             public boolean next() throws SQLException {
@@ -542,16 +542,16 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
     }
 
     public ResultSet getTableTypes() throws SQLException {
-        final TableType[] tt = TableType.values();
-        ResultSet result = new JDBCMetaDataResultSet<TableType>(
+        final TDTableType[] tt = TDTableType.values();
+        ResultSet result = new TDMetaDataResultSet<TDTableType>(
                 Arrays.asList("TABLE_TYPE"), Arrays.asList("STRING"),
-                new ArrayList<TableType>(Arrays.asList(tt))) {
+                new ArrayList<TDTableType>(Arrays.asList(tt))) {
             private int cnt = 0;
 
             public boolean next() throws SQLException {
                 if (cnt < data.size()) {
                     List<Object> a = new ArrayList<Object>(1);
-                    a.add(toJdbcTableType(data.get(cnt).name()));
+                    a.add(toTDTableType(data.get(cnt).name()));
                     row = a;
                     cnt++;
                     return true;
@@ -567,7 +567,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
             String tableNamePattern, String[] types) throws SQLException {
         // TODO #MN
         final List<String> tablesstr;
-        final List<JDBCTable> resultTables = new ArrayList<JDBCTable>();
+        final List<TDTable> resultTables = new ArrayList<TDTable>();
         final String resultCatalog;
         if (catalog == null) { // On jdbc the default catalog is null but on
                                // hive it's "default"
@@ -604,7 +604,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
         } catch (Exception e) {
             throw new SQLException(e);
         }
-        ResultSet result = new JDBCMetaDataResultSet<JDBCTable>(Arrays.asList(
+        ResultSet result = new TDMetaDataResultSet<TDTable>(Arrays.asList(
                 "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE",
                 "REMARKS"), Arrays.asList("STRING", "STRING", "STRING",
                 "STRING", "STRING"), resultTables) {
@@ -613,7 +613,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
             public boolean next() throws SQLException {
                 if (cnt < data.size()) {
                     List<Object> a = new ArrayList<Object>(5);
-                    JDBCTable table = data.get(cnt);
+                    TDTable table = data.get(cnt);
                     // TABLE_CAT String => table catalog (may be null)
                     a.add(table.getTableCatalog());
                     // TABLE_SCHEM String => table schema (may be null)
@@ -644,8 +644,8 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
      * We sort the output of getTables to guarantee jdbc compliance. First check
      * by table type then by table name
      */
-    private class GetTablesComparator implements Comparator<JDBCTable> {
-        public int compare(JDBCTable o1, JDBCTable o2) {
+    private class GetTablesComparator implements Comparator<TDTable> {
+        public int compare(TDTable o1, TDTable o2) {
             int compareType = o1.getType().compareTo(o2.getType());
             if (compareType == 0) {
                 return o1.getTableName().compareTo(o2.getTableName());
@@ -661,14 +661,14 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
      * @param hivetabletype
      * @return
      */
-    public static String toJdbcTableType(String hivetabletype) {
+    public static String toTDTableType(String hivetabletype) {
         if (hivetabletype == null) {
             return null;
-        } else if (hivetabletype.equals(TableType.MANAGED_TABLE.toString())) {
+        } else if (hivetabletype.equals(TDTableType.MANAGED_TABLE.toString())) {
             return "TABLE";
-        } else if (hivetabletype.equals(TableType.VIRTUAL_VIEW.toString())) {
+        } else if (hivetabletype.equals(TDTableType.VIRTUAL_VIEW.toString())) {
             return "VIEW";
-        } else if (hivetabletype.equals(TableType.EXTERNAL_TABLE.toString())) {
+        } else if (hivetabletype.equals(TDTableType.EXTERNAL_TABLE.toString())) {
             return "EXTERNAL TABLE";
         } else {
             return hivetabletype;
@@ -686,7 +686,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
     public ResultSet getUDTs(String catalog, String schemaPattern,
             String typeNamePattern, int[] types) throws SQLException {
 
-        return new JDBCMetaDataResultSet(Arrays.asList("TYPE_CAT",
+        return new TDMetaDataResultSet(Arrays.asList("TYPE_CAT",
                 "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE",
                 "REMARKS", "BASE_TYPE"), Arrays.asList("STRING", "STRING",
                 "STRING", "STRING", "INT", "STRING", "INT"), null) {
@@ -1089,7 +1089,7 @@ public class JDBCDatabaseMetaData implements java.sql.DatabaseMetaData, Constant
     }
 
     public static void main(String[] args) throws SQLException {
-        JDBCDatabaseMetaData meta = new JDBCDatabaseMetaData(null);
+        TDDatabaseMetaData meta = new TDDatabaseMetaData(null);
         System.out.println("DriverName: " + meta.getDriverName());
         System.out.println("DriverVersion: " + meta.getDriverVersion());
     }

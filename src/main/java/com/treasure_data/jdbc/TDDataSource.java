@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-public class JDBCDataSource implements DataSource {
+public class TDDataSource implements DataSource {
     private String password;
 
     private String user;
@@ -15,7 +15,7 @@ public class JDBCDataSource implements DataSource {
 
     private PrintWriter printer;
 
-    public JDBCDataSource() {
+    public TDDataSource() {
     }
 
     /*
@@ -37,7 +37,7 @@ public class JDBCDataSource implements DataSource {
             throws SQLException {
         // TODO #MN
         try {
-            return new JDBCConnection("", null);
+            return new TDConnection("", null);
         } catch (Exception e) {
             throw new SQLException(
                     "Error in getting TreasureDataConnection", e);

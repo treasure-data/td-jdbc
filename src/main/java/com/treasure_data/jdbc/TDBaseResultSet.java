@@ -29,7 +29,7 @@ import org.msgpack.type.Value;
  * Data independed base class which implements the common part of all
  * resultsets.
  */
-public abstract class JDBCBaseResultSet implements ResultSet {
+public abstract class TDBaseResultSet implements ResultSet {
     protected SQLWarning warningChain = null;
 
     protected boolean wasNull = false;
@@ -285,7 +285,7 @@ public abstract class JDBCBaseResultSet implements ResultSet {
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
-        return new JDBCResultSetMetaData(columnNames, columnTypes);
+        return new TDResultSetMetaData(columnNames, columnTypes);
     }
 
     public Reader getNCharacterStream(int arg0) throws SQLException {

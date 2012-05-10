@@ -16,12 +16,14 @@ public class TestCommandExecutor {
 
     @Test @Ignore
     public void select01() throws Exception {
-        String sql = "select count(*) from mugatbl order by c1 desc";
         CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
-        exec.execute(ResultConstants.EXECDIRECT, sql);
+        Wrapper w = new Wrapper();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "select count(*) from mugatbl order by c1 desc";
+        exec.execute(w);
     }
 
-    @Test @Ignore // TODO #MN
+    @Test @Ignore
     public void select02() throws Exception {
         Properties props = new Properties();
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
@@ -30,15 +32,19 @@ public class TestCommandExecutor {
             new TreasureDataClientAdaptor(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
-        String sql = "create table table01(c0 varchar(255), c1 int)";
-        exec.execute(ResultConstants.EXECDIRECT, sql);
+        Wrapper w = new Wrapper();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "create table table01(c0 varchar(255), c1 int)";
+        exec.execute(w);
     }
 
     @Test @Ignore
     public void createTable01() throws Exception {
-        String sql = "create table table01(c0 varchar(255), c1 int)";
         CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
-        exec.execute(ResultConstants.EXECDIRECT, sql);
+        Wrapper w = new Wrapper();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "create table table01(c0 varchar(255), c1 int)";
+        exec.execute(w);
     }
 
     @Test @Ignore
@@ -50,15 +56,19 @@ public class TestCommandExecutor {
             new TreasureDataClientAdaptor(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
-        String sql = "create table table01(c0 varchar(255), c1 int)";
-        exec.execute(ResultConstants.EXECDIRECT, sql);
+        Wrapper w = new Wrapper();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "create table table01(c0 varchar(255), c1 int)";
+        exec.execute(w);
     }
 
     @Test @Ignore
     public void insert01() throws Exception {
-        String sql = "insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')";
         CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
-        exec.execute(ResultConstants.EXECDIRECT, sql);
+        Wrapper w = new Wrapper();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')";
+        exec.execute(w);
     }
 
     @Test @Ignore
@@ -72,9 +82,10 @@ public class TestCommandExecutor {
 
         String sql = "insert into table01 (%s, %s) values (%s, '%s')";
         for (int i = 0; i < 50; i++) {
-            String sql0 = String.format(sql,
-                    "col1", "col2", "" + i, "muga:" + i);
-            exec.execute(ResultConstants.EXECDIRECT, sql0);
+            Wrapper w = new Wrapper();
+            w.mode = ResultConstants.EXECDIRECT;
+            w.sql = String.format(sql, "col1", "col2", "" + i, "muga:" + i);
+            exec.execute(w);
         }
 
         clientAdaptor.flush();

@@ -7,8 +7,9 @@ import java.sql.Statement;
 
 import org.hsqldb.result.ResultConstants;
 
-public class TDStatement extends TDStatementBase
-        implements Statement {
+import com.treasure_data.jdbc.command.Wrapper;
+
+public class TDStatement extends TDStatementBase implements Statement {
     private int fetchSize = 50;
 
     public TDStatement(TDConnection conn) {
@@ -50,16 +51,8 @@ public class TDStatement extends TDStatementBase
     }
 
     public synchronized ResultSet executeQuery(String sql) throws SQLException {
-        fetchResult(sql);
+        fetchResult(sql, ResultConstants.EXECDIRECT);
         return getResultSet();
-    }
-
-    private void fetchResult(String sql) throws SQLException {
-        try {
-            currentResultSet = exec.execute(ResultConstants.EXECDIRECT, sql);
-        } catch (Throwable t) {
-            throw new SQLException(t);
-        }
     }
 
     public int executeUpdate(String sql) throws SQLException {
@@ -108,12 +101,6 @@ public class TDStatement extends TDStatementBase
 
     public int getQueryTimeout() throws SQLException {
         throw new SQLException(new UnsupportedOperationException());
-    }
-
-    public ResultSet getResultSet() throws SQLException {
-        ResultSet tmp = currentResultSet;
-        currentResultSet = null;
-        return tmp;
     }
 
     public int getResultSetConcurrency() throws SQLException {

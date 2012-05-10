@@ -1,7 +1,7 @@
 package com.treasure_data.jdbc.command;
 
 import java.io.ByteArrayInputStream;
-import java.sql.ResultSet;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,11 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hsqldb.result.ResultConstants;
-import org.hsqldb.store.ValuePool;
 
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.TDConnection;
-import com.treasure_data.jdbc.TDQueryResultSet;
 import com.treasure_data.jdbc.compiler.expr.DateValue;
 import com.treasure_data.jdbc.compiler.expr.DoubleValue;
 import com.treasure_data.jdbc.compiler.expr.Expression;
@@ -32,9 +28,6 @@ import com.treasure_data.jdbc.compiler.stat.CreateTable;
 import com.treasure_data.jdbc.compiler.stat.Index;
 import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
-import com.treasure_data.model.Job;
-import com.treasure_data.model.SubmitJobRequest;
-import com.treasure_data.model.SubmitJobResult;
 
 /**
  * @see org.hsqldb.Session
@@ -51,19 +44,21 @@ public class CommandExecutor {
         return clientAdaptor;
     }
 
-    public synchronized ResultSet execute(int mode, String sql)
+    public synchronized Wrapper execute(Wrapper w)
             throws SQLException {
-        switch (mode) {
+        switch (w.mode) {
         case ResultConstants.LARGE_OBJECT_OP:
         case ResultConstants.EXECUTE:
         case ResultConstants.BATCHEXECUTE:
             throw new UnsupportedOperationException();
 
         case ResultConstants.EXECDIRECT:
-            return executeDirectStatement(sql);
+            return executeDirect(w);
 
         case ResultConstants.BATCHEXECDIRECT:
-        case ResultConstants.PREPARE: // TODO
+        case ResultConstants.PREPARE:
+            return executePrepare(w);
+
         case ResultConstants.CLOSE_RESULT:
         case ResultConstants.UPDATE_RESULT:
         case ResultConstants.FREESTMT:
@@ -78,20 +73,34 @@ public class CommandExecutor {
         }
     }
 
-    public ResultSet executeDirectStatement(String sql)
-            throws SQLException {
-        try {
-            ByteArrayInputStream in = new ByteArrayInputStream(sql.getBytes());
-            CCSQLParser p = new CCSQLParser(in);
-            return executeCompiledStatement(p.Statement());
-        } catch (ParseException e) {
-            throw new UnsupportedOperationException();
+    public Wrapper executeDirect(Wrapper w) throws SQLException {
+        w = executePrepare(w);
+        return executeCompiledStatement(w);
+    }
+
+    public Wrapper executePrepare(Wrapper w) throws SQLException {
+        if (w.compiledSql == null) {
+            try {
+                String sql = w.sql;
+                InputStream in = new ByteArrayInputStream(sql.getBytes());
+                CCSQLParser p = new CCSQLParser(in);
+                w.compiledSql = p.Statement();
+                return w;
+            } catch (ParseException e) {
+                throw new SQLException(e);
+            }
+        } else {
+            return executeCompiledStatement(w);
         }
     }
 
-    public ResultSet executeCompiledStatement(
-            com.treasure_data.jdbc.compiler.stat.Statement stat)
-            throws SQLException {
+    public Wrapper executeCompiledStatement(Wrapper w) throws SQLException {
+        if (w.compiledSql == null) {
+            throw new NullPointerException("fatal error");
+        }
+
+        com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
+        Map<Integer, Object> params = w.params;
         if (stat instanceof Insert) {
             return executeCompiledInsert((Insert) stat);
         } else if (stat instanceof CreateTable) {
@@ -103,13 +112,15 @@ public class CommandExecutor {
         }
     }
 
-    public ResultSet executeCompiledSelect(Select stat)
+    public Wrapper executeCompiledSelect(Select stat)
             throws SQLException {
+        Wrapper w = new Wrapper();
         String sql = stat.toString();
-        return clientAdaptor.select(sql);
+        w.resultSet = clientAdaptor.select(sql);
+        return w;
     }
 
-    public ResultSet executeCompiledInsert(Insert stat) {
+    public Wrapper executeCompiledInsert(Insert stat) {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')
@@ -153,6 +164,7 @@ public class CommandExecutor {
             throw new UnsupportedOperationException();
         }
 
+        Wrapper w = new Wrapper();
         try {
             Map<String, Object> record = new HashMap<String, Object>();
             Iterator<Column> col_iter = cols.iterator();
@@ -167,10 +179,10 @@ public class CommandExecutor {
             throw new UnsupportedOperationException();
         }
 
-        return null;
+        return w;
     }
 
-    public ResultSet executeCompiledCreateTable(CreateTable stat) {
+    public Wrapper executeCompiledCreateTable(CreateTable stat) {
         /**
          * SQL:
          * create table table01(c0 varchar(255), c1 int)
@@ -196,13 +208,14 @@ public class CommandExecutor {
         // this variable is not used
         List<Index> indexes = stat.getIndexes();
 
+        Wrapper w = new Wrapper();
         try {
             clientAdaptor.createTable(table.getName());
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
 
-        return null;
+        return w;
     }
 
     private static Object toValue(Expression expr) {

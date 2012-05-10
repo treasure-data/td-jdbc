@@ -31,31 +31,14 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
-public class TDPreparedStatement implements PreparedStatement {
+public class TDPreparedStatement extends TDStatementBase
+        implements PreparedStatement {
     private final String sql;
-
-    private TreasureDataClient client;
-
-    private Database database;
 
     /**
      * save the SQL parameters {paramLoc:paramValue}
      */
     private final HashMap<Integer, String> parameters = new HashMap<Integer, String>();
-
-    /**
-     * We need to keep a reference to the result set to support the following:
-     * <code>
-     * statement.execute(String sql);
-     * statement.getResultSet();
-     * </code>.
-     */
-    private ResultSet resultSet = null;
-
-    /**
-     * The maximum number of rows this statement should return (0 => all rows).
-     */
-    private int maxRows = 0;
 
     private SQLWarning warnings = null;
 
@@ -65,71 +48,36 @@ public class TDPreparedStatement implements PreparedStatement {
     private final int updateCount = 0;
 
     public TDPreparedStatement(TDConnection conn, String sql) {
-        this.client = conn.getClient();
-        this.database = conn.getDatabase();
+        super(conn);
         this.sql = sql;
     }
 
     public void addBatch() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public void clearParameters() throws SQLException {
         this.parameters.clear();
     }
 
-    /**
-     * Invokes executeQuery(sql) using the sql provided to the constructor.
-     * 
-     * @return boolean Returns true if a resultSet is created, false if not.
-     *         Note: If the result set is empty a true is returned.
-     * 
-     * @throws
-     */
-
     public boolean execute() throws SQLException {
-        ResultSet rs = executeImmediate(sql);
-        return rs != null;
+        return executeImmediate(sql) != null;
     }
-
-    /**
-     * Invokes executeQuery(sql) using the sql provided to the constructor.
-     * 
-     * @return ResultSet
-     * @throws
-     */
 
     public ResultSet executeQuery() throws SQLException {
         return executeImmediate(sql);
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#executeUpdate()
-     */
 
     public int executeUpdate() throws SQLException {
         executeImmediate(sql);
         return updateCount;
     }
 
-    /**
-     * Executes the SQL statement.
-     * 
-     * @param sql
-     *            The sql, as a string, to execute
-     * @return ResultSet
-     * @throws SQLException
-     *             if the prepared statement is closed or there is a database
-     *             error. caught Exceptions are thrown as SQLExceptions with the
-     *             description "08S01".
-     */
-
-    protected ResultSet executeImmediate(String sql) throws SQLException {
+    private synchronized ResultSet executeImmediate(String sql)
+            throws SQLException {
         Job job = new Job(database, sql);
         clearWarnings();
-        resultSet = null;
+        currentResultSet = null;
         if (sql.contains("?")) {
             sql = updateSql(sql, parameters);
         }
@@ -144,8 +92,8 @@ public class TDPreparedStatement implements PreparedStatement {
             throw new SQLException(e.toString(), "08S01");
         }
 
-        resultSet = new TDQueryResultSet(client, maxRows, job);
-        return resultSet;
+        currentResultSet = new TDQueryResultSet(client, maxRows, job);
+        return currentResultSet;
     }
 
     /**
@@ -206,331 +154,150 @@ public class TDPreparedStatement implements PreparedStatement {
         return charIndex;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#getMetaData()
-     */
     public ResultSetMetaData getMetaData() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#getParameterMetaData()
-     */
     public ParameterMetaData getParameterMetaData() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setArray(int, java.sql.Array)
-     */
     public void setArray(int i, Array x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream)
-     */
     public void setAsciiStream(int i, InputStream in) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream, int)
-     */
     public void setAsciiStream(int i, InputStream in, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setAsciiStream(int, java.io.InputStream, long)
-     */
     public void setAsciiStream(int i, InputStream in, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBigDecimal(int, java.math.BigDecimal)
-     */
     public void setBigDecimal(int parameterIndex, BigDecimal x)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream)
-     */
     public void setBinaryStream(int i, InputStream x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream, int)
-     */
     public void setBinaryStream(int i, InputStream in, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBinaryStream(int, java.io.InputStream, long)
-     */
     public void setBinaryStream(int i, InputStream in, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBlob(int, java.sql.Blob)
-     */
     public void setBlob(int i, Blob x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBlob(int, java.io.InputStream)
-     */
     public void setBlob(int i, InputStream inputStream) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBlob(int, java.io.InputStream, long)
-     */
     public void setBlob(int i, InputStream inputStream, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBoolean(int, boolean)
-     */
     public void setBoolean(int parameterIndex, boolean x) throws SQLException {
         this.parameters.put(parameterIndex, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setByte(int, byte)
-     */
     public void setByte(int i, byte x) throws SQLException {
         this.parameters.put(i, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setBytes(int, byte[])
-     */
     public void setBytes(int i, byte[] x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader)
-     */
     public void setCharacterStream(int i, Reader reader) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader, int)
-     */
     public void setCharacterStream(int i, Reader reader, int length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setCharacterStream(int, java.io.Reader, long)
-     */
     public void setCharacterStream(int i, Reader reader, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setClob(int, java.sql.Clob)
-     */
     public void setClob(int i, Clob x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setClob(int, java.io.Reader)
-     */
     public void setClob(int i, Reader reader) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setClob(int, java.io.Reader, long)
-     */
     public void setClob(int i, Reader reader, long length) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setDate(int, java.sql.Date)
-     */
     public void setDate(int i, Date x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setDate(int, java.sql.Date,
-     * java.util.Calendar)
-     */
     public void setDate(int i, Date x, Calendar cal) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setDouble(int, double)
-     */
     public void setDouble(int i, double x) throws SQLException {
         parameters.put(i, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setFloat(int, float)
-     */
     public void setFloat(int i, float x) throws SQLException {
         parameters.put(i, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setInt(int, int)
-     */
     public void setInt(int i, int x) throws SQLException {
         parameters.put(i, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setLong(int, long)
-     */
     public void setLong(int i, long x) throws SQLException {
         parameters.put(i, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader)
-     */
     public void setNCharacterStream(int i, Reader value) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNCharacterStream(int, java.io.Reader, long)
-     */
     public void setNCharacterStream(int i, Reader value, long length)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNClob(int, java.sql.NClob)
-     */
     public void setNClob(int i, NClob value) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader)
-     */
     public void setNClob(int i, Reader reader) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNClob(int, java.io.Reader, long)
-     */
     public void setNClob(int i, Reader reader, long length)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNString(int, java.lang.String)
-     */
     public void setNString(int i, String value)
             throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNull(int, int)
-     */
     public void setNull(int i, int sqlType) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setNull(int, int, java.lang.String)
-     */
     public void setNull(int i, int sqlType, String typeName) throws SQLException {
         throw new SQLException("Method not supported");
     }
@@ -591,174 +358,73 @@ public class TDPreparedStatement implements PreparedStatement {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setShort(int, short)
-     */
     public void setShort(int i, short x) throws SQLException {
         this.parameters.put(i, "" + x);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setString(int, java.lang.String)
-     */
     public void setString(int i, String x) throws SQLException {
         x = x.replace("'", "\\'");
         this.parameters.put(i, "'" + x + "'");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setTime(int, java.sql.Time)
-     */
     public void setTime(int i, Time x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setTime(int, java.sql.Time,
-     * java.util.Calendar)
-     */
-    public void setTime(int i, Time x, Calendar cal) throws SQLException {
+    public void setTime(int i, Time x, Calendar cal)
+            throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp)
-     */
-    public void setTimestamp(int i, Timestamp x) throws SQLException {
+    public void setTimestamp(int i, Timestamp x)
+            throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setTimestamp(int, java.sql.Timestamp,
-     * java.util.Calendar)
-     */
-    public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {
+    public void setTimestamp(int i, Timestamp x, Calendar cal)
+            throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setURL(int, java.net.URL)
-     */
     public void setURL(int i, URL x) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.PreparedStatement#setUnicodeStream(int,
-     * java.io.InputStream, int)
-     */
-    public void setUnicodeStream(int i, InputStream x, int length) throws SQLException {
+    public void setUnicodeStream(int i, InputStream x, int length)
+            throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#addBatch(java.lang.String)
-     */
     public void addBatch(String sql) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#cancel()
-     */
     public void cancel() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#clearBatch()
-     */
     public void clearBatch() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#clearWarnings()
-     */
-    public void clearWarnings() throws SQLException {
-        warnings = null;
-    }
-
-    /**
-     * Closes the prepared statement.
-     * 
-     * @throws
-     */
-    public void close() throws SQLException {
-        client = null;
-        if (resultSet != null) {
-            resultSet.close();
-            resultSet = null;
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#execute(java.lang.String)
-     */
     public boolean execute(String sql) throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#execute(java.lang.String, int)
-     */
     public boolean execute(String sql, int autoGeneratedKeys)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        return execute(sql);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#execute(java.lang.String, int[])
-     */
     public boolean execute(String sql, int[] columnIndexes) throws SQLException {
-        throw new SQLException("Method not supported");
+        return execute(sql);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#execute(java.lang.String, java.lang.String[])
-     */
     public boolean execute(String sql, String[] columnNames)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        return execute(sql);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.sql.Statement#executeBatch()
-     */
     public int[] executeBatch() throws SQLException {
         throw new SQLException("Method not supported");
     }
@@ -899,7 +565,7 @@ public class TDPreparedStatement implements PreparedStatement {
      * @see java.sql.Statement#getResultSet()
      */
     public ResultSet getResultSet() throws SQLException {
-        return resultSet;
+        return currentResultSet;
     }
 
     /*

@@ -1,4 +1,4 @@
-package com.treasure_data.jdbc.internal;
+package com.treasure_data.jdbc.command;
 
 import java.io.ByteArrayInputStream;
 import java.sql.ResultSet;

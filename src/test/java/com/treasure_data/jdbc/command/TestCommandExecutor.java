@@ -1,4 +1,4 @@
-package com.treasure_data.jdbc.internal;
+package com.treasure_data.jdbc.command;
 
 import java.util.Properties;
 
@@ -7,6 +7,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.command.CommandExecutor;
+import com.treasure_data.jdbc.command.NullClientAdaptor;
+import com.treasure_data.jdbc.command.TreasureDataClientAdaptor;
 import com.treasure_data.model.Database;
 
 public class TestCommandExecutor {

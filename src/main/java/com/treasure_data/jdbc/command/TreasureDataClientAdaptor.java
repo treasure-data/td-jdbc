@@ -20,7 +20,7 @@ public class TreasureDataClientAdaptor implements ClientAdaptor {
     private Database database;
 
     public TreasureDataClientAdaptor(TDConnection conn) {
-        this(conn.getTreasureDataClient(), conn.getDatabase());
+        this(conn.getClient(), conn.getDatabase());
     }
 
     public TreasureDataClientAdaptor(TreasureDataClient client, Database database) {

@@ -66,7 +66,7 @@ public class TDConnection implements Connection, Constants {
         }
     }
 
-    public TreasureDataClient getTreasureDataClient() {
+    public TreasureDataClient getClient() {
         return client;
     }
 
@@ -177,7 +177,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
-        return new TDDatabaseMetaData(client);
+        return new TDDatabaseMetaData(this);
     }
 
     public int getTransactionIsolation() throws SQLException {
@@ -218,7 +218,7 @@ public class TDConnection implements Connection, Constants {
 
     public PreparedStatement prepareStatement(String sql)
             throws SQLException {
-        return new TDPreparedStatement(client, database, sql);
+        return new TDPreparedStatement(this, sql);
     }
 
     public PreparedStatement prepareStatement(String sql,

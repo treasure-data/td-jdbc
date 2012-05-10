@@ -18,21 +18,10 @@ public class TDDataSource implements DataSource {
     public TDDataSource() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.sql.DataSource#getConnection()
-     */
     public Connection getConnection() throws SQLException {
         return getConnection(getUser(), getPassword());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.sql.DataSource#getConnection(java.lang.String,
-     * java.lang.String)
-     */
     public Connection getConnection(String username, String password)
             throws SQLException {
         // TODO #MN
@@ -60,38 +49,18 @@ public class TDDataSource implements DataSource {
         return password;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.sql.CommonDataSource#getLogWriter()
-     */
     public PrintWriter getLogWriter() throws SQLException {
         return printer;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.sql.CommonDataSource#getLoginTimeout()
-     */
     public int getLoginTimeout() throws SQLException {
         return loginTimeout;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.sql.CommonDataSource#setLogWriter(java.io.PrintWriter)
-     */
     public void setLogWriter(PrintWriter out) throws SQLException {
         printer = out;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see javax.sql.CommonDataSource#setLoginTimeout(int)
-     */
     public void setLoginTimeout(int seconds) throws SQLException {
         loginTimeout = seconds;
     }

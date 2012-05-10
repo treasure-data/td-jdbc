@@ -64,10 +64,9 @@ public class TDPreparedStatement implements PreparedStatement {
      */
     private final int updateCount = 0;
 
-    public TDPreparedStatement(TreasureDataClient client,
-            Database database, String sql) {
-        this.client = client;
-        this.database = database;
+    public TDPreparedStatement(TDConnection conn, String sql) {
+        this.client = conn.getClient();
+        this.database = conn.getDatabase();
         this.sql = sql;
     }
 

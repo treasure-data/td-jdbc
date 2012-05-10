@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.treasure_data.client.TreasureDataClient;
 
-public class TDDatabaseMetaData implements java.sql.DatabaseMetaData, Constants {
+public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     private final TreasureDataClient client;
 
@@ -26,12 +26,12 @@ public class TDDatabaseMetaData implements java.sql.DatabaseMetaData, Constants 
     /**
    *
    */
-    public TDDatabaseMetaData(TreasureDataClient client) {
-        this.client = client;
+    public TDDatabaseMetaData(TDConnection conn) {
+        this.client = conn.getClient();
     }
 
     public boolean allProceduresAreCallable() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean allTablesAreSelectable() throws SQLException {
@@ -39,34 +39,35 @@ public class TDDatabaseMetaData implements java.sql.DatabaseMetaData, Constants 
     }
 
     public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean deletesAreDetected(int type) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    public ResultSet getAttributes(String catalog, String schemaPattern,
-            String typeNamePattern, String attributeNamePattern)
+    public ResultSet getAttributes(String catalog,
+            String schemaPattern, String typeNamePattern,
+            String attributeNamePattern) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException());
+    }
+
+    public ResultSet getBestRowIdentifier(String catalog,
+            String schema, String table, int scope, boolean nullable)
             throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public ResultSet getBestRowIdentifier(String catalog, String schema,
-            String table, int scope, boolean nullable) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     public String getCatalogSeparator() throws SQLException {
@@ -91,8 +92,9 @@ public class TDDatabaseMetaData implements java.sql.DatabaseMetaData, Constants 
                 public boolean next() throws SQLException {
                     if (cnt < data.size()) {
                         List<Object> a = new ArrayList<Object>(1);
-                        a.add(data.get(cnt)); // TABLE_CAT String => table
-                                              // catalog (may be null)
+                        // TABLE_CAT String => table
+                        // catalog (may be null)
+                        a.add(data.get(cnt));
                         row = a;
                         cnt++;
                         return true;
@@ -107,12 +109,13 @@ public class TDDatabaseMetaData implements java.sql.DatabaseMetaData, Constants 
     }
 
     public ResultSet getClientInfoProperties() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException());
     }
 
-    public ResultSet getColumnPrivileges(String catalog, String schema,
-            String table, String columnNamePattern) throws SQLException {
-        throw new SQLException("Method not supported");
+    public ResultSet getColumnPrivileges(String catalog,
+            String schema, String table, String columnNamePattern)
+            throws SQLException {
+        throw new SQLException(new UnsupportedOperationException());
     }
 
     /**

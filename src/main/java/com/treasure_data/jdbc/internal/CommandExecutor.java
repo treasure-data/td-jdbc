@@ -51,7 +51,8 @@ public class CommandExecutor {
         return clientAdaptor;
     }
 
-    public synchronized Job execute(int mode, String sql) {
+    public synchronized ResultSet execute(int mode, String sql)
+            throws SQLException {
         switch (mode) {
         case ResultConstants.LARGE_OBJECT_OP:
         case ResultConstants.EXECUTE:
@@ -77,20 +78,20 @@ public class CommandExecutor {
         }
     }
 
-    public Job executeDirectStatement(String sql) {
-        com.treasure_data.jdbc.compiler.stat.Statement stat = null;
+    public ResultSet executeDirectStatement(String sql)
+            throws SQLException {
         try {
             ByteArrayInputStream in = new ByteArrayInputStream(sql.getBytes());
             CCSQLParser p = new CCSQLParser(in);
-            stat = p.Statement();
+            return executeCompiledStatement(p.Statement());
         } catch (ParseException e) {
             throw new UnsupportedOperationException();
         }
-        return executeCompiledStatement(stat);
     }
 
-    public Job executeCompiledStatement(
-            com.treasure_data.jdbc.compiler.stat.Statement stat) {
+    public ResultSet executeCompiledStatement(
+            com.treasure_data.jdbc.compiler.stat.Statement stat)
+            throws SQLException {
         if (stat instanceof Insert) {
             return executeCompiledInsert((Insert) stat);
         } else if (stat instanceof CreateTable) {
@@ -102,12 +103,13 @@ public class CommandExecutor {
         }
     }
 
-    public Job executeCompiledSelect(Select stat) {
+    public ResultSet executeCompiledSelect(Select stat)
+            throws SQLException {
         String sql = stat.toString();
         return clientAdaptor.select(sql);
     }
 
-    public Job executeCompiledInsert(Insert stat) {
+    public ResultSet executeCompiledInsert(Insert stat) {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')
@@ -168,7 +170,7 @@ public class CommandExecutor {
         return null;
     }
 
-    public Job executeCompiledCreateTable(CreateTable stat) {
+    public ResultSet executeCompiledCreateTable(CreateTable stat) {
         /**
          * SQL:
          * create table table01(c0 varchar(255), c1 int)

@@ -1,5 +1,6 @@
 package com.treasure_data.jdbc.internal;
 
+import java.sql.ResultSet;
 import java.util.Map;
 
 import com.treasure_data.model.Job;
@@ -18,7 +19,7 @@ public class NullClientAdaptor implements ClientAdaptor {
         return true;
     }
 
-    public Job select(String sql) {
+    public ResultSet select(String sql) {
         return null;
     }
 }

@@ -1,10 +1,13 @@
 package com.treasure_data.jdbc.internal;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.TDConnection;
+import com.treasure_data.jdbc.TDQueryResultSet;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
@@ -53,17 +56,21 @@ public class TreasureDataClientAdaptor implements ClientAdaptor {
         return true;
     }
 
-    public Job select(String sql) {
+    public ResultSet select(String sql) throws SQLException {
+        Job job = new Job(database, sql);
         try {
-            Job job = new Job(database, sql);
-
             // submit a job
             SubmitJobRequest request = new SubmitJobRequest(job);
             SubmitJobResult result = client.submitJob(request);
-            return result.getJob();
+            job = result.getJob();
         } catch (ClientException e) {
-            // TODO what exception should we throw?
-            throw new RuntimeException(e);
+            throw new SQLException(e);
+        }
+
+        if (job != null) {
+            return new TDQueryResultSet(client, 50, job);
+        } else {
+            throw new NullPointerException();
         }
     }
 }

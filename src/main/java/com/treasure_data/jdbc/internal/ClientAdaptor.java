@@ -1,5 +1,7 @@
 package com.treasure_data.jdbc.internal;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 import com.treasure_data.model.Job;
@@ -11,5 +13,5 @@ public interface ClientAdaptor {
 
     boolean flush(); // for debugging
 
-    Job select(String sql);
+    ResultSet select(String sql) throws SQLException ;
 }

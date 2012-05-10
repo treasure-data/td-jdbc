@@ -8,10 +8,8 @@ import java.sql.Statement;
 
 import org.hsqldb.result.ResultConstants;
 
-import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.internal.CommandExecutor;
 import com.treasure_data.jdbc.internal.TreasureDataClientAdaptor;
-import com.treasure_data.model.Job;
 
 public class TDStatement implements Statement {
     private CommandExecutor exec;
@@ -96,23 +94,12 @@ public class TDStatement implements Statement {
         return getResultSet();
     }
 
-    private void fetchResult(String sql) throws SQLException { // TODO
+    private void fetchResult(String sql) throws SQLException {
         try {
-            currentResultSet = null;
-            Job job = exec.execute(ResultConstants.EXECDIRECT, sql);
-            if (job != null) {
-                // get the result of the job
-                currentResultSet = new TDQueryResultSet(
-                        toClient(exec), maxRows, job);
-                currentResultSet.setFetchSize(fetchSize);
-            }
+            currentResultSet = exec.execute(ResultConstants.EXECDIRECT, sql);
         } catch (Throwable t) {
             throw new SQLException(t);
         }
-    }
-
-    private static TreasureDataClient toClient(CommandExecutor exec) {
-        return ((TreasureDataClientAdaptor) exec.getClientAdaptor()).getTreasureDataClient();
     }
 
     public int executeUpdate(String sql) throws SQLException {

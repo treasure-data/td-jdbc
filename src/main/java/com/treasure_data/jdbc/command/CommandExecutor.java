@@ -46,20 +46,22 @@ public class CommandExecutor {
         return clientAdaptor;
     }
 
-    public synchronized Wrapper execute(Wrapper w)
+    public synchronized void execute(CommandContext context)
             throws SQLException {
-        switch (w.mode) {
+        switch (context.mode) {
         case ResultConstants.LARGE_OBJECT_OP:
         case ResultConstants.EXECUTE:
         case ResultConstants.BATCHEXECUTE:
             throw new UnsupportedOperationException();
 
         case ResultConstants.EXECDIRECT:
-            return executeDirect(w);
+            executeDirect(context);
+            break;
 
         case ResultConstants.BATCHEXECDIRECT:
         case ResultConstants.PREPARE:
-            return executePrepare(w);
+            executePrepare(context);
+            break;
 
         case ResultConstants.CLOSE_RESULT:
         case ResultConstants.UPDATE_RESULT:
@@ -75,96 +77,97 @@ public class CommandExecutor {
         }
     }
 
-    public Wrapper executeDirect(Wrapper w) throws SQLException {
+    public void executeDirect(CommandContext context) throws SQLException {
         try {
-            String sql = w.sql;
+            String sql = context.sql;
             InputStream in = new ByteArrayInputStream(sql.getBytes());
             CCSQLParser p = new CCSQLParser(in);
-            w.compiledSql = p.Statement();
-            extractJdbcParameters(w);
-            if (w.paramList.size() != 0) {
+            context.compiledSql = p.Statement();
+            extractJdbcParameters(context);
+            if (context.paramList.size() != 0) {
                 throw new ParseException("sql includes some jdbcParameters");
             }
-            return executeCompiledStatement(w);
+            executeCompiledStatement(context);
         } catch (ParseException e) {
             throw new SQLException(e);
         }
     }
 
-    public Wrapper executePrepare(Wrapper w) throws SQLException {
-        if (w.compiledSql == null) {
+    public void executePrepare(CommandContext context)
+            throws SQLException {
+        if (context.compiledSql == null) {
             try {
-                String sql = w.sql;
+                String sql = context.sql;
                 InputStream in = new ByteArrayInputStream(sql.getBytes());
                 CCSQLParser p = new CCSQLParser(in);
-                w.compiledSql = p.Statement();
-                extractJdbcParameters(w);
-                return w;
+                context.compiledSql = p.Statement();
+                extractJdbcParameters(context);
             } catch (ParseException e) {
                 throw new SQLException(e);
             }
         } else {
-            return executeCompiledPreparedStatement(w);
+            executeCompiledPreparedStatement(context);
         }
     }
 
-    private Wrapper extractJdbcParameters(Wrapper w) throws SQLException {
-        w.paramList = new ArrayList<String>();
-        com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
-        if (stat instanceof Insert) {
-            return extractJdbcParameters(w, (Insert) stat);
-        } else if (stat instanceof CreateTable) {
-            return extractJdbcParameters(w, (CreateTable) stat);
-        } else if (stat instanceof Select) {
-            return extractJdbcParameters(w, (Select) stat);
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    public Wrapper executeCompiledStatement(Wrapper w) throws SQLException {
-        com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
-        if (stat instanceof Insert) {
-            return executeCompiledStatement(w, (Insert) stat);
-        } else if (stat instanceof CreateTable) {
-            return executeCompiledStatement(w, (CreateTable) stat);
-        } else if (stat instanceof Select) {
-            return executeCompiledStatement(w, (Select) stat);
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    public Wrapper executeCompiledPreparedStatement(Wrapper w) throws SQLException {
-        com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
-        if (stat instanceof Insert) {
-            return executeCompiledPreparedStatement(w, (Insert) stat);
-        } else if (stat instanceof CreateTable) {
-            return executeCompiledPreparedStatement(w, (CreateTable) stat);
-        } else if (stat instanceof Select) {
-            return executeCompiledPreparedStatement(w, (Select) stat);
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    public Wrapper executeCompiledStatement(Wrapper w, Select stat)
+    private void extractJdbcParameters(CommandContext context)
             throws SQLException {
+        context.paramList = new ArrayList<String>();
+        com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;
+        if (stat instanceof Insert) {
+            extractJdbcParameters(context, (Insert) stat);
+        } else if (stat instanceof CreateTable) {
+            extractJdbcParameters(context, (CreateTable) stat);
+        } else if (stat instanceof Select) {
+            extractJdbcParameters(context, (Select) stat);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public void executeCompiledStatement(CommandContext context)
+            throws SQLException {
+        com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;
+        if (stat instanceof Insert) {
+            executeCompiledStatement(context, (Insert) stat);
+        } else if (stat instanceof CreateTable) {
+            executeCompiledStatement(context, (CreateTable) stat);
+        } else if (stat instanceof Select) {
+            executeCompiledStatement(context, (Select) stat);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public void executeCompiledPreparedStatement(CommandContext context)
+            throws SQLException {
+        com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;
+        if (stat instanceof Insert) {
+            executeCompiledPreparedStatement(context, (Insert) stat);
+        } else if (stat instanceof CreateTable) {
+            executeCompiledPreparedStatement(context, (CreateTable) stat);
+        } else if (stat instanceof Select) {
+            executeCompiledPreparedStatement(context, (Select) stat);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public void executeCompiledStatement(CommandContext context,
+            Select stat) throws SQLException {
         String sql = stat.toString();
-        w.resultSet = clientAdaptor.select(sql);
-        return w;
+        context.resultSet = clientAdaptor.select(sql);
     }
 
-    public Wrapper executeCompiledPreparedStatement(Wrapper w, Select stat)
-            throws SQLException {
-        return this.executeCompiledStatement(w, stat);
+    public void executeCompiledPreparedStatement(CommandContext context,
+            Select stat) throws SQLException {
+        executeCompiledStatement(context, stat);
     }
 
-    public Wrapper extractJdbcParameters(Wrapper w, Select stat) {
-        return w;
+    public void extractJdbcParameters(CommandContext context, Select stat) {
     }
 
-    public Wrapper executeCompiledStatement(Wrapper w, Insert stat) {
+    public void executeCompiledStatement(CommandContext context, Insert stat) {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')
@@ -221,11 +224,9 @@ public class CommandExecutor {
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
-
-        return w;
     }
 
-    public Wrapper executeCompiledPreparedStatement(Wrapper w, Insert stat) {
+    public void executeCompiledPreparedStatement(CommandContext context, Insert stat) {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (?, ?, 'nishizawa')
@@ -270,8 +271,8 @@ public class CommandExecutor {
         }
 
 
-        List<String> paramList = w.paramList;
-        Map<Integer, Object> params = w.params;
+        List<String> paramList = context.paramList;
+        Map<Integer, Object> params = context.params;
 
         try {
             Map<String, Object> record = new HashMap<String, Object>();
@@ -292,11 +293,9 @@ public class CommandExecutor {
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
-
-        return w;
     }
 
-    public Wrapper extractJdbcParameters(Wrapper w, Insert stat) {
+    public void extractJdbcParameters(CommandContext context, Insert stat) {
         List<Column> cols = stat.getColumns();
         List<Expression> exprs =
             ((ExpressionList) stat.getItemsList()).getExpressions();
@@ -308,12 +307,11 @@ public class CommandExecutor {
             }
 
             String colName = cols.get(i).getColumnName();
-            w.paramList.add(colName);
+            context.paramList.add(colName);
         }
-        return w;
     }
 
-    public Wrapper executeCompiledStatement(Wrapper w, CreateTable stat) {
+    public void executeCompiledStatement(CommandContext context, CreateTable stat) {
         /**
          * SQL:
          * create table table01(c0 varchar(255), c1 int)
@@ -344,17 +342,15 @@ public class CommandExecutor {
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
-
-        return w;
     }
 
-    public Wrapper executeCompiledPreparedStatement(Wrapper w, CreateTable stat)
-            throws SQLException {
-        return this.executeCompiledStatement(w, stat);
+    public void executeCompiledPreparedStatement(CommandContext context,
+            CreateTable stat) throws SQLException {
+        executeCompiledStatement(context, stat);
     }
 
-    public Wrapper extractJdbcParameters(Wrapper w, CreateTable stat) {
-        return w;
+    public void extractJdbcParameters(CommandContext context,
+            CreateTable stat) {
     }
 
     private static int getIndex(List<String> list, String data) {

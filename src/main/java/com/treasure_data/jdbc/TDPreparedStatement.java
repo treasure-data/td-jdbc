@@ -24,11 +24,11 @@ import java.util.HashMap;
 
 import org.hsqldb.result.ResultConstants;
 
-import com.treasure_data.jdbc.command.Wrapper;
+import com.treasure_data.jdbc.command.CommandContext;
 
 public class TDPreparedStatement extends TDStatement implements PreparedStatement {
 
-    private Wrapper w;
+    private CommandContext w;
 
     private final HashMap<Integer, Object> params = new HashMap<Integer, Object>();
 

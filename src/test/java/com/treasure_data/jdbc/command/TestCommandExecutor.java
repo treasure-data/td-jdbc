@@ -17,7 +17,7 @@ public class TestCommandExecutor {
     @Test @Ignore
     public void select01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
-        Wrapper w = new Wrapper();
+        CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "select count(*) from mugatbl order by c1 desc";
         exec.execute(w);
@@ -32,7 +32,7 @@ public class TestCommandExecutor {
             new TreasureDataClientAdaptor(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
-        Wrapper w = new Wrapper();
+        CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
         exec.execute(w);
@@ -41,7 +41,7 @@ public class TestCommandExecutor {
     @Test @Ignore
     public void createTable01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
-        Wrapper w = new Wrapper();
+        CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
         exec.execute(w);
@@ -56,7 +56,7 @@ public class TestCommandExecutor {
             new TreasureDataClientAdaptor(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
-        Wrapper w = new Wrapper();
+        CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
         exec.execute(w);
@@ -65,7 +65,7 @@ public class TestCommandExecutor {
     @Test @Ignore
     public void insert01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
-        Wrapper w = new Wrapper();
+        CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')";
         exec.execute(w);
@@ -82,7 +82,7 @@ public class TestCommandExecutor {
 
         String sql = "insert into table01 (%s, %s) values (%s, '%s')";
         for (int i = 0; i < 50; i++) {
-            Wrapper w = new Wrapper();
+            CommandContext w = new CommandContext();
             w.mode = ResultConstants.EXECDIRECT;
             w.sql = String.format(sql, "col1", "col2", "" + i, "muga:" + i);
             exec.execute(w);

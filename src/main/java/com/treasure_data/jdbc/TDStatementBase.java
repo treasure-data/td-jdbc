@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.TreasureDataClientAdaptor;
-import com.treasure_data.jdbc.command.Wrapper;
+import com.treasure_data.jdbc.command.CommandContext;
 
 public abstract class TDStatementBase implements Statement {
 
@@ -74,18 +74,20 @@ public abstract class TDStatementBase implements Statement {
         maxRows = max;
     }
 
-    protected Wrapper fetchResult(String sql, int mode) throws SQLException {
-        Wrapper w = new Wrapper();
-        w.mode = mode;
-        w.sql = sql;
-        return fetchResult(w);
+    protected CommandContext fetchResult(String sql, int mode)
+            throws SQLException {
+        CommandContext context = new CommandContext();
+        context.mode = mode;
+        context.sql = sql;
+        fetchResult(context);
+        return context;
     }
 
-    protected Wrapper fetchResult(Wrapper w) throws SQLException {
+    protected void fetchResult(CommandContext context)
+            throws SQLException {
         try {
-            exec.execute(w);
-            currentResultSet = w.resultSet;
-            return w;
+            exec.execute(context);
+            currentResultSet = context.resultSet;
         } catch (Throwable t) {
             if (t instanceof SQLException) {
                 throw (SQLException) t;

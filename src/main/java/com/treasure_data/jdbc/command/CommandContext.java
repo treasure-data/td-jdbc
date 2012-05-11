@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
-public class Wrapper {
+public class CommandContext {
 
     public int mode;
 
@@ -18,6 +18,6 @@ public class Wrapper {
 
     public ResultSet resultSet;
 
-    public Wrapper() {
+    public CommandContext() {
     }
 }

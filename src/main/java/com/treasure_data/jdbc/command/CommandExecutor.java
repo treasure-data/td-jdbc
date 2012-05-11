@@ -125,32 +125,46 @@ public class CommandExecutor {
     public Wrapper executeCompiledStatement(Wrapper w) throws SQLException {
         com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
         if (stat instanceof Insert) {
-            return executeCompiledInsert(w, (Insert) stat);
+            return executeCompiledStatement(w, (Insert) stat);
         } else if (stat instanceof CreateTable) {
-            return executeCompiledCreateTable(w, (CreateTable) stat);
+            return executeCompiledStatement(w, (CreateTable) stat);
         } else if (stat instanceof Select) {
-            return executeCompiledSelect(w, (Select) stat);
+            return executeCompiledStatement(w, (Select) stat);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
     public Wrapper executeCompiledPreparedStatement(Wrapper w) throws SQLException {
-        return null; // TODO
+        com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
+        if (stat instanceof Insert) {
+            return executeCompiledPreparedStatement(w, (Insert) stat);
+        } else if (stat instanceof CreateTable) {
+            return executeCompiledPreparedStatement(w, (CreateTable) stat);
+        } else if (stat instanceof Select) {
+            return executeCompiledPreparedStatement(w, (Select) stat);
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
 
-    public Wrapper executeCompiledSelect(Wrapper w, Select stat)
+    public Wrapper executeCompiledStatement(Wrapper w, Select stat)
             throws SQLException {
         String sql = stat.toString();
         w.resultSet = clientAdaptor.select(sql);
         return w;
     }
 
+    public Wrapper executeCompiledPreparedStatement(Wrapper w, Select stat)
+            throws SQLException {
+        return this.executeCompiledStatement(w, stat);
+    }
+
     public Wrapper extractJdbcParameters(Wrapper w, Select stat) {
         return w;
     }
 
-    public Wrapper executeCompiledInsert(Wrapper w, Insert stat) {
+    public Wrapper executeCompiledStatement(Wrapper w, Insert stat) {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')
@@ -211,6 +225,77 @@ public class CommandExecutor {
         return w;
     }
 
+    public Wrapper executeCompiledPreparedStatement(Wrapper w, Insert stat) {
+        /**
+         * SQL:
+         * insert into table02 (k1, k2, k3) values (?, ?, 'nishizawa')
+         *
+         * ret:
+         * table => table02
+         * cols  => [k1, k2, k3]
+         * items => (?, ?, 'nishizawa')
+         */
+
+        Table table = stat.getTable();
+        // table validation
+        if (table == null
+                || table.getName() == null
+                || table.getName().isEmpty()) {
+            throw new UnsupportedOperationException();
+        }
+
+        // columns validation
+        List<Column> cols = stat.getColumns();
+        if (cols == null || cols.size() <= 0) {
+            throw new UnsupportedOperationException();
+        }
+
+        // items validation
+        List<Expression> exprs;
+        {
+            ItemsList items = stat.getItemsList();
+            if (items == null) {
+                throw new UnsupportedOperationException();
+            }
+            try {
+                exprs = ((ExpressionList) items).getExpressions();
+            } catch (Throwable t) {
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        // other validations
+        if (cols.size() != exprs.size()) {
+            throw new UnsupportedOperationException();
+        }
+
+
+        List<String> paramList = w.paramList;
+        Map<Integer, Object> params = w.params;
+
+        try {
+            Map<String, Object> record = new HashMap<String, Object>();
+            Iterator<Column> col_iter = cols.iterator();
+            Iterator<Expression> expr_iter = exprs.iterator();
+            while (col_iter.hasNext()) {
+                Column col = col_iter.next();
+                String colName = col.getColumnName();
+                int i = getIndex(paramList, colName);
+                if (i >= 0) {
+                    record.put(colName, params.get(new Integer(i + 1)));
+                } else {
+                    Expression expr = expr_iter.next();
+                    record.put(colName, toValue(expr));
+                }
+            }
+            clientAdaptor.insertData(table.getName(), record);
+        } catch (Exception e) {
+            throw new UnsupportedOperationException();
+        }
+
+        return w;
+    }
+
     public Wrapper extractJdbcParameters(Wrapper w, Insert stat) {
         List<Column> cols = stat.getColumns();
         List<Expression> exprs =
@@ -228,7 +313,7 @@ public class CommandExecutor {
         return w;
     }
 
-    public Wrapper executeCompiledCreateTable(Wrapper w, CreateTable stat) {
+    public Wrapper executeCompiledStatement(Wrapper w, CreateTable stat) {
         /**
          * SQL:
          * create table table01(c0 varchar(255), c1 int)
@@ -263,8 +348,23 @@ public class CommandExecutor {
         return w;
     }
 
+    public Wrapper executeCompiledPreparedStatement(Wrapper w, CreateTable stat)
+            throws SQLException {
+        return this.executeCompiledStatement(w, stat);
+    }
+
     public Wrapper extractJdbcParameters(Wrapper w, CreateTable stat) {
-        return w; // TODO
+        return w;
+    }
+
+    private static int getIndex(List<String> list, String data) {
+        for (int i = 0; i < list.size(); i++) {
+            String d = list.get(i);
+            if (d.equals(data)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private static Object toValue(Expression expr) {

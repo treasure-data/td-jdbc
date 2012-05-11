@@ -30,7 +30,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
 
     private Wrapper w;
 
-    private final HashMap<Integer, String> parameters = new HashMap<Integer, String>();
+    private final HashMap<Integer, String> params = new HashMap<Integer, String>();
 
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
@@ -39,7 +39,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void clearParameters() throws SQLException {
-        parameters.clear();
+        params.clear();
     }
 
     public void addBatch() throws SQLException {
@@ -114,11 +114,11 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setBoolean(int parameterIndex, boolean x) throws SQLException {
-        this.parameters.put(parameterIndex, "" + x);
+        this.params.put(parameterIndex, "" + x);
     }
 
     public void setByte(int i, byte x) throws SQLException {
-        this.parameters.put(i, "" + x);
+        this.params.put(i, "" + x);
     }
 
     public void setBytes(int i, byte[] x) throws SQLException {
@@ -158,19 +158,19 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDouble(int i, double x) throws SQLException {
-        parameters.put(i, "" + x);
+        params.put(i, "" + x);
     }
 
     public void setFloat(int i, float x) throws SQLException {
-        parameters.put(i, "" + x);
+        params.put(i, "" + x);
     }
 
     public void setInt(int i, int x) throws SQLException {
-        parameters.put(i, "" + x);
+        params.put(i, "" + x);
     }
 
     public void setLong(int i, long x) throws SQLException {
-        parameters.put(i, "" + x);
+        params.put(i, "" + x);
     }
 
     public void setNCharacterStream(int i, Reader value) throws SQLException {
@@ -235,12 +235,12 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setShort(int i, short x) throws SQLException {
-        parameters.put(i, "" + x);
+        params.put(i, "" + x);
     }
 
     public void setString(int i, String x) throws SQLException {
         x = x.replace("'", "\\'");
-        parameters.put(i, "'" + x + "'");
+        params.put(i, "'" + x + "'");
     }
 
     public void setTime(int i, Time x) throws SQLException {

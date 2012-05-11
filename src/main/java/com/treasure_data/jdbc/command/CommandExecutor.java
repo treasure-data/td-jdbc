@@ -3,6 +3,7 @@ package com.treasure_data.jdbc.command;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.hsqldb.result.ResultConstants;
 import com.treasure_data.jdbc.compiler.expr.DateValue;
 import com.treasure_data.jdbc.compiler.expr.DoubleValue;
 import com.treasure_data.jdbc.compiler.expr.Expression;
+import com.treasure_data.jdbc.compiler.expr.JdbcParameter;
 import com.treasure_data.jdbc.compiler.expr.LongValue;
 import com.treasure_data.jdbc.compiler.expr.NullValue;
 import com.treasure_data.jdbc.compiler.expr.StringValue;
@@ -74,8 +76,19 @@ public class CommandExecutor {
     }
 
     public Wrapper executeDirect(Wrapper w) throws SQLException {
-        w = executePrepare(w);
-        return executeCompiledStatement(w);
+        try {
+            String sql = w.sql;
+            InputStream in = new ByteArrayInputStream(sql.getBytes());
+            CCSQLParser p = new CCSQLParser(in);
+            w.compiledSql = p.Statement();
+            extractJdbcParameters(w);
+            if (w.paramList.size() != 0) {
+                throw new ParseException("sql includes some jdbcParameters");
+            }
+            return executeCompiledStatement(w);
+        } catch (ParseException e) {
+            throw new SQLException(e);
+        }
     }
 
     public Wrapper executePrepare(Wrapper w) throws SQLException {
@@ -85,42 +98,59 @@ public class CommandExecutor {
                 InputStream in = new ByteArrayInputStream(sql.getBytes());
                 CCSQLParser p = new CCSQLParser(in);
                 w.compiledSql = p.Statement();
+                extractJdbcParameters(w);
                 return w;
             } catch (ParseException e) {
                 throw new SQLException(e);
             }
         } else {
-            return executeCompiledStatement(w);
+            return executeCompiledPreparedStatement(w);
         }
     }
 
-    public Wrapper executeCompiledStatement(Wrapper w) throws SQLException {
-        if (w.compiledSql == null) {
-            throw new NullPointerException("fatal error");
-        }
-
+    private Wrapper extractJdbcParameters(Wrapper w) throws SQLException {
+        w.paramList = new ArrayList<String>();
         com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
-        Map<Integer, Object> params = w.params;
         if (stat instanceof Insert) {
-            return executeCompiledInsert((Insert) stat);
+            return extractJdbcParameters(w, (Insert) stat);
         } else if (stat instanceof CreateTable) {
-            return executeCompiledCreateTable((CreateTable) stat);
+            return extractJdbcParameters(w, (CreateTable) stat);
         } else if (stat instanceof Select) {
-            return executeCompiledSelect((Select) stat);
+            return extractJdbcParameters(w, (Select) stat);
         } else {
             throw new UnsupportedOperationException();
         }
     }
 
-    public Wrapper executeCompiledSelect(Select stat)
+    public Wrapper executeCompiledStatement(Wrapper w) throws SQLException {
+        com.treasure_data.jdbc.compiler.stat.Statement stat = w.compiledSql;
+        if (stat instanceof Insert) {
+            return executeCompiledInsert(w, (Insert) stat);
+        } else if (stat instanceof CreateTable) {
+            return executeCompiledCreateTable(w, (CreateTable) stat);
+        } else if (stat instanceof Select) {
+            return executeCompiledSelect(w, (Select) stat);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public Wrapper executeCompiledPreparedStatement(Wrapper w) throws SQLException {
+        return null; // TODO
+    }
+
+    public Wrapper executeCompiledSelect(Wrapper w, Select stat)
             throws SQLException {
-        Wrapper w = new Wrapper();
         String sql = stat.toString();
         w.resultSet = clientAdaptor.select(sql);
         return w;
     }
 
-    public Wrapper executeCompiledInsert(Insert stat) {
+    public Wrapper extractJdbcParameters(Wrapper w, Select stat) {
+        return w;
+    }
+
+    public Wrapper executeCompiledInsert(Wrapper w, Insert stat) {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')
@@ -164,7 +194,6 @@ public class CommandExecutor {
             throw new UnsupportedOperationException();
         }
 
-        Wrapper w = new Wrapper();
         try {
             Map<String, Object> record = new HashMap<String, Object>();
             Iterator<Column> col_iter = cols.iterator();
@@ -182,7 +211,24 @@ public class CommandExecutor {
         return w;
     }
 
-    public Wrapper executeCompiledCreateTable(CreateTable stat) {
+    public Wrapper extractJdbcParameters(Wrapper w, Insert stat) {
+        List<Column> cols = stat.getColumns();
+        List<Expression> exprs =
+            ((ExpressionList) stat.getItemsList()).getExpressions();
+        int len = cols.size();
+        for (int i = 0; i < len; i++) {
+            Expression expr = exprs.get(i);
+            if (! (expr instanceof JdbcParameter)) {
+                continue;
+            }
+
+            String colName = cols.get(i).getColumnName();
+            w.paramList.add(colName);
+        }
+        return w;
+    }
+
+    public Wrapper executeCompiledCreateTable(Wrapper w, CreateTable stat) {
         /**
          * SQL:
          * create table table01(c0 varchar(255), c1 int)
@@ -208,7 +254,6 @@ public class CommandExecutor {
         // this variable is not used
         List<Index> indexes = stat.getIndexes();
 
-        Wrapper w = new Wrapper();
         try {
             clientAdaptor.createTable(table.getName());
         } catch (Exception e) {
@@ -216,6 +261,10 @@ public class CommandExecutor {
         }
 
         return w;
+    }
+
+    public Wrapper extractJdbcParameters(Wrapper w, CreateTable stat) {
+        return w; // TODO
     }
 
     private static Object toValue(Expression expr) {

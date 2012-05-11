@@ -30,7 +30,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
 
     private Wrapper w;
 
-    private final HashMap<Integer, String> params = new HashMap<Integer, String>();
+    private final HashMap<Integer, Object> params = new HashMap<Integer, Object>();
 
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
@@ -51,6 +51,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
+        w.params = params;
         fetchResult(w);
         return getResultSet();
     }

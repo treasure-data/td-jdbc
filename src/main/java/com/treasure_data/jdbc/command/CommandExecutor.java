@@ -110,7 +110,7 @@ public class CommandExecutor {
         }
     }
 
-    private void extractJdbcParameters(CommandContext context)
+    public void extractJdbcParameters(CommandContext context)
             throws SQLException {
         context.paramList = new ArrayList<String>();
         com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;

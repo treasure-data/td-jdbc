@@ -13,5 +13,5 @@ public interface ClientAdaptor {
 
     boolean flush(); // for debugging
 
-    ResultSet select(String sql) throws SQLException ;
+    ResultSet select(String sql) throws SQLException;
 }

@@ -52,7 +52,7 @@ public class TreasureDataClientAdaptor implements ClientAdaptor {
 
     public boolean flush() { // TODO for debug
         TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
-        TreasureDataLogger.close();
+        TreasureDataLogger.closeAll();
         return true;
     }
 

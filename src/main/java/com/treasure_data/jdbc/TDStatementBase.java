@@ -6,7 +6,7 @@ import java.sql.SQLWarning;
 import java.sql.Statement;
 
 import com.treasure_data.jdbc.command.CommandExecutor;
-import com.treasure_data.jdbc.command.TreasureDataClientAdaptor;
+import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.jdbc.command.CommandContext;
 
 public abstract class TDStatementBase implements Statement {
@@ -30,7 +30,7 @@ public abstract class TDStatementBase implements Statement {
     private boolean isEscapeProcessing;
 
     protected TDStatementBase(TDConnection conn) {
-        exec = new CommandExecutor(new TreasureDataClientAdaptor(conn));
+        exec = new CommandExecutor(new TDClientAPI(conn));
     }
 
     public void close() throws SQLException {

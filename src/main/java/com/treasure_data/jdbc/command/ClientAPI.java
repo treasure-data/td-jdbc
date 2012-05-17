@@ -4,9 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import com.treasure_data.model.Job;
-
-public interface ClientAdaptor {
+public interface ClientAPI {
     boolean createTable(String table);
 
     boolean insertData(String tableName, Map<String, Object> record);

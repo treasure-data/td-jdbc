@@ -36,14 +36,14 @@ import com.treasure_data.jdbc.compiler.stat.Select;
  * @see org.hsqldb.SessionInterface
  */
 public class CommandExecutor {
-    private ClientAdaptor clientAdaptor;
+    private ClientAPI api;
 
-    public CommandExecutor(ClientAdaptor clientAdaptor) {
-        this.clientAdaptor = clientAdaptor;
+    public CommandExecutor(ClientAPI api) {
+        this.api = api;
     }
 
-    public ClientAdaptor getClientAdaptor() {
-        return clientAdaptor;
+    public ClientAPI getAPI() {
+        return api;
     }
 
     public synchronized void execute(CommandContext context)
@@ -156,7 +156,7 @@ public class CommandExecutor {
     public void executeCompiledStatement(CommandContext context,
             Select stat) throws SQLException {
         String sql = stat.toString();
-        context.resultSet = clientAdaptor.select(sql);
+        context.resultSet = api.select(sql);
     }
 
     public void executeCompiledPreparedStatement(CommandContext context,
@@ -220,7 +220,7 @@ public class CommandExecutor {
                 Expression expr = expr_iter.next();
                 record.put(col.getColumnName(), toValue(expr));
             }
-            clientAdaptor.insertData(table.getName(), record);
+            api.insertData(table.getName(), record);
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
@@ -289,7 +289,7 @@ public class CommandExecutor {
                     record.put(colName, toValue(expr));
                 }
             }
-            clientAdaptor.insertData(table.getName(), record);
+            api.insertData(table.getName(), record);
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
@@ -338,7 +338,7 @@ public class CommandExecutor {
         List<Index> indexes = stat.getIndexes();
 
         try {
-            clientAdaptor.createTable(table.getName());
+            api.createTable(table.getName());
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }

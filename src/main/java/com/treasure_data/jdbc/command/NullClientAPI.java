@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.treasure_data.model.Job;
 
-public class NullClientAdaptor implements ClientAdaptor {
+public class NullClientAPI implements ClientAPI {
 
     public boolean createTable(String table) {
         return true;

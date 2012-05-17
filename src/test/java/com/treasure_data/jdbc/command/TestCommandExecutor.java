@@ -8,15 +8,15 @@ import org.junit.Test;
 
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.command.CommandExecutor;
-import com.treasure_data.jdbc.command.NullClientAdaptor;
-import com.treasure_data.jdbc.command.TreasureDataClientAdaptor;
+import com.treasure_data.jdbc.command.NullClientAPI;
+import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
 
 public class TestCommandExecutor {
 
     @Test @Ignore
     public void select01() throws Exception {
-        CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
+        CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "select count(*) from mugatbl order by c1 desc";
@@ -28,8 +28,8 @@ public class TestCommandExecutor {
         Properties props = new Properties();
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TreasureDataClientAdaptor clientAdaptor =
-            new TreasureDataClientAdaptor(client, new Database("mugadb"));
+        TDClientAPI clientAdaptor =
+            new TDClientAPI(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
@@ -40,7 +40,7 @@ public class TestCommandExecutor {
 
     @Test @Ignore
     public void createTable01() throws Exception {
-        CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
+        CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
@@ -52,8 +52,8 @@ public class TestCommandExecutor {
         Properties props = new Properties();
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TreasureDataClientAdaptor clientAdaptor =
-            new TreasureDataClientAdaptor(client, new Database("mugadb"));
+        TDClientAPI clientAdaptor =
+            new TDClientAPI(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
@@ -64,7 +64,7 @@ public class TestCommandExecutor {
 
     @Test @Ignore
     public void insert01() throws Exception {
-        CommandExecutor exec = new CommandExecutor(new NullClientAdaptor());
+        CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;
         w.sql = "insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')";
@@ -76,8 +76,8 @@ public class TestCommandExecutor {
         Properties props = new Properties();
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TreasureDataClientAdaptor clientAdaptor =
-            new TreasureDataClientAdaptor(client, new Database("mugadb"));
+        TDClientAPI clientAdaptor =
+            new TDClientAPI(client, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         String sql = "insert into table01 (%s, %s) values (%s, '%s')";

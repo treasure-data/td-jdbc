@@ -14,16 +14,16 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
-public class TreasureDataClientAdaptor implements ClientAdaptor {
+public class TDClientAPI implements ClientAPI {
     private TreasureDataClient client;
 
     private Database database;
 
-    public TreasureDataClientAdaptor(TDConnection conn) {
+    public TDClientAPI(TDConnection conn) {
         this(conn.getClient(), conn.getDatabase());
     }
 
-    public TreasureDataClientAdaptor(TreasureDataClient client, Database database) {
+    public TDClientAPI(TreasureDataClient client, Database database) {
         this.client = client;
         this.database = database;
     }

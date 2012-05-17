@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.hsqldb.result.ResultConstants;
 
+import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.compiler.expr.DateValue;
 import com.treasure_data.jdbc.compiler.expr.DoubleValue;
 import com.treasure_data.jdbc.compiler.expr.Expression;
@@ -156,7 +157,11 @@ public class CommandExecutor {
     public void executeCompiledStatement(CommandContext context,
             Select stat) throws SQLException {
         String sql = stat.toString();
-        context.resultSet = api.select(sql);
+        try {
+            context.resultSet = api.select(sql);
+        } catch (ClientException e) {
+            throw new SQLException(e);
+        }
     }
 
     public void executeCompiledPreparedStatement(CommandContext context,
@@ -220,7 +225,7 @@ public class CommandExecutor {
                 Expression expr = expr_iter.next();
                 record.put(col.getColumnName(), toValue(expr));
             }
-            api.insertData(table.getName(), record);
+            api.insert(table.getName(), record);
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
@@ -289,7 +294,7 @@ public class CommandExecutor {
                     record.put(colName, toValue(expr));
                 }
             }
-            api.insertData(table.getName(), record);
+            api.insert(table.getName(), record);
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }
@@ -335,10 +340,11 @@ public class CommandExecutor {
         }
 
         // this variable is not used
+        @SuppressWarnings("unused")
         List<Index> indexes = stat.getIndexes();
 
         try {
-            api.createTable(table.getName());
+            api.create(table.getName());
         } catch (Exception e) {
             throw new UnsupportedOperationException();
         }

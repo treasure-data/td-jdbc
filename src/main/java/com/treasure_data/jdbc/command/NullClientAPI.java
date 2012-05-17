@@ -3,15 +3,15 @@ package com.treasure_data.jdbc.command;
 import java.sql.ResultSet;
 import java.util.Map;
 
-import com.treasure_data.model.Job;
+import com.treasure_data.client.ClientException;
 
 public class NullClientAPI implements ClientAPI {
 
-    public boolean createTable(String table) {
+    public boolean create(String table) throws ClientException {
         return true;
     }
 
-    public boolean insertData(String tableName, Map<String, Object> record) {
+    public boolean insert(String tableName, Map<String, Object> record) throws ClientException {
         return true;
     }
 
@@ -19,7 +19,7 @@ public class NullClientAPI implements ClientAPI {
         return true;
     }
 
-    public ResultSet select(String sql) {
+    public ResultSet select(String sql) throws ClientException {
         return null;
     }
 }

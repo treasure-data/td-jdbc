@@ -1,7 +1,6 @@
 package com.treasure_data.jdbc.command;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 import com.treasure_data.client.ClientException;
@@ -36,7 +35,7 @@ public class TDClientAPI implements ClientAPI {
         return database;
     }
 
-    public boolean createTable(String table) {
+    public boolean create(String table) {
         try {
             client.createTable(database, table);
             return true;
@@ -45,7 +44,7 @@ public class TDClientAPI implements ClientAPI {
         }
     }
 
-    public boolean insertData(String tableName, Map<String, Object> record) {
+    public boolean insert(String tableName, Map<String, Object> record) {
         TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
         return logger.log(tableName, record);
     }
@@ -56,21 +55,17 @@ public class TDClientAPI implements ClientAPI {
         return true;
     }
 
-    public ResultSet select(String sql) throws SQLException {
+    public ResultSet select(String sql) throws ClientException {
+        ResultSet rs = null;
+
         Job job = new Job(database, sql);
-        try {
-            // submit a job
-            SubmitJobRequest request = new SubmitJobRequest(job);
-            SubmitJobResult result = client.submitJob(request);
-            job = result.getJob();
-        } catch (ClientException e) {
-            throw new SQLException(e);
-        }
+        SubmitJobRequest request = new SubmitJobRequest(job);
+        SubmitJobResult result = client.submitJob(request);
+        job = result.getJob();
 
         if (job != null) {
-            return new TDQueryResultSet(client, 50, job);
-        } else {
-            throw new NullPointerException();
+            rs = new TDQueryResultSet(client, 50, job);
         }
+        return rs;
     }
 }

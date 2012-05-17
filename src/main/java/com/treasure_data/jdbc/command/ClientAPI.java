@@ -1,15 +1,19 @@
 package com.treasure_data.jdbc.command;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
-public interface ClientAPI {
-    boolean createTable(String table);
+import com.treasure_data.client.ClientException;
 
-    boolean insertData(String tableName, Map<String, Object> record);
+public interface ClientAPI {
+    // create table statement
+    boolean create(String table) throws ClientException;
+
+    // insert statement
+    boolean insert(String tableName, Map<String, Object> record) throws ClientException;
+
+    // select statement
+    ResultSet select(String sql) throws ClientException;
 
     boolean flush(); // for debugging
-
-    ResultSet select(String sql) throws SQLException;
 }

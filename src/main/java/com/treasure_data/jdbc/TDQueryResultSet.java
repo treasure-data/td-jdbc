@@ -41,8 +41,7 @@ public class TDQueryResultSet extends TDBaseResultSet {
 
     private Job job;
 
-    public TDQueryResultSet(TreasureDataClient client, int maxRows, Job job)
-            throws SQLException {
+    public TDQueryResultSet(TreasureDataClient client, int maxRows, Job job) {
         this.client = client;
         this.maxRows = maxRows;
         this.job = job;

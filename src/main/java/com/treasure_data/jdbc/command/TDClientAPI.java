@@ -20,7 +20,7 @@ public class TDClientAPI implements ClientAPI {
     private Database database;
 
     public TDClientAPI(TDConnection conn) {
-        this(conn.getClient(), conn.getDatabase());
+        this(new TreasureDataClient(conn.getProperties()), conn.getDatabase());
     }
 
     public TDClientAPI(TreasureDataClient client, Database database) {

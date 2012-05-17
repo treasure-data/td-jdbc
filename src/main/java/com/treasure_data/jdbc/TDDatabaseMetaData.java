@@ -15,7 +15,7 @@ import com.treasure_data.client.TreasureDataClient;
 
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
-    private final TreasureDataClient client;
+    //private final TreasureDataClient client;
 
     private static final String CATALOG_SEPARATOR = ".";
 
@@ -27,7 +27,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
    *
    */
     public TDDatabaseMetaData(TDConnection conn) {
-        this.client = conn.getClient();
+        //this.client = conn.getClient();
     }
 
     public boolean allProceduresAreCallable() throws SQLException {

@@ -23,14 +23,13 @@ import com.treasure_data.model.Database;
 
 public class TDConnection implements Connection, Constants {
 
-    private TreasureDataClient client;
+    private Properties props;
 
     private Database database;
 
     private SQLWarning warnings = null;
 
-    public TDConnection(String uri, Properties props)
-            throws SQLException {
+    public TDConnection(String uri, Properties props) throws SQLException {
         if (uri == null || uri.isEmpty() || !uri.startsWith(URI_PREFIX)) {
             throw new SQLException("Invalid URI: " + uri);
         }
@@ -53,9 +52,7 @@ public class TDConnection implements Connection, Constants {
             // inserted into a port variable. 
         }
         props.setProperty(Config.TD_API_SERVER_HOST, host + ":" + port);
-
-        // create a TreasureDataClient object
-        client = new TreasureDataClient(props);
+        this.props = props;
 
         // create a Database object
         if (fragments.length > 1) {
@@ -66,8 +63,8 @@ public class TDConnection implements Connection, Constants {
         }
     }
 
-    public TreasureDataClient getClient() {
-        return client;
+    public Properties getProperties() {
+        return props;
     }
 
     public Database getDatabase() {
@@ -205,14 +202,15 @@ public class TDConnection implements Connection, Constants {
         throw new SQLException(new UnsupportedOperationException());
     }
 
-    public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency) throws SQLException {
+    public CallableStatement prepareCall(String sql,
+            int resultSetType, int resultSetConcurrency)
+            throws SQLException {
         throw new SQLException(new UnsupportedOperationException());
     }
 
-    public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
+    public CallableStatement prepareCall(String sql,
+            int resultSetType, int resultSetConcurrency,
+            int resultSetHoldability) throws SQLException {
         throw new SQLException(new UnsupportedOperationException());
     }
 

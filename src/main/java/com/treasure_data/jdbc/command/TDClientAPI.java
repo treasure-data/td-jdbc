@@ -50,9 +50,9 @@ public class TDClientAPI implements ClientAPI {
         return logger.log(tableName, record);
     }
 
-    public boolean flush() { // TODO for debug
+    public boolean flush() {
         TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
-        TreasureDataLogger.closeAll();
+        logger.flush();
         return true;
     }
 

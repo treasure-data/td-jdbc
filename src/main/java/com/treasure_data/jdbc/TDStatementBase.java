@@ -33,6 +33,10 @@ public abstract class TDStatementBase implements Statement {
         exec = new CommandExecutor(new TDClientAPI(conn));
     }
 
+    public CommandExecutor getCommandExecutor() {
+        return exec;
+    }
+
     public void close() throws SQLException {
         currentResultSet = null;
     }

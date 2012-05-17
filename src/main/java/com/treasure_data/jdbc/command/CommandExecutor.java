@@ -280,12 +280,12 @@ public class CommandExecutor {
             Iterator<Expression> expr_iter = exprs.iterator();
             while (col_iter.hasNext()) {
                 Column col = col_iter.next();
+                Expression expr = expr_iter.next();
                 String colName = col.getColumnName();
                 int i = getIndex(paramList, colName);
                 if (i >= 0) {
                     record.put(colName, params.get(new Integer(i + 1)));
                 } else {
-                    Expression expr = expr_iter.next();
                     record.put(colName, toValue(expr));
                 }
             }

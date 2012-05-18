@@ -1,5 +1,9 @@
 package com.treasure_data.jdbc.command;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.sql.SQLException;
 import java.util.Properties;
 
 import org.hsqldb.result.ResultConstants;
@@ -13,6 +17,102 @@ import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
 
 public class TestCommandExecutor {
+
+    /*
+     * throw an exception by invalid context.mode
+     * invalid mode means number without EXECDIRECT and PREPARE
+     */
+    @Test
+    public void testExecute01() throws Exception {
+        ClientAPI clientApi = new NullClientAPI();
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        CommandContext context = new CommandContext();
+        context.mode = ResultConstants.CHANGE_SET; // without EXECDIRECT and PREPARE
+        try {
+            exec.execute(context);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof SQLException);
+        }
+    }
+
+    /*
+     * throw an exception by invalid context.sql
+     */
+    @Test
+    public void testExecute02() throws Exception {
+        ClientAPI clientApi = new NullClientAPI();
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        CommandContext context = new CommandContext();
+        context.mode = ResultConstants.EXECDIRECT;
+        context.sql = "illigal statement";
+        try {
+            exec.execute(context);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof SQLException);
+        }
+    }
+
+    /*
+     * throw an exception by invalid context.sql
+     * invalid sql means sql statement without insert/create/drop/select
+     */
+    @Test
+    public void testExecute03() throws Exception {
+        ClientAPI clientApi = new NullClientAPI();
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        CommandContext context = new CommandContext();
+        context.mode = ResultConstants.EXECDIRECT;
+        context.sql = "update foo set k='muga' where id = 100";
+        try {
+            exec.execute(context);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof SQLException);
+        }
+    }
+
+    /*
+     * throw an exception by invalid context.sql
+     * here invalid sql means a sql statement that includes jdbc parameters like '?'.
+     */
+    @Test
+    public void testExecute04() throws Exception {
+        ClientAPI clientApi = new NullClientAPI();
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        CommandContext context = new CommandContext();
+        context.mode = ResultConstants.EXECDIRECT;
+        context.sql = "insert into foo (k1, k2) values (?, 'muga')";
+        try {
+            exec.execute(context);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof SQLException);
+        }
+    }
+
+    // TODO XXX
+
+    @Test
+    public void testExecuteXX() throws Exception {
+        ClientAPI clientApi = new NullClientAPI();
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        CommandContext context = new CommandContext();
+        context.mode = ResultConstants.PREPARE;
+        // TODO
+        try {
+            exec.execute(context);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof SQLException);
+        }
+    }
 
     @Test @Ignore
     public void select01() throws Exception {
@@ -28,9 +128,9 @@ public class TestCommandExecutor {
         Properties props = new Properties();
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TDClientAPI clientAdaptor =
+        TDClientAPI clientApi =
             new TDClientAPI(client, new Database("mugadb"));
-        CommandExecutor exec = new CommandExecutor(clientAdaptor);
+        CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext w = new CommandContext();
         w.mode = ResultConstants.EXECDIRECT;

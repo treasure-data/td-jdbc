@@ -3,13 +3,16 @@ package com.treasure_data.jdbc.command;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Properties;
 
 import org.hsqldb.result.ResultConstants;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.NullClientAPI;
@@ -93,6 +96,150 @@ public class TestCommandExecutor {
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof SQLException);
+        }
+    }
+
+    @Test
+    public void testExecute05() throws Exception {
+        { // insert
+            ClientAPI clientApi = new ClientAPI() {
+                public boolean drop(String tableName) throws ClientException {
+                    return false;
+                }
+
+                public boolean create(String table) throws ClientException {
+                    return false;
+                }
+
+                public boolean insert(String tableName,
+                        Map<String, Object> record) throws ClientException {
+                    throw new ClientException("mock exception");
+                }
+
+                public ResultSet select(String sql) throws ClientException {
+                    return null;
+                }
+
+                public boolean flush() {
+                    return false;
+                }
+            };
+            CommandExecutor exec = new CommandExecutor(clientApi);
+
+            CommandContext context = new CommandContext();
+            context.mode = ResultConstants.EXECDIRECT;
+            context.sql = "insert into foo (k1, k2) values (1, 'muga')";
+            try {
+                exec.execute(context);
+                fail();
+            } catch (Exception e) {
+                assertTrue(e instanceof SQLException);
+            }
+        }
+        { // create table
+            ClientAPI clientApi = new ClientAPI() {
+                public boolean drop(String tableName) throws ClientException {
+                    return false;
+                }
+
+                public boolean create(String table) throws ClientException {
+                    throw new ClientException("mock exception");
+                }
+
+                public boolean insert(String tableName,
+                        Map<String, Object> record) throws ClientException {
+                    return false;
+                }
+
+                public ResultSet select(String sql) throws ClientException {
+                    return null;
+                }
+
+                public boolean flush() {
+                    return false;
+                }
+            };
+            CommandExecutor exec = new CommandExecutor(clientApi);
+
+            CommandContext context = new CommandContext();
+            context.mode = ResultConstants.EXECDIRECT;
+            context.sql = "create table foo(name int)";
+            try {
+                exec.execute(context);
+                fail();
+            } catch (Exception e) {
+                assertTrue(e instanceof SQLException);
+            }
+        }
+        { // drop table
+            ClientAPI clientApi = new ClientAPI() {
+                public boolean drop(String tableName) throws ClientException {
+                    throw new ClientException("mock exception");
+                }
+
+                public boolean create(String table) throws ClientException {
+                    return false;
+                }
+
+                public boolean insert(String tableName,
+                        Map<String, Object> record) throws ClientException {
+                    return false;
+                }
+
+                public ResultSet select(String sql) throws ClientException {
+                    return null;
+                }
+
+                public boolean flush() {
+                    return false;
+                }
+            };
+            CommandExecutor exec = new CommandExecutor(clientApi);
+
+            CommandContext context = new CommandContext();
+            context.mode = ResultConstants.EXECDIRECT;
+            context.sql = "drop table foo";
+            try {
+                exec.execute(context);
+                fail();
+            } catch (Exception e) {
+                assertTrue(e instanceof SQLException);
+            }
+        }
+        { // select
+            ClientAPI clientApi = new ClientAPI() {
+                public boolean drop(String tableName) throws ClientException {
+                    return false;
+                }
+
+                public boolean create(String table) throws ClientException {
+                    return false;
+                }
+
+                public boolean insert(String tableName,
+                        Map<String, Object> record) throws ClientException {
+                    return false;
+                }
+
+                public ResultSet select(String sql) throws ClientException {
+                    throw new ClientException("mock exception");
+                }
+
+                public boolean flush() {
+                    return false;
+                }
+            };
+            CommandExecutor exec = new CommandExecutor(clientApi);
+
+            CommandContext context = new CommandContext();
+            context.mode = ResultConstants.EXECDIRECT;
+            context.sql = "select v from accesslog";
+            try {
+                exec.execute(context);
+                fail();
+            } catch (Exception e) {
+                assertTrue(e instanceof SQLException);
+            }
         }
     }
 

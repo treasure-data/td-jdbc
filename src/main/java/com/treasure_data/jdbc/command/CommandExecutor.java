@@ -269,8 +269,10 @@ public class CommandExecutor {
                 record.put(col.getColumnName(), toValue(expr));
             }
             api.insert(table.getName(), record);
-        } catch (Exception e) {
-            throw new UnsupportedOperationException();
+        } catch (ParseException e) {
+            throw new SQLException(e);
+        } catch (ClientException e) {
+            throw new SQLException(e);
         }
     }
 
@@ -348,7 +350,8 @@ public class CommandExecutor {
         List<Index> indexes = stat.getIndexes();
     }
 
-    public void executeCompiledStatement(CommandContext context, CreateTable stat) {
+    public void executeCompiledStatement(CommandContext context, CreateTable stat)
+            throws SQLException {
         /**
          * SQL:
          * create table table01(c0 varchar(255), c1 int)
@@ -358,14 +361,15 @@ public class CommandExecutor {
          */
 
         Table table = stat.getTable();
+        @SuppressWarnings("unused")
         List<ColumnDefinition> def = stat.getColumnDefinitions();
         @SuppressWarnings("unused")
         List<Index> indexes = stat.getIndexes();
 
         try {
             api.create(table.getName());
-        } catch (Exception e) {
-            throw new UnsupportedOperationException();
+        } catch (ClientException e) {
+            throw new SQLException(e);
         }
     }
 
@@ -394,7 +398,8 @@ public class CommandExecutor {
         }
     }
 
-    public void executeCompiledStatement(CommandContext context, Drop stat) {
+    public void executeCompiledStatement(CommandContext context, Drop stat)
+            throws SQLException {
         /**
          * SQL:
          * drop table table02
@@ -406,12 +411,13 @@ public class CommandExecutor {
         String tableName = stat.getName();
         @SuppressWarnings("unused")
         List<String> params = stat.getParameters();
+        @SuppressWarnings("unused")
         String type = stat.getType();
 
         try {
             api.drop(tableName);
         } catch (ClientException e) {
-            throw new UnsupportedOperationException();
+            throw new SQLException(e);
         }
     }
 
@@ -453,8 +459,7 @@ public class CommandExecutor {
             TimeValue v = (TimeValue) expr;
             return v.getValue().getTime() / 1000;
         } else {
-            throw new ParseException(
-                    String.format("Type of value is not supported: %s", expr));
+            throw new ParseException("Type of value is not supported: " + expr);
         }
     }
 }

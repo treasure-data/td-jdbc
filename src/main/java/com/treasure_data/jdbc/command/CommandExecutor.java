@@ -58,7 +58,7 @@ public class CommandExecutor {
 
         case ResultConstants.EXECUTE:
         case ResultConstants.BATCHEXECUTE:
-            throw new UnsupportedOperationException();
+            throw new SQLException("invalid mode: " + context.mode);
 
         case ResultConstants.PREPARE:
             executePrepare(context);

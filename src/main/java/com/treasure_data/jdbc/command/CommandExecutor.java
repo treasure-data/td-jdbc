@@ -369,7 +369,7 @@ public class CommandExecutor {
         return -1;
     }
 
-    private static Object toValue(Expression expr) {
+    private static Object toValue(Expression expr) throws ParseException {
         if (expr instanceof DateValue) {
             DateValue v = (DateValue) expr;
             return v.getValue().getTime() / 1000;
@@ -388,9 +388,8 @@ public class CommandExecutor {
             TimeValue v = (TimeValue) expr;
             return v.getValue().getTime() / 1000;
         } else {
-            return org.hsqldb.result.Result.newErrorResult(
-                    new UnsupportedOperationException(),
-                    expr.toString());
+            throw new ParseException(
+                    String.format("Type of value is not supported: %s", expr));
         }
     }
 }

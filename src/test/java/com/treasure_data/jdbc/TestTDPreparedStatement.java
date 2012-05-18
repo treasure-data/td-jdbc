@@ -20,7 +20,7 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.jdbc.TDConnection;
 
-public class TestTreasureDataPreparedStatement {
+public class TestTDPreparedStatement {
 
     @Test @Ignore
     public void testSimple() throws Exception {

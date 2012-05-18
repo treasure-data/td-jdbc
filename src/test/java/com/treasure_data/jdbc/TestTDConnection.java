@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import com.treasure_data.jdbc.TDConnection;
 
-public class TestTreasureDataConnection {
+public class TestTDConnection {
 
     @Test @Ignore
     public void testSimple() throws Exception {

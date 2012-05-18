@@ -63,6 +63,30 @@ public class TestCommandExecutor {
     }
 
     @Test @Ignore
+    public void dropTable01() throws Exception {
+        CommandExecutor exec = new CommandExecutor(new NullClientAPI());
+        CommandContext w = new CommandContext();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "drop table table02";
+        exec.execute(w);
+    }
+
+    @Test @Ignore
+    public void dropTable02() throws Exception {
+        Properties props = new Properties();
+        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
+        TreasureDataClient client = new TreasureDataClient(props);
+        TDClientAPI clientAdaptor =
+            new TDClientAPI(client, new Database("mugadb"));
+        CommandExecutor exec = new CommandExecutor(clientAdaptor);
+
+        CommandContext w = new CommandContext();
+        w.mode = ResultConstants.EXECDIRECT;
+        w.sql = "drop table table02";
+        exec.execute(w);
+    }
+
+    @Test @Ignore
     public void insert01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();

@@ -35,6 +35,15 @@ public class TDClientAPI implements ClientAPI {
         return database;
     }
 
+    public boolean drop(String table) {
+        try {
+            client.deleteTable(database.getName(), table);
+            return true;
+        } catch (ClientException e) {
+            return false;
+        }
+    }
+
     public boolean create(String table) {
         try {
             client.createTable(database, table);

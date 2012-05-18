@@ -6,6 +6,9 @@ import java.util.Map;
 import com.treasure_data.client.ClientException;
 
 public interface ClientAPI {
+    // drop table statement
+    boolean drop(String tableName) throws ClientException;
+
     // create table statement
     boolean create(String table) throws ClientException;
 
@@ -16,4 +19,5 @@ public interface ClientAPI {
     ResultSet select(String sql) throws ClientException;
 
     boolean flush(); // for debugging
+
 }

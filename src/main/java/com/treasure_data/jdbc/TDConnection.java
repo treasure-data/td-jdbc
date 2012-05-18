@@ -18,7 +18,6 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 
-import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.model.Database;
 
 public class TDConnection implements Connection, Constants {

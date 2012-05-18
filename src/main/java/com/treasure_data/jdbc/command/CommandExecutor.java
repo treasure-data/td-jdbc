@@ -28,6 +28,7 @@ import com.treasure_data.jdbc.compiler.schema.Column;
 import com.treasure_data.jdbc.compiler.schema.Table;
 import com.treasure_data.jdbc.compiler.stat.ColumnDefinition;
 import com.treasure_data.jdbc.compiler.stat.CreateTable;
+import com.treasure_data.jdbc.compiler.stat.Drop;
 import com.treasure_data.jdbc.compiler.stat.Index;
 import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
@@ -94,8 +95,7 @@ public class CommandExecutor {
         }
     }
 
-    public void executePrepare(CommandContext context)
-            throws SQLException {
+    public void executePrepare(CommandContext context) throws SQLException {
         if (context.compiledSql == null) {
             try {
                 String sql = context.sql;
@@ -119,6 +119,8 @@ public class CommandExecutor {
             extractJdbcParameters(context, (Insert) stat);
         } else if (stat instanceof CreateTable) {
             extractJdbcParameters(context, (CreateTable) stat);
+        } else if (stat instanceof Drop) {
+            extractJdbcParameters(context, (Drop) stat);
         } else if (stat instanceof Select) {
             extractJdbcParameters(context, (Select) stat);
         } else {
@@ -133,6 +135,8 @@ public class CommandExecutor {
             executeCompiledStatement(context, (Insert) stat);
         } else if (stat instanceof CreateTable) {
             executeCompiledStatement(context, (CreateTable) stat);
+        } else if (stat instanceof Drop) {
+            executeCompiledStatement(context, (Drop) stat);
         } else if (stat instanceof Select) {
             executeCompiledStatement(context, (Select) stat);
         } else {
@@ -147,6 +151,8 @@ public class CommandExecutor {
             executeCompiledPreparedStatement(context, (Insert) stat);
         } else if (stat instanceof CreateTable) {
             executeCompiledPreparedStatement(context, (CreateTable) stat);
+        } else if (stat instanceof Drop) {
+            executeCompiledPreparedStatement(context, (Drop) stat);
         } else if (stat instanceof Select) {
             executeCompiledPreparedStatement(context, (Select) stat);
         } else {
@@ -170,6 +176,7 @@ public class CommandExecutor {
     }
 
     public void extractJdbcParameters(CommandContext context, Select stat) {
+        // ignore
     }
 
     public void executeCompiledStatement(CommandContext context, Insert stat) {
@@ -243,39 +250,8 @@ public class CommandExecutor {
          */
 
         Table table = stat.getTable();
-        // table validation
-        if (table == null
-                || table.getName() == null
-                || table.getName().isEmpty()) {
-            throw new UnsupportedOperationException();
-        }
-
-        // columns validation
         List<Column> cols = stat.getColumns();
-        if (cols == null || cols.size() <= 0) {
-            throw new UnsupportedOperationException();
-        }
-
-        // items validation
-        List<Expression> exprs;
-        {
-            ItemsList items = stat.getItemsList();
-            if (items == null) {
-                throw new UnsupportedOperationException();
-            }
-            try {
-                exprs = ((ExpressionList) items).getExpressions();
-            } catch (Throwable t) {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        // other validations
-        if (cols.size() != exprs.size()) {
-            throw new UnsupportedOperationException();
-        }
-
-
+        List<Expression> exprs = ((ExpressionList) stat.getItemsList()).getExpressions();
         List<String> paramList = context.paramList;
         Map<Integer, Object> params = context.params;
 
@@ -355,8 +331,46 @@ public class CommandExecutor {
         executeCompiledStatement(context, stat);
     }
 
-    public void extractJdbcParameters(CommandContext context,
-            CreateTable stat) {
+    public void extractJdbcParameters(CommandContext context, CreateTable stat) {
+            // ignore
+    }
+
+    public void executeCompiledStatement(CommandContext context, Drop stat) {
+        /**
+         * SQL:
+         * drop table table02
+         *
+         * ret:
+         * table => table02
+         */
+
+        String tableName = stat.getName();
+        if (tableName == null || tableName.isEmpty()) {
+            throw new UnsupportedOperationException();
+        }
+
+        @SuppressWarnings("unused")
+        List<String> params = stat.getParameters();
+
+        String type = stat.getType();
+        if (! (type.equals("table"))) {
+            throw new UnsupportedOperationException();
+        }
+
+        try {
+            api.drop(tableName);
+        } catch (ClientException e) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public void executeCompiledPreparedStatement(CommandContext context,
+            Drop stat) throws SQLException {
+        executeCompiledStatement(context, stat);
+    }
+
+    public void extractJdbcParameters(CommandContext context, Drop stat) {
+        // ignore
     }
 
     private static int getIndex(List<String> list, String data) {

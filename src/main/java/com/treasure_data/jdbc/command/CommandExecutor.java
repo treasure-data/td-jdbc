@@ -32,6 +32,7 @@ import com.treasure_data.jdbc.compiler.stat.Drop;
 import com.treasure_data.jdbc.compiler.stat.Index;
 import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
+import com.treasure_data.jdbc.compiler.stat.Statement;
 
 /**
  * @see org.hsqldb.Session
@@ -51,20 +52,20 @@ public class CommandExecutor {
     public synchronized void execute(CommandContext context)
             throws SQLException {
         switch (context.mode) {
-        case ResultConstants.LARGE_OBJECT_OP:
-        case ResultConstants.EXECUTE:
-        case ResultConstants.BATCHEXECUTE:
-            throw new UnsupportedOperationException();
-
         case ResultConstants.EXECDIRECT:
             executeDirect(context);
             break;
 
-        case ResultConstants.BATCHEXECDIRECT:
+        case ResultConstants.EXECUTE:
+        case ResultConstants.BATCHEXECUTE:
+            throw new UnsupportedOperationException();
+
         case ResultConstants.PREPARE:
             executePrepare(context);
             break;
 
+        case ResultConstants.LARGE_OBJECT_OP:
+        case ResultConstants.BATCHEXECDIRECT:
         case ResultConstants.CLOSE_RESULT:
         case ResultConstants.UPDATE_RESULT:
         case ResultConstants.FREESTMT:
@@ -75,7 +76,7 @@ public class CommandExecutor {
         case ResultConstants.REQUESTDATA:
         case ResultConstants.DISCONNECT:
         default:
-            throw new UnsupportedOperationException();
+            throw new SQLException("invalid mode: " + context.mode);
         }
     }
 
@@ -85,6 +86,7 @@ public class CommandExecutor {
             InputStream in = new ByteArrayInputStream(sql.getBytes());
             CCSQLParser p = new CCSQLParser(in);
             context.compiledSql = p.Statement();
+            validateStatement(context);
             extractJdbcParameters(context);
             if (context.paramList.size() != 0) {
                 throw new ParseException("sql includes some jdbcParameters");
@@ -102,6 +104,7 @@ public class CommandExecutor {
                 InputStream in = new ByteArrayInputStream(sql.getBytes());
                 CCSQLParser p = new CCSQLParser(in);
                 context.compiledSql = p.Statement();
+                validateStatement(context);
                 extractJdbcParameters(context);
             } catch (ParseException e) {
                 throw new SQLException(e);
@@ -111,10 +114,30 @@ public class CommandExecutor {
         }
     }
 
+    public void validateStatement(CommandContext context)
+            throws ParseException {
+        Statement stat = context.compiledSql;
+        if (stat == null) {
+            throw new ParseException("stat is null");
+        }
+
+        if (stat instanceof Insert) {
+            validateStatement(context, (Insert) stat);
+        } else if (stat instanceof CreateTable) {
+            validateStatement(context, (CreateTable) stat);
+        } else if (stat instanceof Drop) {
+            validateStatement(context, (Drop) stat);
+        } else if (stat instanceof Select) {
+            validateStatement(context, (Select) stat);
+        } else {
+            throw new ParseException("unsupported statement: " + stat);
+        }
+    }
+
     public void extractJdbcParameters(CommandContext context)
-            throws SQLException {
+            throws ParseException {
         context.paramList = new ArrayList<String>();
-        com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;
+        Statement stat = context.compiledSql;
         if (stat instanceof Insert) {
             extractJdbcParameters(context, (Insert) stat);
         } else if (stat instanceof CreateTable) {
@@ -124,13 +147,13 @@ public class CommandExecutor {
         } else if (stat instanceof Select) {
             extractJdbcParameters(context, (Select) stat);
         } else {
-            throw new UnsupportedOperationException();
+            throw new ParseException("unsupported statement: " + stat);
         }
     }
 
     public void executeCompiledStatement(CommandContext context)
             throws SQLException {
-        com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;
+        Statement stat = context.compiledSql;
         if (stat instanceof Insert) {
             executeCompiledStatement(context, (Insert) stat);
         } else if (stat instanceof CreateTable) {
@@ -140,13 +163,13 @@ public class CommandExecutor {
         } else if (stat instanceof Select) {
             executeCompiledStatement(context, (Select) stat);
         } else {
-            throw new UnsupportedOperationException();
+            throw new SQLException("unsupported statement: " + stat);
         }
     }
 
     public void executeCompiledPreparedStatement(CommandContext context)
             throws SQLException {
-        com.treasure_data.jdbc.compiler.stat.Statement stat = context.compiledSql;
+        Statement stat = context.compiledSql;
         if (stat instanceof Insert) {
             executeCompiledPreparedStatement(context, (Insert) stat);
         } else if (stat instanceof CreateTable) {
@@ -156,8 +179,13 @@ public class CommandExecutor {
         } else if (stat instanceof Select) {
             executeCompiledPreparedStatement(context, (Select) stat);
         } else {
-            throw new UnsupportedOperationException();
+            throw new SQLException("unsupported statement: " + stat);
         }
+    }
+
+    public void validateStatement(CommandContext context, Select stat)
+            throws ParseException {
+        // ignore
     }
 
     public void executeCompiledStatement(CommandContext context,
@@ -179,7 +207,44 @@ public class CommandExecutor {
         // ignore
     }
 
-    public void executeCompiledStatement(CommandContext context, Insert stat) {
+    public void validateStatement(CommandContext context, Insert stat)
+            throws ParseException {
+        Table table = stat.getTable();
+        // table validation
+        if (table == null
+                || table.getName() == null
+                || table.getName().isEmpty()) {
+            throw new ParseException("invalid table name: " + table);
+        }
+
+        // columns validation
+        List<Column> cols = stat.getColumns();
+        if (cols == null || cols.size() <= 0) {
+            throw new ParseException("invalid columns: " +  cols);
+        }
+
+        // items validation
+        List<Expression> exprs;
+        {
+            ItemsList items = stat.getItemsList();
+            if (items == null) {
+                throw new ParseException("invalid item list: " + items);
+            }
+            try {
+                exprs = ((ExpressionList) items).getExpressions();
+            } catch (Throwable t) {
+                throw new ParseException("unsupported expressions");
+            }
+        }
+
+        // other validations
+        if (cols.size() != exprs.size()) {
+            throw new ParseException("invalid columns or expressions");
+        }
+    }
+
+    public void executeCompiledStatement(CommandContext context, Insert stat)
+            throws SQLException {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')
@@ -191,37 +256,8 @@ public class CommandExecutor {
          */
 
         Table table = stat.getTable();
-        // table validation
-        if (table == null
-                || table.getName() == null
-                || table.getName().isEmpty()) {
-            throw new UnsupportedOperationException();
-        }
-
-        // columns validation
         List<Column> cols = stat.getColumns();
-        if (cols == null || cols.size() <= 0) {
-            throw new UnsupportedOperationException();
-        }
-
-        // items validation
-        List<Expression> exprs;
-        {
-            ItemsList items = stat.getItemsList();
-            if (items == null) {
-                throw new UnsupportedOperationException();
-            }
-            try {
-                exprs = ((ExpressionList) items).getExpressions();
-            } catch (Throwable t) {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        // other validations
-        if (cols.size() != exprs.size()) {
-            throw new UnsupportedOperationException();
-        }
+        List<Expression> exprs = ((ExpressionList) stat.getItemsList()).getExpressions();
 
         try {
             Map<String, Object> record = new HashMap<String, Object>();
@@ -278,8 +314,7 @@ public class CommandExecutor {
 
     public void extractJdbcParameters(CommandContext context, Insert stat) {
         List<Column> cols = stat.getColumns();
-        List<Expression> exprs =
-            ((ExpressionList) stat.getItemsList()).getExpressions();
+        List<Expression> exprs = ((ExpressionList) stat.getItemsList()).getExpressions();
         int len = cols.size();
         for (int i = 0; i < len; i++) {
             Expression expr = exprs.get(i);
@@ -292,6 +327,27 @@ public class CommandExecutor {
         }
     }
 
+    public void validateStatement(CommandContext context, CreateTable stat)
+            throws ParseException {
+        // table validation
+        Table table = stat.getTable();
+        if (table == null
+                || table.getName() == null
+                || table.getName().isEmpty()) {
+            throw new ParseException("invalid table name: " + table);
+                    }
+
+        // column definition validation
+        List<ColumnDefinition> def = stat.getColumnDefinitions();
+        if (def == null || def.size() == 0) {
+            throw new ParseException("invalid column definitions: " + def);
+        }
+
+        // this variable is not used
+        @SuppressWarnings("unused")
+        List<Index> indexes = stat.getIndexes();
+    }
+
     public void executeCompiledStatement(CommandContext context, CreateTable stat) {
         /**
          * SQL:
@@ -301,21 +357,8 @@ public class CommandExecutor {
          * table => table02
          */
 
-        // table validation
         Table table = stat.getTable();
-        if (table == null
-                || table.getName() == null
-                || table.getName().isEmpty()) {
-            throw new UnsupportedOperationException();
-        }
-
-        // column definition validation
         List<ColumnDefinition> def = stat.getColumnDefinitions();
-        if (def == null || def.size() == 0) {
-            throw new UnsupportedOperationException();
-        }
-
-        // this variable is not used
         @SuppressWarnings("unused")
         List<Index> indexes = stat.getIndexes();
 
@@ -332,7 +375,23 @@ public class CommandExecutor {
     }
 
     public void extractJdbcParameters(CommandContext context, CreateTable stat) {
-            // ignore
+        // ignore
+    }
+
+    public void validateStatement(CommandContext context, Drop stat)
+            throws ParseException {
+        String tableName = stat.getName();
+        if (tableName == null || tableName.isEmpty()) {
+            throw new ParseException("invalid table name: " + tableName);
+        }
+
+        @SuppressWarnings("unused")
+        List<String> params = stat.getParameters();
+
+        String type = stat.getType();
+        if (! (type.equals("table"))) {
+            throw new ParseException("unsupported type: " + type);
+        }
     }
 
     public void executeCompiledStatement(CommandContext context, Drop stat) {
@@ -345,17 +404,9 @@ public class CommandExecutor {
          */
 
         String tableName = stat.getName();
-        if (tableName == null || tableName.isEmpty()) {
-            throw new UnsupportedOperationException();
-        }
-
         @SuppressWarnings("unused")
         List<String> params = stat.getParameters();
-
         String type = stat.getType();
-        if (! (type.equals("table"))) {
-            throw new UnsupportedOperationException();
-        }
 
         try {
             api.drop(tableName);

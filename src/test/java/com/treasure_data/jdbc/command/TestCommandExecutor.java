@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -101,31 +102,31 @@ public class TestCommandExecutor {
 
     @Test
     public void testExecute05() throws Exception {
+        ClientAPI clientApi = new ClientAPI() {
+            public boolean drop(String tableName) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public boolean create(String table) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public boolean insert(String tableName,
+                    Map<String, Object> record) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public ResultSet select(String sql) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public boolean flush() {
+                return false;
+            }
+        };
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
         { // insert
-            ClientAPI clientApi = new ClientAPI() {
-                public boolean drop(String tableName) throws ClientException {
-                    return false;
-                }
-
-                public boolean create(String table) throws ClientException {
-                    return false;
-                }
-
-                public boolean insert(String tableName,
-                        Map<String, Object> record) throws ClientException {
-                    throw new ClientException("mock exception");
-                }
-
-                public ResultSet select(String sql) throws ClientException {
-                    return null;
-                }
-
-                public boolean flush() {
-                    return false;
-                }
-            };
-            CommandExecutor exec = new CommandExecutor(clientApi);
-
             CommandContext context = new CommandContext();
             context.mode = ResultConstants.EXECDIRECT;
             context.sql = "insert into foo (k1, k2) values (1, 'muga')";
@@ -137,30 +138,6 @@ public class TestCommandExecutor {
             }
         }
         { // create table
-            ClientAPI clientApi = new ClientAPI() {
-                public boolean drop(String tableName) throws ClientException {
-                    return false;
-                }
-
-                public boolean create(String table) throws ClientException {
-                    throw new ClientException("mock exception");
-                }
-
-                public boolean insert(String tableName,
-                        Map<String, Object> record) throws ClientException {
-                    return false;
-                }
-
-                public ResultSet select(String sql) throws ClientException {
-                    return null;
-                }
-
-                public boolean flush() {
-                    return false;
-                }
-            };
-            CommandExecutor exec = new CommandExecutor(clientApi);
-
             CommandContext context = new CommandContext();
             context.mode = ResultConstants.EXECDIRECT;
             context.sql = "create table foo(name int)";
@@ -172,30 +149,6 @@ public class TestCommandExecutor {
             }
         }
         { // drop table
-            ClientAPI clientApi = new ClientAPI() {
-                public boolean drop(String tableName) throws ClientException {
-                    throw new ClientException("mock exception");
-                }
-
-                public boolean create(String table) throws ClientException {
-                    return false;
-                }
-
-                public boolean insert(String tableName,
-                        Map<String, Object> record) throws ClientException {
-                    return false;
-                }
-
-                public ResultSet select(String sql) throws ClientException {
-                    return null;
-                }
-
-                public boolean flush() {
-                    return false;
-                }
-            };
-            CommandExecutor exec = new CommandExecutor(clientApi);
-
             CommandContext context = new CommandContext();
             context.mode = ResultConstants.EXECDIRECT;
             context.sql = "drop table foo";
@@ -207,30 +160,6 @@ public class TestCommandExecutor {
             }
         }
         { // select
-            ClientAPI clientApi = new ClientAPI() {
-                public boolean drop(String tableName) throws ClientException {
-                    return false;
-                }
-
-                public boolean create(String table) throws ClientException {
-                    return false;
-                }
-
-                public boolean insert(String tableName,
-                        Map<String, Object> record) throws ClientException {
-                    return false;
-                }
-
-                public ResultSet select(String sql) throws ClientException {
-                    throw new ClientException("mock exception");
-                }
-
-                public boolean flush() {
-                    return false;
-                }
-            };
-            CommandExecutor exec = new CommandExecutor(clientApi);
-
             CommandContext context = new CommandContext();
             context.mode = ResultConstants.EXECDIRECT;
             context.sql = "select v from accesslog";
@@ -243,21 +172,92 @@ public class TestCommandExecutor {
         }
     }
 
-    // TODO XXX
-
+    /*
+     * throw an exception by invalid context.sql
+     */
     @Test
-    public void testExecuteXX() throws Exception {
+    public void testExecute06() throws Exception {
         ClientAPI clientApi = new NullClientAPI();
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
         context.mode = ResultConstants.PREPARE;
-        // TODO
+        context.sql = "illigal statement";
         try {
             exec.execute(context);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof SQLException);
+        }
+    }
+
+    /*
+     * throw an exception by invalid context.sql
+     * invalid sql means sql statement without insert/create/drop/select
+     */
+    @Test
+    public void testExecute07() throws Exception {
+        ClientAPI clientApi = new NullClientAPI();
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        CommandContext context = new CommandContext();
+        context.mode = ResultConstants.PREPARE;
+        context.sql = "update foo set k='muga' where id = 100";
+        try {
+            exec.execute(context);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof SQLException);
+        }
+    }
+
+    /*
+     * throw an exception by invalid context.sql
+     * here sql means a sql statement that includes jdbc parameters like '?'.
+     */
+    @Test
+    public void testExecute08() throws Exception {
+        ClientAPI clientApi = new ClientAPI() {
+            public boolean drop(String tableName) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public boolean create(String table) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public boolean insert(String tableName,
+                    Map<String, Object> record) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public ResultSet select(String sql) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public boolean flush() {
+                return false;
+            }
+        };
+        CommandExecutor exec = new CommandExecutor(clientApi);
+
+        { // insert
+            CommandContext context = new CommandContext();
+            context.mode = ResultConstants.PREPARE;
+            context.sql = "insert into foo (k1, k2) values (?, 'muga')";
+            try {
+                exec.execute(context);
+            } catch (Exception e) {
+                assertTrue(e instanceof SQLException);
+            }
+            context.params = new HashMap<Integer, Object>();
+            context.params.put(1, 1);
+            try {
+                exec.execute(context);
+                fail();
+            } catch (Exception e) {
+                assertTrue(e instanceof SQLException);
+            }
         }
     }
 

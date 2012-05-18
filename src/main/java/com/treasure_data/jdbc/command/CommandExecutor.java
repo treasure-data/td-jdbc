@@ -276,7 +276,8 @@ public class CommandExecutor {
         }
     }
 
-    public void executeCompiledPreparedStatement(CommandContext context, Insert stat) {
+    public void executeCompiledPreparedStatement(CommandContext context, Insert stat)
+            throws SQLException {
         /**
          * SQL:
          * insert into table02 (k1, k2, k3) values (?, ?, 'nishizawa')
@@ -309,8 +310,10 @@ public class CommandExecutor {
                 }
             }
             api.insert(table.getName(), record);
-        } catch (Exception e) {
-            throw new UnsupportedOperationException();
+        } catch (ParseException e) {
+            throw new SQLException(e);
+        } catch (ClientException e) {
+            throw new SQLException(e);
         }
     }
 

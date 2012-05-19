@@ -14,15 +14,9 @@ import org.msgpack.type.Value;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
-import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.command.ClientAPI;
-import com.treasure_data.model.GetJobResultRequest;
-import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
-import com.treasure_data.model.JobResult;
 import com.treasure_data.model.JobSummary;
-import com.treasure_data.model.ShowJobRequest;
-import com.treasure_data.model.ShowJobResult;
 
 public class TDResultSet extends TDResultSetBase {
     private static Logger LOG = Logger.getLogger(TDResultSet.class.getName());
@@ -55,6 +49,14 @@ public class TDResultSet extends TDResultSetBase {
     @Override
     public int getFetchSize() throws SQLException {
         return fetchSize;
+    }
+
+    public void setMaxRows(int maxRows) {
+        this.maxRows = maxRows;
+    }
+
+    public int getMaxRows() {
+        return maxRows;
     }
 
     @Override

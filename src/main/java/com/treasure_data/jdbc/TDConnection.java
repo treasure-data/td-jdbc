@@ -26,6 +26,8 @@ public class TDConnection implements Connection, Constants {
 
     private Database database;
 
+    private int maxRows = 50;
+
     private SQLWarning warnings = null;
 
     public TDConnection(String uri, Properties props) throws SQLException {
@@ -68,6 +70,10 @@ public class TDConnection implements Connection, Constants {
 
     public Database getDatabase() {
         return database;
+    }
+
+    public int getMaxRows() {
+        return maxRows;
     }
 
     public void clearWarnings() throws SQLException {

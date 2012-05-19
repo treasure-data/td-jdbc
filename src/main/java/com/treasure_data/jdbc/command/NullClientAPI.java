@@ -3,7 +3,11 @@ package com.treasure_data.jdbc.command;
 import java.sql.ResultSet;
 import java.util.Map;
 
+import org.msgpack.unpacker.Unpacker;
+
 import com.treasure_data.client.ClientException;
+import com.treasure_data.model.Job;
+import com.treasure_data.model.JobSummary;
 
 public class NullClientAPI implements ClientAPI {
     public NullClientAPI() {
@@ -29,4 +33,11 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
+    public JobSummary waitJobResult(Job job) throws ClientException {
+        return null;
+    }
+
+    public Unpacker getJobResult(Job job) throws ClientException {
+        return null;
+    }
 }

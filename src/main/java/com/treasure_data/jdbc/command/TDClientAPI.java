@@ -1,7 +1,12 @@
 package com.treasure_data.jdbc.command;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
@@ -9,11 +14,19 @@ import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.Database;
+import com.treasure_data.model.GetJobResultRequest;
+import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
+import com.treasure_data.model.JobResult;
+import com.treasure_data.model.JobSummary;
+import com.treasure_data.model.ShowJobRequest;
+import com.treasure_data.model.ShowJobResult;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 
 public class TDClientAPI implements ClientAPI {
+    private static final Logger LOG = Logger.getLogger(TDClientAPI.class.getName());
+
     private TreasureDataClient client;
 
     private Database database;
@@ -60,9 +73,37 @@ public class TDClientAPI implements ClientAPI {
         job = result.getJob();
 
         if (job != null) {
-            rs = new TDResultSet(client, maxRows, job);
+            rs = new TDResultSet(this, maxRows, job);
         }
         return rs;
+    }
+
+    public JobSummary waitJobResult(Job job) throws ClientException {
+        ShowJobResult result;
+        while (true) {
+            ShowJobRequest request = new ShowJobRequest(job);
+            result = client.showJob(request);
+
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.fine("Job status: " + result.getJob().getStatus());
+            }
+
+            if (result.getJob().getStatus() == JobSummary.Status.SUCCESS) {
+                break;
+            }
+
+            try {
+                Thread.sleep(2 * 1000);
+            } catch (InterruptedException e) { // ignore
+            }
+        }
+        return result.getJob();
+    }
+
+    public Unpacker getJobResult(Job job) throws ClientException {
+        GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
+        GetJobResultResult result = client.getJobResult(request);
+        return result.getJobResult().getResult();
     }
 
     public boolean flush() {

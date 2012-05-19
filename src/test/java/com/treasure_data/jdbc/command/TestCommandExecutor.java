@@ -12,6 +12,7 @@ import java.util.Properties;
 import org.hsqldb.result.ResultConstants;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
@@ -19,6 +20,8 @@ import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.NullClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
+import com.treasure_data.model.Job;
+import com.treasure_data.model.JobSummary;
 
 public class TestCommandExecutor {
 
@@ -122,6 +125,14 @@ public class TestCommandExecutor {
 
             public boolean flush() {
                 return false;
+            }
+
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                return null;
+            }
+
+            public Unpacker getJobResult(Job job) throws ClientException {
+                return null;
             }
         };
         CommandExecutor exec = new CommandExecutor(clientApi);
@@ -237,6 +248,14 @@ public class TestCommandExecutor {
 
             public boolean flush() {
                 return false;
+            }
+
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                return null;
+            }
+
+            public Unpacker getJobResult(Job job) throws ClientException {
+                return null;
             }
         };
         CommandExecutor exec = new CommandExecutor(clientApi);

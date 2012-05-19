@@ -3,7 +3,11 @@ package com.treasure_data.jdbc.command;
 import java.sql.ResultSet;
 import java.util.Map;
 
+import org.msgpack.unpacker.Unpacker;
+
 import com.treasure_data.client.ClientException;
+import com.treasure_data.model.Job;
+import com.treasure_data.model.JobSummary;
 
 public interface ClientAPI {
     // drop table statement
@@ -20,4 +24,7 @@ public interface ClientAPI {
 
     boolean flush(); // for debugging
 
+    JobSummary waitJobResult(Job job) throws ClientException;
+
+    Unpacker getJobResult(Job job) throws ClientException;
 }

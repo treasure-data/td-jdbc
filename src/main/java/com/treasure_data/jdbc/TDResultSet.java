@@ -15,6 +15,7 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
@@ -26,7 +27,7 @@ import com.treasure_data.model.ShowJobResult;
 public class TDResultSet extends TDResultSetBase {
     private static Logger LOG = Logger.getLogger(TDResultSet.class.getName());
 
-    private TreasureDataClient client;
+    private ClientAPI clientApi;
 
     private int maxRows = 0;
 
@@ -40,15 +41,10 @@ public class TDResultSet extends TDResultSetBase {
 
     private Job job;
 
-    public TDResultSet(TreasureDataClient client, int maxRows, Job job) {
-        this.client = client;
+    public TDResultSet(ClientAPI clientApi, int maxRows, Job job) {
+        this.clientApi = clientApi;
         this.maxRows = maxRows;
         this.job = job;
-    }
-
-    public TDResultSet(TreasureDataClient client, Job job)
-            throws SQLException {
-        this(client, 0, job);
     }
 
     @Override
@@ -63,7 +59,9 @@ public class TDResultSet extends TDResultSetBase {
 
     @Override
     public void close() throws SQLException {
-        client = null;
+        clientApi = null;
+        fetchedRows = null;
+        fetchedRowsItr = null;
     }
 
     /**
@@ -106,53 +104,22 @@ public class TDResultSet extends TDResultSetBase {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        while (true) {
-            try {
-                ShowJobRequest request = new ShowJobRequest(job);
-                ShowJobResult result = client.showJob(request);
-                if (LOG.isLoggable(Level.FINE)) {
-                    LOG.fine("Job status: " + result.getJob().getStatus());
-                }
-                if (result.getJob().getStatus() == JobSummary.Status.SUCCESS) {
-                    initColumnNamesAndTypes(result.getJob());
-                    break;
-                }
-            } catch (ClientException e) {
-                throw new SQLException(e);
-            }
-
-            try {
-                Thread.sleep(2 * 1000);
-            } catch (InterruptedException e) { // ignore
-            }
+        try {
+            JobSummary jobSummary = clientApi.waitJobResult(job);
+            initColumnNamesAndTypes(jobSummary);
+            return super.getMetaData();
+        } catch (ClientException e) {
+            throw new SQLException(e);
         }
-        return super.getMetaData();
     }
 
-    private Unpacker fetchRows(int fetchSize) throws ClientException {
-        while (true) {
-            ShowJobRequest request = new ShowJobRequest(job);
-            ShowJobResult result = client.showJob(request);
-            if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Job status: " + result.getJob().getStatus());
-            }
-            if (result.getJob().getStatus() == JobSummary.Status.SUCCESS) {
-                initColumnNamesAndTypes(result.getJob());
-                break;
-            }
-
-            try {
-                Thread.sleep(2 * 1000);
-            } catch (InterruptedException e) { // ignore
-            }
-        }
-
+    private Unpacker fetchRows(int fetchSize) throws SQLException {
         try {
-            GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
-            GetJobResultResult result = client.getJobResult(request);
-            return result.getJobResult().getResult();
-        } catch (Exception e) {
-            throw new ClientException(e);
+            JobSummary jobSummary = clientApi.waitJobResult(job);
+            initColumnNamesAndTypes(jobSummary);
+            return clientApi.getJobResult(job);
+        } catch (ClientException e) {
+            throw new SQLException(e);
         }
     }
 

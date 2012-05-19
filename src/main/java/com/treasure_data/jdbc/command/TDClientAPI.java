@@ -42,6 +42,10 @@ public class TDClientAPI implements ClientAPI {
         return database;
     }
 
+    public int getMaxRows() {
+        return maxRows;
+    }
+
     public boolean drop(String table) throws ClientException {
         client.deleteTable(database.getName(), table);
         return true;
@@ -58,12 +62,6 @@ public class TDClientAPI implements ClientAPI {
         return logger.log(tableName, record);
     }
 
-    public boolean flush() {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
-        logger.flush();
-        return true;
-    }
-
     public ResultSet select(String sql) throws ClientException {
         ResultSet rs = null;
 
@@ -77,4 +75,11 @@ public class TDClientAPI implements ClientAPI {
         }
         return rs;
     }
+
+    public boolean flush() {
+        TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
+        logger.flush();
+        return true;
+    }
+
 }

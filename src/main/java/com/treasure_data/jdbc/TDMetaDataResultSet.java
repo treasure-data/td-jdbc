@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class TDMetaDataResultSet<M> extends TDBaseResultSet {
+public abstract class TDMetaDataResultSet<M> extends TDResultSetBase {
     protected final List<M> data;
 
     public TDMetaDataResultSet(final List<String> columnNames,

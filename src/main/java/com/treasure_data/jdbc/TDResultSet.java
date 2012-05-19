@@ -23,9 +23,8 @@ import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 
-public class TDQueryResultSet extends TDBaseResultSet {
-    private static Logger LOG = Logger.getLogger(
-            TDQueryResultSet.class.getName());
+public class TDResultSet extends TDResultSetBase {
+    private static Logger LOG = Logger.getLogger(TDResultSet.class.getName());
 
     private TreasureDataClient client;
 
@@ -41,16 +40,25 @@ public class TDQueryResultSet extends TDBaseResultSet {
 
     private Job job;
 
-    public TDQueryResultSet(TreasureDataClient client, int maxRows, Job job) {
+    public TDResultSet(TreasureDataClient client, int maxRows, Job job) {
         this.client = client;
         this.maxRows = maxRows;
         this.job = job;
-        //row = Arrays.asList(new Object[columnNames.size()]); // TODO #MN
     }
 
-    public TDQueryResultSet(TreasureDataClient client, Job job)
+    public TDResultSet(TreasureDataClient client, Job job)
             throws SQLException {
         this(client, 0, job);
+    }
+
+    @Override
+    public void setFetchSize(int rows) throws SQLException {
+        fetchSize = rows;
+    }
+
+    @Override
+    public int getFetchSize() throws SQLException {
+        return fetchSize;
     }
 
     @Override
@@ -98,16 +106,6 @@ public class TDQueryResultSet extends TDBaseResultSet {
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-//        // FIXME #MN for debug
-//        columnNames = new ArrayList<String>();
-//        columnTypes = new ArrayList<String>();
-//        columnNames.add("id");
-//        columnNames.add("name");
-//        columnNames.add("score");
-//        columnTypes.add("string");
-//        columnTypes.add("string");
-//        columnTypes.add("string");
-//        return super.getMetaData();
         while (true) {
             try {
                 ShowJobRequest request = new ShowJobRequest(job);
@@ -132,23 +130,6 @@ public class TDQueryResultSet extends TDBaseResultSet {
     }
 
     private Unpacker fetchRows(int fetchSize) throws ClientException {
-//        // FIXME #MN for debug
-//        org.msgpack.MessagePack msgpack = new org.msgpack.MessagePack();
-//        ByteArrayOutputStream out = new ByteArrayOutputStream();
-//        Packer packer = msgpack.createPacker(out);
-//        for (int i = 0; i < 30; i++) {
-//            List<String> row = new ArrayList<String>();
-//            row.add("" + i);
-//            row.add("muga:" + i);
-//            row.add("" + ((int) (Math.random() * i * 1000)) % 100);
-//            try {
-//                packer.write(row);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        byte[] bytes = out.toByteArray();
-//        return msgpack.createUnpacker(new ByteArrayInputStream(bytes));
         while (true) {
             ShowJobRequest request = new ShowJobRequest(job);
             ShowJobResult result = client.showJob(request);
@@ -188,16 +169,6 @@ public class TDQueryResultSet extends TDBaseResultSet {
             columnNames.add(col.get(0));
             columnTypes.add(col.get(1));
         }
-    }
-
-    @Override
-    public void setFetchSize(int rows) throws SQLException {
-        fetchSize = rows;
-    }
-
-    @Override
-    public int getFetchSize() throws SQLException {
-        return fetchSize;
     }
 
 }

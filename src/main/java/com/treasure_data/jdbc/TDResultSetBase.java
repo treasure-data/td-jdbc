@@ -29,7 +29,7 @@ import org.msgpack.type.Value;
  * Data independed base class which implements the common part of all
  * resultsets.
  */
-public abstract class TDBaseResultSet implements ResultSet {
+public abstract class TDResultSetBase implements ResultSet {
     protected SQLWarning warningChain = null;
 
     protected boolean wasNull = false;

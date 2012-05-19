@@ -6,7 +6,7 @@ import java.util.Map;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.TDConnection;
-import com.treasure_data.jdbc.TDQueryResultSet;
+import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
@@ -60,7 +60,7 @@ public class TDClientAPI implements ClientAPI {
         job = result.getJob();
 
         if (job != null) {
-            rs = new TDQueryResultSet(client, maxRows, job);
+            rs = new TDResultSet(client, maxRows, job);
         }
         return rs;
     }

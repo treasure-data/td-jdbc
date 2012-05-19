@@ -21,7 +21,8 @@ public class TDClientAPI implements ClientAPI {
     private int maxRows = 50;
 
     public TDClientAPI(TDConnection conn) {
-        this(new TreasureDataClient(conn.getProperties()), conn.getDatabase());
+        this(new TreasureDataClient(conn.getProperties()),
+                conn.getDatabase(), conn.getMaxRows());
     }
 
     public TDClientAPI(TreasureDataClient client, Database database) {
@@ -32,18 +33,6 @@ public class TDClientAPI implements ClientAPI {
         this.client = client;
         this.database = database;
         this.maxRows = maxRows;
-    }
-
-    public TreasureDataClient getClient() {
-        return client;
-    }
-
-    public Database getDatabase() {
-        return database;
-    }
-
-    public int getMaxRows() {
-        return maxRows;
     }
 
     public boolean drop(String table) throws ClientException {

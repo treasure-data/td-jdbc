@@ -6,6 +6,9 @@ import java.util.Map;
 import com.treasure_data.client.ClientException;
 
 public class NullClientAPI implements ClientAPI {
+    public NullClientAPI() {
+    }
+
     public boolean drop(String tableName) throws ClientException {
         return true;
     }

@@ -18,16 +18,23 @@ public class TDClientAPI implements ClientAPI {
 
     private Database database;
 
+    private int maxRows = 50;
+
     public TDClientAPI(TDConnection conn) {
         this(new TreasureDataClient(conn.getProperties()), conn.getDatabase());
     }
 
     public TDClientAPI(TreasureDataClient client, Database database) {
-        this.client = client;
-        this.database = database;
+        this(client, database, 50);
     }
 
-    public TreasureDataClient getTreasureDataClient() {
+    public TDClientAPI(TreasureDataClient client, Database database, int maxRows) {
+        this.client = client;
+        this.database = database;
+        this.maxRows = maxRows;
+    }
+
+    public TreasureDataClient getClient() {
         return client;
     }
 
@@ -35,25 +42,18 @@ public class TDClientAPI implements ClientAPI {
         return database;
     }
 
-    public boolean drop(String table) {
-        try {
-            client.deleteTable(database.getName(), table);
-            return true;
-        } catch (ClientException e) {
-            return false;
-        }
+    public boolean drop(String table) throws ClientException {
+        client.deleteTable(database.getName(), table);
+        return true;
     }
 
-    public boolean create(String table) {
-        try {
-            client.createTable(database, table);
-            return true;
-        } catch (ClientException e) {
-            return false;
-        }
+    public boolean create(String table) throws ClientException {
+        client.createTable(database, table);
+        return true;
     }
 
-    public boolean insert(String tableName, Map<String, Object> record) {
+    public boolean insert(String tableName, Map<String, Object> record)
+            throws ClientException {
         TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
         return logger.log(tableName, record);
     }
@@ -73,7 +73,7 @@ public class TDClientAPI implements ClientAPI {
         job = result.getJob();
 
         if (job != null) {
-            rs = new TDQueryResultSet(client, 50, job);
+            rs = new TDQueryResultSet(client, maxRows, job);
         }
         return rs;
     }

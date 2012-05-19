@@ -108,7 +108,7 @@ public class TDResultSet extends TDResultSetBase {
     public ResultSetMetaData getMetaData() throws SQLException {
         try {
             JobSummary jobSummary = clientApi.waitJobResult(job);
-            initColumnNamesAndTypes(jobSummary);
+            initColumnNamesAndTypes(jobSummary.getResultSchema());
             return super.getMetaData();
         } catch (ClientException e) {
             throw new SQLException(e);
@@ -118,15 +118,14 @@ public class TDResultSet extends TDResultSetBase {
     private Unpacker fetchRows(int fetchSize) throws SQLException {
         try {
             JobSummary jobSummary = clientApi.waitJobResult(job);
-            initColumnNamesAndTypes(jobSummary);
+            initColumnNamesAndTypes(jobSummary.getResultSchema());
             return clientApi.getJobResult(job);
         } catch (ClientException e) {
             throw new SQLException(e);
         }
     }
 
-    private void initColumnNamesAndTypes(JobSummary job) {
-        String resultSchema = job.getResultSchema();
+    private void initColumnNamesAndTypes(String resultSchema) {
         @SuppressWarnings("unchecked")
         List<List<String>> cols = (List<List<String>>) JSONValue.parse(resultSchema);
         if (cols == null) {

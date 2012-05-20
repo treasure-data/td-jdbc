@@ -69,7 +69,7 @@ public class TestTDResultSet {
         Job job = new Job("12345");
         TDResultSet rs = new TDResultSet(clientApi, 50, job);
         ResultSetMetaData rsMetaData = rs.getMetaData();
-        {
+        { // getColumnType(int)
             try {
                 rsMetaData.getColumnType(0);
                 fail();
@@ -87,6 +87,41 @@ public class TestTDResultSet {
                 assertTrue(t instanceof SQLException);
             }
         }
+        { // getColumnTypeName(int)
+            try {
+                rsMetaData.getColumnTypeName(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(1));
+            assertEquals(Constants.FLOAT_TYPE_NAME, rsMetaData.getColumnTypeName(2));
+            assertEquals(Constants.DOUBLE_TYPE_NAME, rsMetaData.getColumnTypeName(3));
+            assertEquals(Constants.BOOLEAN_TYPE_NAME, rsMetaData.getColumnTypeName(4));
+            try {
+                rsMetaData.getColumnTypeName(5);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+        { // getColumnName(int)
+            try {
+                rsMetaData.getColumnName(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof ArrayIndexOutOfBoundsException);
+            }
+            assertEquals("p1", rsMetaData.getColumnName(1));
+            assertEquals("p2", rsMetaData.getColumnName(2));
+            assertEquals("p3", rsMetaData.getColumnName(3));
+            assertEquals("p4", rsMetaData.getColumnName(4));
+            try {
+                rsMetaData.getColumnName(5);
+            } catch (Throwable t) {
+                assertTrue(t instanceof IndexOutOfBoundsException);
+            }
+        }
     }
 
     @Test
@@ -101,7 +136,7 @@ public class TestTDResultSet {
         Job job = new Job("12345");
         TDResultSet rs = new TDResultSet(clientApi, 50, job);
         ResultSetMetaData rsMetaData = rs.getMetaData();
-        {
+        { // getColumnType(int)
             try {
                 rsMetaData.getColumnType(0);
                 fail();
@@ -119,6 +154,41 @@ public class TestTDResultSet {
                 assertTrue(t instanceof SQLException);
             }
         }
+        { // getColumnTypeName(int)
+            try {
+                rsMetaData.getColumnTypeName(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+            assertEquals(Constants.TINYINT_TYPE_NAME, rsMetaData.getColumnTypeName(1));
+            assertEquals(Constants.SMALLINT_TYPE_NAME, rsMetaData.getColumnTypeName(2));
+            assertEquals(Constants.INT_TYPE_NAME, rsMetaData.getColumnTypeName(3));
+            assertEquals(Constants.BIGINT_TYPE_NAME, rsMetaData.getColumnTypeName(4));
+            try {
+                rsMetaData.getColumnTypeName(5);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+        { // getColumnName(int)
+            try {
+                rsMetaData.getColumnName(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof ArrayIndexOutOfBoundsException);
+            }
+            assertEquals("p1", rsMetaData.getColumnName(1));
+            assertEquals("p2", rsMetaData.getColumnName(2));
+            assertEquals("p3", rsMetaData.getColumnName(3));
+            assertEquals("p4", rsMetaData.getColumnName(4));
+            try {
+                rsMetaData.getColumnName(5);
+            } catch (Throwable t) {
+                assertTrue(t instanceof IndexOutOfBoundsException);
+            }
+        }
     }
 
     @Test
@@ -133,7 +203,7 @@ public class TestTDResultSet {
         Job job = new Job("12345");
         TDResultSet rs = new TDResultSet(clientApi, 50, job);
         ResultSetMetaData rsMetaData = rs.getMetaData();
-        {
+        { // getColumnType(int)
             try {
                 rsMetaData.getColumnType(0);
                 fail();
@@ -148,6 +218,39 @@ public class TestTDResultSet {
                 fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
+            }
+        }
+        { // getColumnTypeName(int)
+            try {
+                rsMetaData.getColumnTypeName(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(1));
+            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(2));
+            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(3));
+            try {
+                rsMetaData.getColumnTypeName(4);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+        { // getColumnName(int)
+            try {
+                rsMetaData.getColumnName(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof ArrayIndexOutOfBoundsException);
+            }
+            assertEquals("p1", rsMetaData.getColumnName(1));
+            assertEquals("p2", rsMetaData.getColumnName(2));
+            assertEquals("p3", rsMetaData.getColumnName(3));
+            try {
+                rsMetaData.getColumnName(4);
+            } catch (Throwable t) {
+                assertTrue(t instanceof IndexOutOfBoundsException);
             }
         }
     }

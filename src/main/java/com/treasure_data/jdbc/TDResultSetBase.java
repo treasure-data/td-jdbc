@@ -261,7 +261,7 @@ public abstract class TDResultSetBase implements ResultSet {
             return v.asIntegerValue().getInt();
         } catch (Exception e) {
             throw new SQLException("Cannot convert column " + columnIndex
-                    + " to integer" + e.toString());
+                    + " to integer " + e.toString());
         }
     }
 

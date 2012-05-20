@@ -1,6 +1,7 @@
 package com.treasure_data.jdbc;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.msgpack.MessagePack;
 import org.msgpack.packer.BufferPacker;
+import org.msgpack.type.ValueFactory;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
@@ -70,11 +72,11 @@ public class TestTDResultSet {
                     MessagePack msgpack = new MessagePack();
                     BufferPacker packer = msgpack.createBufferPacker();
                     List<Object> ret0 = new ArrayList<Object>();
-                    ret0.add(10);
+                    ret0.add(1);
                     ret0.add("muga");
                     packer.write(ret0);
                     List<Object> ret1 = new ArrayList<Object>();
-                    ret1.add(20);
+                    ret1.add(2);
                     ret1.add("nishizawa");
                     packer.write(ret1);
                     byte[] bytes = packer.toByteArray();
@@ -86,10 +88,103 @@ public class TestTDResultSet {
         };
         Job job = new Job("12345");
         ResultSet rs = new TDResultSet(clientApi, 50, job);
-        while (rs.next()) {
-            System.out.println(rs.getInt(1));
-            System.out.println(rs.getString(2));
+        assertTrue(rs.next());
+        assertEquals(1, rs.getInt(1));
+        assertEquals("muga", rs.getString(2));
+        assertTrue(rs.next());
+        assertEquals(2, rs.getInt(1));
+        assertEquals("nishizawa", rs.getString(2));
+        assertFalse(rs.next());
+    }
+
+    @Test
+    public void testNext02() throws Exception {
+        ClientAPI clientApi = new MockClientAPI() {
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
+                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            }
+
+            public Unpacker getJobResult(Job job) throws ClientException {
+                try {
+                    MessagePack msgpack = new MessagePack();
+                    BufferPacker packer = msgpack.createBufferPacker();
+                    List<Object> ret0 = new ArrayList<Object>();
+                    ret0.add(10);
+                    ret0.add("muga");
+                    packer.write(ret0);
+                    byte[] bytes = packer.toByteArray();
+                    return msgpack.createBufferUnpacker(bytes);
+                } catch (java.io.IOException e) {
+                    throw new ClientException("mock");
+                }
+            }
+        };
+        Job job = new Job("12345");
+        ResultSet rs = new TDResultSet(clientApi, 50, job);
+        assertTrue(rs.next());
+        { // ok: int to int
+            assertEquals(10, rs.getInt(1));
         }
+        { // ok: int to object
+            assertEquals(ValueFactory.createIntegerValue(10), rs.getObject(1));
+        }
+        { // error: int to string
+            try {
+                rs.getString(1);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+        { // error: int to boolean
+            try {
+                rs.getBoolean(1);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+    }
+
+    @Test
+    public void testNext03() throws Exception {
+        final int count = 100;
+        ClientAPI clientApi = new MockClientAPI() {
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                String resultSchema = "[[\"p1\",\"string\"],[\"p2\",\"string\"]]";
+                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            }
+
+            public Unpacker getJobResult(Job job) throws ClientException {
+                try {
+                    MessagePack msgpack = new MessagePack();
+                    BufferPacker packer = msgpack.createBufferPacker();
+                    for (int i = 0; i < count; i++) {
+                        List<Object> ret = new ArrayList<Object>();
+                        ret.add("p1:" + i);
+                        ret.add("p2:" + i);
+                        packer.write(ret);
+                    }
+                    byte[] bytes = packer.toByteArray();
+                    return msgpack.createBufferUnpacker(bytes);
+                } catch (java.io.IOException e) {
+                    throw new ClientException("mock");
+                }
+            }
+        };
+
+        Job job = new Job("12345");
+        ResultSet rs = new TDResultSet(clientApi, 100, job);
+        for (int i = 0; i < count; i++) {
+            System.out.println("i: " + i);
+            assertTrue(rs.next());
+            assertEquals("p1:" + i, rs.getString(1));
+            assertEquals("p2:" + i, rs.getString(2));
+        }
+        assertFalse(rs.next());
     }
 
     @Test

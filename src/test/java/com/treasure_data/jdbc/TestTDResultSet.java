@@ -1,6 +1,12 @@
 package com.treasure_data.jdbc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,43 +26,137 @@ import com.treasure_data.model.JobSummary.Status;
 
 public class TestTDResultSet {
 
+    public static class MockClientAPI implements ClientAPI {
+        public boolean drop(String tableName) throws ClientException {
+            return false;
+        }
+
+        public boolean create(String table) throws ClientException {
+            return false;
+        }
+
+        public boolean insert(String tableName, Map<String, Object> record)
+                throws ClientException {
+            return false;
+        }
+
+        public ResultSet select(String sql) throws ClientException {
+            return null;
+        }
+
+        public boolean flush() {
+            return false;
+        }
+
+        public JobSummary waitJobResult(Job job) throws ClientException {
+            return null;
+        }
+
+        public Unpacker getJobResult(Job job) throws ClientException {
+            return null;
+        }
+    }
+
+    @Test
+    public void testGetMetaData01() throws Exception {
+        ClientAPI clientApi = new MockClientAPI() {
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                String resultSchema = "[[\"p1\",\"string\"],[\"p2\",\"float\"],[\"p3\",\"double\"],[\"p4\",\"boolean\"]]";
+                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            }
+        };
+        Job job = new Job("12345");
+        TDResultSet rs = new TDResultSet(clientApi, 50, job);
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        {
+            try {
+                rsMetaData.getColumnType(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.FLOAT_TYPE_NAME), rsMetaData.getColumnType(2));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.DOUBLE_TYPE_NAME), rsMetaData.getColumnType(3));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.BOOLEAN_TYPE_NAME), rsMetaData.getColumnType(4));
+            try {
+                rsMetaData.getColumnType(5);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+    }
+
+    @Test
+    public void testGetMetaData02() throws Exception {
+        ClientAPI clientApi = new MockClientAPI() {
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                String resultSchema = "[[\"p1\",\"tinyint\"],[\"p2\",\"smallint\"],[\"p3\",\"int\"],[\"p4\",\"bigint\"]]";
+                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            }
+        };
+        Job job = new Job("12345");
+        TDResultSet rs = new TDResultSet(clientApi, 50, job);
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        {
+            try {
+                rsMetaData.getColumnType(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+            assertEquals(Utils.hiveTypeToSqlType(Constants.TINYINT_TYPE_NAME), rsMetaData.getColumnType(1));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.SMALLINT_TYPE_NAME), rsMetaData.getColumnType(2));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.INT_TYPE_NAME), rsMetaData.getColumnType(3));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.BIGINT_TYPE_NAME), rsMetaData.getColumnType(4));
+            try {
+                rsMetaData.getColumnType(5);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+    }
+
+    @Test
+    public void testGetMetaData03() throws Exception {
+        ClientAPI clientApi = new MockClientAPI() {
+            public JobSummary waitJobResult(Job job) throws ClientException {
+                String resultSchema = "[[\"p1\",\"map<string,int>\"],[\"p2\",\"array<int>\"],[\"p3\",\"struct<int>\"]]";
+                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            }
+        };
+        Job job = new Job("12345");
+        TDResultSet rs = new TDResultSet(clientApi, 50, job);
+        ResultSetMetaData rsMetaData = rs.getMetaData();
+        {
+            try {
+                rsMetaData.getColumnType(0);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(2));
+            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(3));
+            try {
+                rsMetaData.getColumnType(4);
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException);
+            }
+        }
+    }
+
     @Test
     public void testSample() throws Exception {
-        ClientAPI clientApi = new ClientAPI() {
-            public boolean drop(String tableName) throws ClientException {
-                return false;
-            }
-
-            public boolean create(String table) throws ClientException {
-                return false;
-            }
-
-            public boolean insert(String tableName, Map<String, Object> record) throws ClientException {
-                return false;
-            }
-
-            public ResultSet select(String sql) throws ClientException {
-                return null;
-            }
-
-            public boolean flush() {
-                return false;
-            }
-
+        ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
-                // hive_result_schema to json
-                //1.9.2-p290 :005 > names.zip(types)
-                //=> [["age", "int"], ["name", "string"]]
-                List<List<String>> resultSchema0 = new ArrayList<List<String>>();
-                List<String> col1 = new ArrayList<String>();
-                col1.add("age");
-                col1.add("int");
-                resultSchema0.add(col1);
-                List<String> col2 = new ArrayList<String>();
-                col2.add("name");
-                col2.add("string");
-                resultSchema0.add(col2);
-                String resultSchema = JSONValue.toJSONString(resultSchema0);
+                String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
                         "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
             }

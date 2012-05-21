@@ -31,7 +31,7 @@ public class TDClientAPI implements ClientAPI {
 
     private Database database;
 
-    private int maxRows = 50;
+    private int maxRows = 5000;
 
     public TDClientAPI(TDConnection conn) {
         this(new TreasureDataClient(conn.getProperties()),
@@ -39,7 +39,7 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public TDClientAPI(TreasureDataClient client, Database database) {
-        this(client, database, 50);
+        this(client, database, 5000);
     }
 
     public TDClientAPI(TreasureDataClient client, Database database, int maxRows) {

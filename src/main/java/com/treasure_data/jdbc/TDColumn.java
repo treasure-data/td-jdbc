@@ -8,10 +8,15 @@ import java.sql.Types;
  */
 public class TDColumn {
     private final String columnName;
+
     private final String tableName;
+
     private final String tableCatalog;
+
     private final String type;
+
     private final String comment;
+
     private final int ordinalPos;
 
     TDColumn(String columnName, String tableName, String tableCatalog,

@@ -23,6 +23,7 @@ public class TDResultSet extends TDResultSetBase {
 
     private ClientAPI clientApi;
 
+    // TODO #MN maxRows limitation is not used in current version
     private int maxRows = 0;
 
     private int rowsFetched = 0;
@@ -73,10 +74,6 @@ public class TDResultSet extends TDResultSetBase {
      * @throws SQLException     if a database access error occurs.
      */
     public boolean next() throws SQLException {
-        if (maxRows > 0 && rowsFetched >= maxRows) {
-            return false;
-        }
-
         try {
             if (fetchedRows == null) {
                 fetchedRows = fetchRows(fetchSize);
@@ -95,7 +92,7 @@ public class TDResultSet extends TDResultSetBase {
             rowsFetched++;
 
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Fetched row: " + row);
+                LOG.fine(String.format("fetched row(%d): %s", rowsFetched, row));
             }
         } catch (Exception e) {
             throw new SQLException("Error retrieving next row", e);
@@ -126,11 +123,22 @@ public class TDResultSet extends TDResultSetBase {
     }
 
     private void initColumnNamesAndTypes(String resultSchema) {
+        if (LOG.isLoggable(Level.FINE)) {
+            LOG.fine("resultSchema: " + resultSchema);
+        }
+
+        if (resultSchema == null) {
+            LOG.warning("Illegal resultSchema: null");
+            return;
+        }
+
         @SuppressWarnings("unchecked")
         List<List<String>> cols = (List<List<String>>) JSONValue.parse(resultSchema);
         if (cols == null) {
+            LOG.warning("Illegal resultSchema: " + resultSchema);
             return;
         }
+
         columnNames = new ArrayList<String>(cols.size());
         columnTypes = new ArrayList<String>(cols.size());
         for (List<String> col : cols) {

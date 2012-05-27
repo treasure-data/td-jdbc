@@ -13,6 +13,11 @@ public class JDBCSample {
         props.load(TestTreasureDataDriver.class.getClassLoader().getResourceAsStream("treasure-data.properties"));
     }
 
+    public static String getSystemProperty(String key) {
+        Properties props = System.getProperties();
+        return props.getProperty(key);
+    }
+
     public static void main(String[] args) throws Exception {
         loadSystemProperties();
 
@@ -23,10 +28,13 @@ public class JDBCSample {
             System.exit(1);
         }
 
+        String user = getSystemProperty("td.api.user");
+        String password = getSystemProperty("td.api.password");
         Connection conn = DriverManager.getConnection(
-                "jdbc:td://192.168.0.23:80/mugadb", "", "");
+                //"jdbc:td://192.168.0.23:80/mugadb", user, password);
+                "jdbc:td://api.treasure-data.com:80/mugatest", user, password);
         Statement stmt = conn.createStatement();
-        String sql = "select v from loggertable";
+        String sql = "select v from table2";
         System.out.println("Running: " + sql);
         ResultSet res = stmt.executeQuery(sql);
         while (res.next()) {

@@ -52,7 +52,13 @@ public class TDConnection implements Connection, Constants {
             // *ignore*: if an exception is thrown, 80 is
             // inserted into a port variable. 
         }
-        props.setProperty(Config.TD_API_SERVER_HOST, host + ":" + port);
+        props.setProperty(Config.TD_API_SERVER_HOST, host);
+        props.setProperty(Config.TD_API_SERVER_PORT, "" + port);
+        {
+            Properties sprops = System.getProperties();
+            sprops.setProperty(Config.TD_API_SERVER_HOST, host);
+            sprops.setProperty(Config.TD_API_SERVER_PORT, "" + port);
+        }
         this.props = props;
 
         // create a Database object

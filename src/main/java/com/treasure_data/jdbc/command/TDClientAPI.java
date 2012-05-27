@@ -3,6 +3,7 @@ package com.treasure_data.jdbc.command;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,8 @@ import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.logger.TreasureDataLogger;
+import com.treasure_data.model.AuthenticateRequest;
+import com.treasure_data.model.AuthenticateResult;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
@@ -29,23 +32,48 @@ public class TDClientAPI implements ClientAPI {
 
     private TreasureDataClient client;
 
+    private Properties props;
+
     private Database database;
 
     private int maxRows = 5000;
 
     public TDClientAPI(TDConnection conn) {
-        this(new TreasureDataClient(conn.getProperties()),
+        this(new TreasureDataClient(conn.getProperties()), conn.getProperties(),
                 conn.getDatabase(), conn.getMaxRows());
     }
 
     public TDClientAPI(TreasureDataClient client, Database database) {
-        this(client, database, 5000);
+        this(client, System.getProperties(), database, 5000);
     }
 
-    public TDClientAPI(TreasureDataClient client, Database database, int maxRows) {
+    public TDClientAPI(TreasureDataClient client, Properties props, Database database, int maxRows) {
         this.client = client;
+        this.props = props;
+        checkCredentials();
         this.database = database;
         this.maxRows = maxRows;
+    }
+
+    private void checkCredentials() {
+        String apiKey = client.getTreasureDataCredentials().getAPIKey();
+        if (apiKey != null) {
+            return;
+        }
+
+        if (props == null) {
+            return;
+        }
+
+        String user = props.getProperty("user");
+        String password = props.getProperty("password");
+        try {
+            AuthenticateRequest req = new AuthenticateRequest(user, password);
+            AuthenticateResult ret = client.authenticate(req);
+        } catch (ClientException e) {
+            LOG.throwing(this.getClass().getName(), "checkCredentials", e);
+            return;
+        }
     }
 
     public boolean drop(String table) throws ClientException {

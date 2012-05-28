@@ -1,6 +1,7 @@
 package com.treasure_data.jdbc.command;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.Map;
 
 import org.msgpack.unpacker.Unpacker;
@@ -8,8 +9,12 @@ import org.msgpack.unpacker.Unpacker;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
+import com.treasure_data.model.TableSummary;
 
 public interface ClientAPI {
+    // show table statement
+    List<TableSummary> showTable() throws ClientException;
+
     // drop table statement
     boolean drop(String tableName) throws ClientException;
 

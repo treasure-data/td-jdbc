@@ -2,6 +2,7 @@ package com.treasure_data.jdbc.command;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -26,6 +27,7 @@ import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
+import com.treasure_data.model.TableSummary;
 
 public class TDClientAPI implements ClientAPI {
     private static final Logger LOG = Logger.getLogger(TDClientAPI.class.getName());
@@ -74,6 +76,10 @@ public class TDClientAPI implements ClientAPI {
             LOG.throwing(this.getClass().getName(), "checkCredentials", e);
             return;
         }
+    }
+
+    public List<TableSummary> showTable() throws ClientException {
+        return client.listTables(database);
     }
 
     public boolean drop(String table) throws ClientException {

@@ -32,6 +32,7 @@ import com.treasure_data.jdbc.compiler.stat.Drop;
 import com.treasure_data.jdbc.compiler.stat.Index;
 import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
+import com.treasure_data.jdbc.compiler.stat.Show;
 import com.treasure_data.jdbc.compiler.stat.Statement;
 
 /**
@@ -129,6 +130,8 @@ public class CommandExecutor {
             validateStatement(context, (Drop) stat);
         } else if (stat instanceof Select) {
             validateStatement(context, (Select) stat);
+        } else if (stat instanceof Show) {
+            validateStatement(context, (Show) stat);
         } else {
             throw new ParseException("unsupported statement: " + stat);
         }
@@ -146,6 +149,8 @@ public class CommandExecutor {
             extractJdbcParameters(context, (Drop) stat);
         } else if (stat instanceof Select) {
             extractJdbcParameters(context, (Select) stat);
+        } else if (stat instanceof Show) {
+            extractJdbcParameters(context, (Show) stat);
         } else {
             throw new ParseException("unsupported statement: " + stat);
         }
@@ -162,6 +167,8 @@ public class CommandExecutor {
             executeCompiledStatement(context, (Drop) stat);
         } else if (stat instanceof Select) {
             executeCompiledStatement(context, (Select) stat);
+        } else if (stat instanceof Show) {
+            executeCompiledStatement(context, (Show) stat);
         } else {
             throw new SQLException("unsupported statement: " + stat);
         }
@@ -178,6 +185,8 @@ public class CommandExecutor {
             executeCompiledPreparedStatement(context, (Drop) stat);
         } else if (stat instanceof Select) {
             executeCompiledPreparedStatement(context, (Select) stat);
+        } else if (stat instanceof Show) {
+            executeCompiledPreparedStatement(context, (Show) stat);
         } else {
             throw new SQLException("unsupported statement: " + stat);
         }
@@ -382,6 +391,42 @@ public class CommandExecutor {
     }
 
     public void extractJdbcParameters(CommandContext context, CreateTable stat) {
+        // ignore
+    }
+
+    public void validateStatement(CommandContext context, Show stat)
+            throws ParseException {
+        String type = stat.getType();
+        if (type.equals("TABLES")) {
+            List<String> params = stat.getParameters();
+            if (params != null && params.size() > 0) {
+                throw new ParseException("parameters are not supported");
+            }
+        } else if (type.equals("COLUMNES")) {
+            throw new ParseException("unsupported type: " + type);
+        } else if (type.equals("SCHEMAS")) {
+            throw new ParseException("unsupported type: " + type);
+        } else {
+            throw new ParseException("invalid type: " + type);
+        }
+    }
+
+    public void executeCompiledStatement(CommandContext context, Show stat)
+            throws SQLException {
+        try {
+            api.showTable();
+            // TODO #MN we should consider how we use context objects
+        } catch (ClientException e) {
+            throw new SQLException(e);
+        }
+    }
+
+    public void executeCompiledPreparedStatement(CommandContext context,
+            Show stat) throws SQLException {
+        executeCompiledStatement(context, stat);
+    }
+
+    public void extractJdbcParameters(CommandContext context, Show stat) {
         // ignore
     }
 

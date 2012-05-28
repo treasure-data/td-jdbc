@@ -17,4 +17,6 @@ public interface StatementVisitor {
 
     public void visit(CreateTable createTable);
 
+    public void visit(Show show);
+
 }

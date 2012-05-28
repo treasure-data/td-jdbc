@@ -79,83 +79,91 @@ public interface CCSQLParserConstants {
   /** RegularExpression Id. */
   int K_TABLE = 38;
   /** RegularExpression Id. */
-  int K_WHERE = 39;
+  int K_TABLES = 39;
   /** RegularExpression Id. */
-  int K_USING = 40;
+  int K_SCHEMAS = 40;
   /** RegularExpression Id. */
-  int K_UNION = 41;
+  int K_COLUMNS = 41;
   /** RegularExpression Id. */
-  int K_GROUP = 42;
+  int K_WHERE = 42;
   /** RegularExpression Id. */
-  int K_BEGIN = 43;
+  int K_USING = 43;
   /** RegularExpression Id. */
-  int K_INDEX = 44;
+  int K_UNION = 44;
   /** RegularExpression Id. */
-  int K_INNER = 45;
+  int K_GROUP = 45;
   /** RegularExpression Id. */
-  int K_LIMIT = 46;
+  int K_BEGIN = 46;
   /** RegularExpression Id. */
-  int K_OUTER = 47;
+  int K_INDEX = 47;
   /** RegularExpression Id. */
-  int K_ORDER = 48;
+  int K_INNER = 48;
   /** RegularExpression Id. */
-  int K_RIGHT = 49;
+  int K_LIMIT = 49;
   /** RegularExpression Id. */
-  int K_VALUE = 50;
+  int K_OUTER = 50;
   /** RegularExpression Id. */
-  int K_DELETE = 51;
+  int K_ORDER = 51;
   /** RegularExpression Id. */
-  int K_CREATE = 52;
+  int K_RIGHT = 52;
   /** RegularExpression Id. */
-  int K_SELECT = 53;
+  int K_VALUE = 53;
   /** RegularExpression Id. */
-  int K_OFFSET = 54;
+  int K_DELETE = 54;
   /** RegularExpression Id. */
-  int K_EXISTS = 55;
+  int K_CREATE = 55;
   /** RegularExpression Id. */
-  int K_HAVING = 56;
+  int K_SELECT = 56;
   /** RegularExpression Id. */
-  int K_INSERT = 57;
+  int K_SHOW = 57;
   /** RegularExpression Id. */
-  int K_UPDATE = 58;
+  int K_OFFSET = 58;
   /** RegularExpression Id. */
-  int K_VALUES = 59;
+  int K_EXISTS = 59;
   /** RegularExpression Id. */
-  int K_ESCAPE = 60;
+  int K_HAVING = 60;
   /** RegularExpression Id. */
-  int K_PRIMARY = 61;
+  int K_INSERT = 61;
   /** RegularExpression Id. */
-  int K_NATURAL = 62;
+  int K_UPDATE = 62;
   /** RegularExpression Id. */
-  int K_REPLACE = 63;
+  int K_VALUES = 63;
   /** RegularExpression Id. */
-  int K_BETWEEN = 64;
+  int K_ESCAPE = 64;
   /** RegularExpression Id. */
-  int K_TRUNCATE = 65;
+  int K_PRIMARY = 65;
   /** RegularExpression Id. */
-  int K_DISTINCT = 66;
+  int K_NATURAL = 66;
   /** RegularExpression Id. */
-  int K_INTERSECT = 67;
+  int K_REPLACE = 67;
   /** RegularExpression Id. */
-  int S_DOUBLE = 68;
+  int K_BETWEEN = 68;
   /** RegularExpression Id. */
-  int S_INTEGER = 69;
+  int K_TRUNCATE = 69;
   /** RegularExpression Id. */
-  int DIGIT = 70;
+  int K_DISTINCT = 70;
   /** RegularExpression Id. */
-  int LINE_COMMENT = 71;
+  int K_INTERSECT = 71;
   /** RegularExpression Id. */
-  int MULTI_LINE_COMMENT = 72;
+  int S_DOUBLE = 72;
   /** RegularExpression Id. */
-  int S_IDENTIFIER = 73;
+  int S_INTEGER = 73;
   /** RegularExpression Id. */
-  int LETTER = 74;
+  int DIGIT = 74;
   /** RegularExpression Id. */
-  int SPECIAL_CHARS = 75;
+  int LINE_COMMENT = 75;
   /** RegularExpression Id. */
-  int S_CHAR_LITERAL = 76;
+  int MULTI_LINE_COMMENT = 76;
   /** RegularExpression Id. */
-  int S_QUOTED_IDENTIFIER = 77;
+  int S_IDENTIFIER = 77;
+  /** RegularExpression Id. */
+  int LETTER = 78;
+  /** RegularExpression Id. */
+  int SPECIAL_CHARS = 79;
+  /** RegularExpression Id. */
+  int S_CHAR_LITERAL = 80;
+  /** RegularExpression Id. */
+  int S_QUOTED_IDENTIFIER = 81;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -201,6 +209,9 @@ public interface CCSQLParserConstants {
     "\"FULL\"",
     "\"WITH\"",
     "\"TABLE\"",
+    "\"TABLES\"",
+    "\"SCHEMAS\"",
+    "\"COLUMNS\"",
     "\"WHERE\"",
     "\"USING\"",
     "\"UNION\"",
@@ -216,6 +227,7 @@ public interface CCSQLParserConstants {
     "\"DELETE\"",
     "\"CREATE\"",
     "\"SELECT\"",
+    "\"SHOW\"",
     "\"OFFSET\"",
     "\"EXISTS\"",
     "\"HAVING\"",

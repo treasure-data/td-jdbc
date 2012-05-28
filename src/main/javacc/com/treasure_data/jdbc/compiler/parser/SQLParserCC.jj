@@ -1658,8 +1658,6 @@ Show Show():
 {
 	<K_SHOW>
 	(
-		tk=<S_IDENTIFIER>
-		|
 		tk=<K_SCHEMAS>
 		| 
 		tk=<K_TABLES>

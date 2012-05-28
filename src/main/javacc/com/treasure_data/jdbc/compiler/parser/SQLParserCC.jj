@@ -76,6 +76,7 @@ import com.treasure_data.jdbc.compiler.stat.Select;
 import com.treasure_data.jdbc.compiler.stat.SelectBody;
 import com.treasure_data.jdbc.compiler.stat.SelectExpressionItem;
 import com.treasure_data.jdbc.compiler.stat.SelectItem;
+import com.treasure_data.jdbc.compiler.stat.Show;
 import com.treasure_data.jdbc.compiler.stat.Statement;
 import com.treasure_data.jdbc.compiler.stat.SubJoin;
 import com.treasure_data.jdbc.compiler.stat.SubSelect;
@@ -140,6 +141,9 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_FULL:"FULL">
 |   <K_WITH:"WITH">
 |   <K_TABLE:"TABLE">
+|   <K_TABLES:"TABLES">
+|   <K_SCHEMAS:"SCHEMAS">
+|   <K_COLUMNS:"COLUMNS">
 |   <K_WHERE:"WHERE">
 |   <K_USING:"USING">
 |   <K_UNION:"UNION">
@@ -155,6 +159,7 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_DELETE:"DELETE">
 |   <K_CREATE:"CREATE">
 |   <K_SELECT:"SELECT">
+|   <K_SHOW:"SHOW">
 |   <K_OFFSET:"OFFSET">
 |   <K_EXISTS:"EXISTS">
 |   <K_HAVING:"HAVING">
@@ -208,7 +213,9 @@ Statement Statement() :
 	(
     stm = Select()
     |
-    stm =  Update()
+    stm = Show()
+    |
+    stm = Update()
     |
     stm = Insert()
     |
@@ -227,7 +234,6 @@ Statement Statement() :
     { return stm; }
 }
 
-
 Update Update():
 { 
 	Update update = new Update(); 
@@ -237,7 +243,7 @@ Update Update():
 	List expList = new ArrayList(); 
 	List columns = new ArrayList(); 
 	Expression value = null;
-	
+
 }
 {
     <K_UPDATE> table=TableWithAlias()
@@ -264,12 +270,11 @@ Replace Replace():
 	List expList = new ArrayList(); 
 	ItemsList itemsList = null;
 	Expression exp = null;
-	
-	
+
 }
 {
     <K_REPLACE> [<K_INTO>] table=Table()
-    
+
     (
 		(    
 		    <K_SET> tableColumn=Column() "=" value=SimpleExpression() { columns.add(tableColumn); expList.add(value); }
@@ -279,17 +284,17 @@ Replace Replace():
 			 }
 		)
 		|
-	
+
 		(
 		     [LOOKAHEAD(2) "(" tableColumn=Column() { columns.add(tableColumn); } ("," tableColumn=Column() { columns.add(tableColumn); } )* ")"  ]
-			
+
 			( 
 				[<K_VALUES> | <K_VALUE>]  "(" exp=PrimaryExpression() { expList.add(exp); } 
 						("," exp=PrimaryExpression()  { expList.add(exp); } )* ")" { itemsList = new ExpressionList(expList); }
-				
+
 				| 
 					{ replace.setUseValues(false); }
-				
+
 				    itemsList=SubSelect()  
 			)
 		    { 
@@ -305,7 +310,6 @@ Replace Replace():
    }
 }
 
-
 Insert Insert():
 { 
 	Insert insert = new Insert(); 
@@ -318,16 +322,16 @@ Insert Insert():
 }
 {
     <K_INSERT> [<K_INTO>] table=Table()
-    
-    
+
+
      [LOOKAHEAD(2) "(" tableColumn=Column() { columns.add(tableColumn); } ("," tableColumn=Column() { columns.add(tableColumn); } )* ")"  ]
-	
+
 	( 
 		[<K_VALUES> | <K_VALUE>]  "(" exp=SimpleExpression() { primaryExpList.add(exp); } 
 				("," exp=SimpleExpression()  { primaryExpList.add(exp); } )* ")" { itemsList = new ExpressionList(primaryExpList); }
-		
+
 		| 
-		
+
 		[LOOKAHEAD(2) "(" ]
 		(
 			{ insert.setUseValues(false); }
@@ -335,7 +339,7 @@ Insert Insert():
 		)
 		[ ")" ]
 	)
-    
+
     { 
 		insert.setItemsList(itemsList);
 	    insert.setTable(table);
@@ -344,8 +348,6 @@ Insert Insert():
     	return insert; 
     }
 }
-
-
 
 Delete Delete():
 { 
@@ -361,8 +363,6 @@ Delete Delete():
     	return delete;
     }
 }
-
-
 
 Column Column():
 {
@@ -386,7 +386,7 @@ Column Column():
     		table = new Table(null, null);
     		colName = name1;
     	}
-    	
+
     	return new Column(table, colName); 
    	}
 }
@@ -399,7 +399,7 @@ String RelObjectName()  :
 	|
 	tk=<S_QUOTED_IDENTIFIER>
 	)
-	
+
     { return tk.image; }
 }
 
@@ -412,7 +412,6 @@ Table TableWithAlias():
 	table=Table() [alias=Alias() { table.setAlias(alias); }]
 	{ return table; }
 }
-
 
 Table Table():
 { 
@@ -429,10 +428,8 @@ Table Table():
 	{		
 		return table; 
 	}
-	
+
 }
-
-
 
 Select Select():
 { 
@@ -513,8 +510,6 @@ PlainSelect PlainSelect():
 	}
 }
 
-
-
 Union Union():
 { 
 	Union union = new Union(); 
@@ -586,7 +581,7 @@ List SelectItemsList():
 }
 { 
     selectItem=SelectItem() { selectItemsList.add(selectItem); } ("," selectItem=SelectItem() { selectItemsList.add(selectItem); } )*
-    
+
     { return selectItemsList; }
 }
 
@@ -602,8 +597,6 @@ SelectItem SelectItem():
 	SubSelect subSelect = null;
 }
 {
-	
-
     ("*" { selectItem = new AllColumns(); }
     |
 	LOOKAHEAD(AllTableColumns()) selectItem=AllTableColumns()
@@ -614,7 +607,7 @@ SelectItem SelectItem():
 	{
 		return selectItem;
 	}
-	
+
 }
 
 AllTableColumns AllTableColumns():
@@ -626,7 +619,7 @@ AllTableColumns AllTableColumns():
 	{ 
 		return new AllTableColumns(table); 
 	}
-	
+
 }
 
 String Alias():
@@ -1435,8 +1428,6 @@ Function Function():
     }
 }
 
-
-
 SubSelect SubSelect():
 {
 	SelectBody selectBody = null;
@@ -1478,15 +1469,15 @@ CreateTable CreateTable():
 	<K_TABLE> table=Table() 
 	[
 		"("
-		
+
 		columnName=<S_IDENTIFIER>
 		colDataType = ColDataType()
 		{
 			columnSpecs = new ArrayList();
 		}
-	
+
 		( parameter=CreateParameter() { columnSpecs.add(parameter); } )*
-	
+
 		{ 
 			coldef = new ColumnDefinition();
 			coldef.setColumnName(columnName.image);
@@ -1495,10 +1486,10 @@ CreateTable CreateTable():
 				coldef.setColumnSpecStrings(columnSpecs);
 			columnDefinitions.add(coldef);
 		}
-		
+
 		(
 			","
-			
+
 			(
 				(
 					tk=<K_INDEX>
@@ -1543,9 +1534,9 @@ CreateTable CreateTable():
 					{
 						columnSpecs = new ArrayList();
 					}
-				
+
 					( 	parameter=CreateParameter() { columnSpecs.add(parameter); } 	)*
-		
+
 					{ 
 						coldef = new ColumnDefinition();
 						coldef.setColumnName(columnName.image);
@@ -1560,10 +1551,9 @@ CreateTable CreateTable():
 		
 		")"
 		( 	parameter=CreateParameter() { tableOptions.add(parameter); } )*
-	
+
 	]
-	
-	
+
 	{
 		createTable.setTable(table);
 		if (indexes.size() > 0)
@@ -1659,6 +1649,35 @@ List ColumnsNamesList():
 	}
 }
 
+Show Show():
+{
+	Show show = new Show();
+	Token tk = null;
+	List showArgs = new ArrayList();
+}
+{
+	<K_SHOW>
+	(
+		tk=<S_IDENTIFIER>
+		|
+		tk=<K_SCHEMAS>
+		| 
+		tk=<K_TABLES>
+		|
+		tk=<K_COLUMNS>
+	)
+    { show.setType(tk.image); }
+   	(
+		LOOKAHEAD(<K_FROM>) 
+			<K_FROM>
+			tk=<S_IDENTIFIER> { showArgs.add(tk.image); }
+    )*
+	{
+		if (showArgs.size() > 0)
+			show.setParameters(showArgs);
+		return show;
+	}
+}
 
 Drop Drop():
 {

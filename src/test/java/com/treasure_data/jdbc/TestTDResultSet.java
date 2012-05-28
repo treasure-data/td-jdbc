@@ -24,10 +24,15 @@ import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.JobSummary.Status;
+import com.treasure_data.model.TableSummary;
 
 public class TestTDResultSet {
 
     public static class MockClientAPI implements ClientAPI {
+        public List<TableSummary> showTable() throws ClientException {
+            return null;
+        }
+
         public boolean drop(String tableName) throws ClientException {
             return false;
         }

@@ -6,6 +6,7 @@ import static org.junit.Assert.fail;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -22,6 +23,7 @@ import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
+import com.treasure_data.model.TableSummary;
 
 public class TestCommandExecutor {
 
@@ -106,6 +108,10 @@ public class TestCommandExecutor {
     @Test
     public void testExecute05() throws Exception {
         ClientAPI clientApi = new ClientAPI() {
+            public List<TableSummary> showTable() throws ClientException {
+                return null;
+            }
+
             public boolean drop(String tableName) throws ClientException {
                 throw new ClientException("mock exception");
             }
@@ -229,6 +235,10 @@ public class TestCommandExecutor {
     @Test
     public void testExecute08() throws Exception {
         ClientAPI clientApi = new ClientAPI() {
+            public List<TableSummary> showTable() throws ClientException {
+                return null;
+            }
+
             public boolean drop(String tableName) throws ClientException {
                 throw new ClientException("mock exception");
             }

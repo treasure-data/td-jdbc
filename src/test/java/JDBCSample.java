@@ -5,12 +5,10 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
 
-import com.treasure_data.jdbc.TestTreasureDataDriver;
-
 public class JDBCSample {
     public static void loadSystemProperties() throws IOException {
         Properties props = System.getProperties();
-        props.load(TestTreasureDataDriver.class.getClassLoader().getResourceAsStream("treasure-data.properties"));
+        props.load(JDBCSample.class.getClassLoader().getResourceAsStream("treasure-data.properties"));
     }
 
     public static String getSystemProperty(String key) {

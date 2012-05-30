@@ -84,8 +84,7 @@ public class CommandExecutor {
     public void executeDirect(CommandContext context) throws SQLException {
         try {
             String sql = context.sql;
-            InputStream in = new ByteArrayInputStream(sql.getBytes());
-            CCSQLParser p = new CCSQLParser(in);
+            ExtCCSQLParser p = new ExtCCSQLParser(sql);
             context.compiledSql = p.Statement();
             validateStatement(context);
             extractJdbcParameters(context);

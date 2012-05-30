@@ -32,7 +32,7 @@ public class JDBCSample {
                 //"jdbc:td://192.168.0.23:80/mugadb", user, password);
                 "jdbc:td://api.treasure-data.com:80/mugatest", user, password);
         Statement stmt = conn.createStatement();
-        String sql = "select v from table2";
+        String sql = "select cast(count(*) as double) from table2";
         System.out.println("Running: " + sql);
         ResultSet res = stmt.executeQuery(sql);
         while (res.next()) {

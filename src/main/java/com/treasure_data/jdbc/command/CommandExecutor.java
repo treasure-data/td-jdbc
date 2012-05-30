@@ -198,9 +198,8 @@ public class CommandExecutor {
 
     public void executeCompiledStatement(CommandContext context,
             Select stat) throws SQLException {
-        String sql = stat.toString();
         try {
-            context.resultSet = api.select(sql);
+            context.resultSet = api.select(context.sql);
         } catch (ClientException e) {
             throw new SQLException(e);
         }

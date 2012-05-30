@@ -192,6 +192,13 @@ public class CommandExecutor {
 
     public void validateStatement(CommandContext context, Select stat)
             throws ParseException {
+        if (context.mode == ResultConstants.PREPARE) {
+            String s = context.sql;
+            if (s.indexOf('?') >= 0) {
+                throw new ParseException(
+                        "unsupported jdbc parameters in select statements: " + s);
+            }
+        }
         // ignore
     }
 

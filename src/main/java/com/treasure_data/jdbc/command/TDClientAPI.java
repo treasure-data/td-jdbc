@@ -70,8 +70,7 @@ public class TDClientAPI implements ClientAPI {
         String user = props.getProperty("user");
         String password = props.getProperty("password");
         try {
-            AuthenticateRequest req = new AuthenticateRequest(user, password);
-            AuthenticateResult ret = client.authenticate(req);
+            client.authenticate(new AuthenticateRequest(user, password));
         } catch (ClientException e) {
             LOG.throwing(this.getClass().getName(), "checkCredentials", e);
             return;

@@ -23,6 +23,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.msgpack.type.BooleanValue;
+import org.msgpack.type.NumberValue;
 import org.msgpack.type.Value;
 
 /**
@@ -123,42 +125,46 @@ public abstract class TDResultSetBase implements ResultSet {
         throw new SQLException("Method not supported");
     }
 
-    public boolean getBoolean(int columnIndex) throws SQLException {
+    public boolean getBoolean(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asBooleanValue().getBoolean();
+            Object obj = getObject(index);
+            return obj == null ? false :
+                ((BooleanValue) obj).getBoolean();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to boolean");
+            String msg = String.format(
+                    "Cannot convert column %d to boolean: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public boolean getBoolean(String columnName) throws SQLException {
-        return getBoolean(findColumn(columnName));
+    public boolean getBoolean(String name) throws SQLException {
+        return getBoolean(findColumn(name));
     }
 
-    public byte getByte(int columnIndex) throws SQLException {
+    public byte getByte(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asIntegerValue().getByte();
+            Object obj = getObject(index);
+            return obj == null ? 0 :
+                ((NumberValue) obj).byteValue();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to byte");
+            String msg = String.format(
+                    "Cannot convert column %d to byte: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public byte getByte(String columnName) throws SQLException {
-        return getByte(findColumn(columnName));
+    public byte getByte(String name) throws SQLException {
+        return getByte(findColumn(name));
     }
 
     public byte[] getBytes(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException("Method not supported"); // TODO
     }
 
     public byte[] getBytes(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException("Method not supported"); // TODO
     }
 
     public Reader getCharacterStream(int columnIndex) throws SQLException {
@@ -185,8 +191,8 @@ public abstract class TDResultSetBase implements ResultSet {
         throw new SQLException("Method not supported");
     }
 
-    public Date getDate(int columnIndex) throws SQLException {
-        Object obj = getObject(columnIndex);
+    public Date getDate(int index) throws SQLException { // TODO
+        Object obj = getObject(index);
         if (obj == null) {
             return null;
         }
@@ -195,36 +201,42 @@ public abstract class TDResultSetBase implements ResultSet {
             Value v = (Value) obj;
             return Date.valueOf(v.asRawValue().getString());
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to date: " + e.toString());
+            String msg = String.format(
+                    "Cannot convert column %d to date: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public Date getDate(String columnName) throws SQLException {
+    public Date getDate(String columnName) throws SQLException { // TODO
         return getDate(findColumn(columnName));
     }
 
-    public Date getDate(int columnIndex, Calendar cal) throws SQLException {
+    public Date getDate(int columnIndex, Calendar cal)
+            throws SQLException { // TODO
         throw new SQLException("Method not supported");
     }
 
-    public Date getDate(String columnName, Calendar cal) throws SQLException {
+    public Date getDate(String columnName, Calendar cal)
+            throws SQLException { // TODO
         throw new SQLException("Method not supported");
     }
 
-    public double getDouble(int columnIndex) throws SQLException {
+    public double getDouble(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asFloatValue().getDouble();
+            Object obj = getObject(index);
+            return obj == null ? 0.0 :
+                ((NumberValue) obj).doubleValue();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to double: " + e.toString());
+            String msg = String.format(
+                    "Cannot convert column %d to double: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public double getDouble(String columnName) throws SQLException {
-        return getDouble(findColumn(columnName));
+    public double getDouble(String name) throws SQLException {
+        return getDouble(findColumn(name));
     }
 
     public int getFetchDirection() throws SQLException {
@@ -235,53 +247,58 @@ public abstract class TDResultSetBase implements ResultSet {
         throw new SQLException("Method not supported");
     }
 
-    public float getFloat(int columnIndex) throws SQLException {
+    public float getFloat(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asFloatValue().getFloat();
+            Object obj = getObject(index);
+            return obj == null ? (float) 0.0 :
+                ((NumberValue) obj).floatValue();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to float: " + e.toString());
+            String msg = String.format(
+                    "Cannot convert column %d to float: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public float getFloat(String columnName) throws SQLException {
-        return getFloat(findColumn(columnName));
+    public float getFloat(String name) throws SQLException {
+        return getFloat(findColumn(name));
     }
 
     public int getHoldability() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
-    public int getInt(int columnIndex) throws SQLException {
+    public int getInt(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asIntegerValue().getInt();
+            Object obj = getObject(index);
+            return obj == null ? 0 :
+                ((NumberValue) obj).intValue();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to integer " + e.toString());
+            String msg = String.format(
+                    "Cannot convert column %d to integer: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public int getInt(String columnName) throws SQLException {
-        return getInt(findColumn(columnName));
+    public int getInt(String name) throws SQLException {
+        return getInt(findColumn(name));
     }
 
-    public long getLong(int columnIndex) throws SQLException {
+    public long getLong(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asIntegerValue().getLong();
+            Object obj = getObject(index);
+            return obj == null ? 0 :
+                ((NumberValue) obj).longValue();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to long: " + e.toString());
+            String msg = String.format(
+                    "Cannot convert column %d to long", index);
+            throw new SQLException(msg);
         }
     }
 
-    public long getLong(String columnName) throws SQLException {
-        return getLong(findColumn(columnName));
+    public long getLong(String name) throws SQLException {
+        return getLong(findColumn(name));
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
@@ -375,19 +392,21 @@ public abstract class TDResultSetBase implements ResultSet {
         throw new SQLException("Method not supported");
     }
 
-    public short getShort(int columnIndex) throws SQLException {
+    public short getShort(int index) throws SQLException {
         try {
-            Object obj = getObject(columnIndex);
-            Value v = (Value) obj;
-            return v.asIntegerValue().getShort();
+            Object obj = getObject(index);
+            return obj == null ? 0 :
+                ((NumberValue) obj).shortValue();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to short: " + e.toString());
+            String msg = String.format(
+                    "Cannot convert column %d to short: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public short getShort(String columnName) throws SQLException {
-        return getShort(findColumn(columnName));
+    public short getShort(String name) throws SQLException {
+        return getShort(findColumn(name));
     }
 
     public Statement getStatement() throws SQLException {
@@ -395,14 +414,14 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     /**
-     * @param columnIndex
+     * @param index
      *            - the first column is 1, the second is 2, ...
      * @see java.sql.ResultSet#getString(int)
      */
 
-    public String getString(int columnIndex) throws SQLException {
+    public String getString(int index) throws SQLException {
         // Column index starts from 1, not 0.
-        Object obj = getObject(columnIndex);
+        Object obj = getObject(index);
         if (obj == null) {
             return null;
         }
@@ -411,13 +430,14 @@ public abstract class TDResultSetBase implements ResultSet {
             Value v = (Value) obj;
             return v.asRawValue().getString();
         } catch (Exception e) {
-            throw new SQLException("Cannot convert column " + columnIndex
-                    + " to string: " + e.toString());
+            String msg = String.format("Cannot convert column %d to string: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
         }
     }
 
-    public String getString(String columnName) throws SQLException {
-        return getString(findColumn(columnName));
+    public String getString(String name) throws SQLException {
+        return getString(findColumn(name));
     }
 
     public Time getTime(int columnIndex) throws SQLException {

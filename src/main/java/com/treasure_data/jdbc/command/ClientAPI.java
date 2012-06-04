@@ -13,7 +13,7 @@ import com.treasure_data.model.TableSummary;
 
 public interface ClientAPI {
     // show table statement
-    List<TableSummary> showTable() throws ClientException;
+    List<TableSummary> showTables() throws ClientException;
 
     // drop table statement
     boolean drop(String tableName) throws ClientException;

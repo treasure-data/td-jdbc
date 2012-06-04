@@ -77,7 +77,7 @@ public class TDClientAPI implements ClientAPI {
         }
     }
 
-    public List<TableSummary> showTable() throws ClientException {
+    public List<TableSummary> showTables() throws ClientException {
         return client.listTables(database);
     }
 

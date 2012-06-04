@@ -15,7 +15,7 @@ public class NullClientAPI implements ClientAPI {
     public NullClientAPI() {
     }
 
-    public List<TableSummary> showTable() throws ClientException {
+    public List<TableSummary> showTables() throws ClientException {
         return null;
     }
 

@@ -23,7 +23,6 @@ public class TDResultSet extends TDResultSetBase {
 
     private ClientAPI clientApi;
 
-    // TODO #MN maxRows limitation is not used in current version
     private int maxRows = 0;
 
     private int rowsFetched = 0;
@@ -76,7 +75,7 @@ public class TDResultSet extends TDResultSetBase {
     public boolean next() throws SQLException {
         try {
             if (fetchedRows == null) {
-                fetchedRows = fetchRows(fetchSize);
+                fetchedRows = fetchRows();
                 fetchedRowsItr = fetchedRows.iterator();
             }
 
@@ -112,7 +111,7 @@ public class TDResultSet extends TDResultSetBase {
         }
     }
 
-    private Unpacker fetchRows(int fetchSize) throws SQLException {
+    private Unpacker fetchRows() throws SQLException {
         try {
             JobSummary jobSummary = clientApi.waitJobResult(job);
             initColumnNamesAndTypes(jobSummary.getResultSchema());

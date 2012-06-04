@@ -21,12 +21,18 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.hsqldb.result.ResultConstants;
 
 import com.treasure_data.jdbc.command.CommandContext;
+import com.treasure_data.logger.TreasureDataLogger;
 
 public class TDPreparedStatement extends TDStatement implements PreparedStatement {
+
+    private static Logger LOG = Logger.getLogger(
+            TDPreparedStatement.class.getName());
 
     private CommandContext w;
 
@@ -39,11 +45,13 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void clearParameters() throws SQLException {
-        params.clear();
+        for (Map<Integer, Object> params : w.params0) {
+            params.clear();
+        }
     }
 
     public void addBatch() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        w.params0.add(params);
     }
 
     public boolean execute() throws SQLException {
@@ -51,9 +59,23 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        w.params = params;
+        w.params0.add(params);
         fetchResult(w);
         return getResultSet();
+    }
+
+    @Override
+    public int[] executeBatch() throws SQLException {
+        LOG.info("fetchResult");
+        // TODO #MN temporal implementation
+        fetchResult(w);
+        TreasureDataLogger.flushAll();
+        int[] ret = new int[w.params0.size()];
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = -2;
+        }
+        LOG.info("end fetchResult");
+        return ret;
     }
 
     public int executeUpdate() throws SQLException {

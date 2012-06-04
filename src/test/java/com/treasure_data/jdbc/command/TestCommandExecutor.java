@@ -108,7 +108,7 @@ public class TestCommandExecutor {
     @Test
     public void testExecute05() throws Exception {
         ClientAPI clientApi = new ClientAPI() {
-            public List<TableSummary> showTable() throws ClientException {
+            public List<TableSummary> showTables() throws ClientException {
                 return null;
             }
 
@@ -235,7 +235,7 @@ public class TestCommandExecutor {
     @Test
     public void testExecute08() throws Exception {
         ClientAPI clientApi = new ClientAPI() {
-            public List<TableSummary> showTable() throws ClientException {
+            public List<TableSummary> showTables() throws ClientException {
                 return null;
             }
 

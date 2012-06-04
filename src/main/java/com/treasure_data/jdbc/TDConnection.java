@@ -18,9 +18,12 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 
+import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.Database;
 
 public class TDConnection implements Connection, Constants {
+
+    private boolean autoCommit = false;
 
     private Properties props;
 
@@ -111,7 +114,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void commit() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        // TODO #MN
     }
 
     public Array createArrayOf(String typeName, Object[] elements)
@@ -165,7 +168,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public boolean getAutoCommit() throws SQLException {
-        return true;
+        return autoCommit;
     }
 
     public String getCatalog() throws SQLException {
@@ -185,7 +188,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
-        return new TDDatabaseMetaData(this);
+        return new TDDatabaseMetaData(this); // TODO
     }
 
     public int getTransactionIsolation() throws SQLException {
@@ -272,7 +275,7 @@ public class TDConnection implements Connection, Constants {
 
     public void setAutoCommit(boolean autoCommit)
             throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        this.autoCommit = autoCommit;
     }
 
     public void setCatalog(String catalog) throws SQLException {

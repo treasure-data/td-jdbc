@@ -2,6 +2,7 @@ package com.treasure_data.jdbc.command;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,8 @@ import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
 import com.treasure_data.jdbc.compiler.stat.Show;
 import com.treasure_data.jdbc.compiler.stat.Statement;
+import com.treasure_data.logger.TreasureDataLogger;
+import com.treasure_data.model.TableSummary;
 
 /**
  * @see org.hsqldb.Session
@@ -305,28 +308,29 @@ public class CommandExecutor {
         List<Column> cols = stat.getColumns();
         List<Expression> exprs = ((ExpressionList) stat.getItemsList()).getExpressions();
         List<String> paramList = context.paramList;
-        Map<Integer, Object> params = context.params;
-
-        try {
-            Map<String, Object> record = new HashMap<String, Object>();
-            Iterator<Column> col_iter = cols.iterator();
-            Iterator<Expression> expr_iter = exprs.iterator();
-            while (col_iter.hasNext()) {
-                Column col = col_iter.next();
-                Expression expr = expr_iter.next();
-                String colName = col.getColumnName();
-                int i = getIndex(paramList, colName);
-                if (i >= 0) {
-                    record.put(colName, params.get(new Integer(i + 1)));
-                } else {
-                    record.put(colName, toValue(expr));
+        List<Map<Integer, Object>> params0 = context.params0;
+        for (Map<Integer, Object> params : params0) {
+            try {
+                Map<String, Object> record = new HashMap<String, Object>();
+                Iterator<Column> col_iter = cols.iterator();
+                Iterator<Expression> expr_iter = exprs.iterator();
+                while (col_iter.hasNext()) {
+                    Column col = col_iter.next();
+                    Expression expr = expr_iter.next();
+                    String colName = col.getColumnName();
+                    int i = getIndex(paramList, colName);
+                    if (i >= 0) {
+                        record.put(colName, params.get(new Integer(i + 1)));
+                    } else {
+                        record.put(colName, toValue(expr));
+                    }
                 }
+                api.insert(table.getName(), record);
+            } catch (ParseException e) {
+                throw new SQLException(e);
+            } catch (ClientException e) {
+                throw new SQLException(e);
             }
-            api.insert(table.getName(), record);
-        } catch (ParseException e) {
-            throw new SQLException(e);
-        } catch (ClientException e) {
-            throw new SQLException(e);
         }
     }
 
@@ -415,11 +419,11 @@ public class CommandExecutor {
         }
     }
 
-    public void executeCompiledStatement(CommandContext context, Show stat)
-            throws SQLException {
+    public void executeCompiledStatement(
+            CommandContext context, Show stat) throws SQLException {
         try {
-            api.showTable();
-            // TODO #MN we should consider how we use context objects
+            List<TableSummary> tables = api.showTables();
+            context.resultSet = null; // FIXME #MN
         } catch (ClientException e) {
             throw new SQLException(e);
         }

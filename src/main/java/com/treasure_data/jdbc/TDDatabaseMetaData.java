@@ -11,11 +11,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.json.simple.JSONValue;
+
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.command.TDClientAPI;
+import com.treasure_data.model.TableSummary;
 
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
-    //private final TreasureDataClient client;
+    private ClientAPI api;
 
     private static final String CATALOG_SEPARATOR = ".";
 
@@ -23,11 +28,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     private static final int maxColumnNameLength = 128;
 
-    /**
-   *
-   */
     public TDDatabaseMetaData(TDConnection conn) {
-        //this.client = conn.getClient();
+        api = new TDClientAPI(conn);
     }
 
     public boolean allProceduresAreCallable() throws SQLException {
@@ -164,7 +166,6 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getColumns(String catalog, final String schemaPattern,
             final String tableNamePattern, final String columnNamePattern)
             throws SQLException {
-        // TODO #MN
         List<TDColumn> columns = new ArrayList<TDColumn>();
         try {
             if (catalog == null) {
@@ -174,12 +175,28 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             String regtableNamePattern = convertPattern(tableNamePattern);
             String regcolumnNamePattern = convertPattern(columnNamePattern);
 
-            List<String> tables = null;
-//          List<String> tables = client.get_tables(catalog, "*");
+            List<TableSummary> ts = api.showTables();
+            for (TableSummary t : ts) {
+                if (t.getName().matches(regtableNamePattern)) {
+                    Object o = JSONValue.parse(t.getSchema());
+                    List<List<String>> schemaFields = (List<List<String>>) o;
+                    int ordinalPos = 1;
+                    for (List<String> schemaField : schemaFields) {
+                        String fieldName = schemaField.get(0);
+                        String fieldType = schemaField.get(1);
+                        if (fieldName.matches(regcolumnNamePattern)) {
+                            columns.add(new TDColumn(fieldName, t.getName(),
+                                    catalog, "TABLE", "comment", ordinalPos)); // TODO
+                            ordinalPos++;
+                        }
+                    }
+                }
+            }
+
 //            for (String table : tables) {
 //                if (table.matches(regtableNamePattern)) {
-//                    List<FieldSchema> fields = client
-//                            .get_schema(catalog, table);
+//                    List<FieldSchema> fields = client.get_schema(catalog, table);
+//                    
 //                    int ordinalPos = 1;
 //                    for (FieldSchema field : fields) {
 //                        if (field.getName().matches(regcolumnNamePattern)) {
@@ -193,14 +210,16 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 //            }
             Collections.sort(columns, new GetColumnsComparator());
 
-            return new TDMetaDataResultSet<TDColumn>(Arrays.asList(
+            return new TDMetaDataResultSet<TDColumn>(
+                    Arrays.asList(
                     "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME",
                     "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH",
                     "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS",
                     "COLUMN_DEF", "SQL_DATA_TYPE", "SQL_DATETIME_SUB",
                     "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE",
                     "SCOPE_CATLOG", "SCOPE_SCHEMA", "SCOPE_TABLE",
-                    "SOURCE_DATA_TYPE"), Arrays.asList("STRING", "STRING",
+                    "SOURCE_DATA_TYPE"),
+                    Arrays.asList("STRING", "STRING",
                     "STRING", "STRING", "INT", "STRING", "INT", "INT", "INT",
                     "INT", "INT", "STRING", "STRING", "INT", "INT", "INT",
                     "INT", "STRING", "STRING", "STRING", "STRING", "INT"),
@@ -568,12 +587,19 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getTables(String catalog, String schemaPattern,
             String tableNamePattern, String[] types) throws SQLException {
-        // TODO #MN
+        /**
+##
+catalog: null
+schemaPattern: null
+tableNamePattern: %
+types: null
+##
+         */
         final List<String> tablesstr;
         final List<TDTable> resultTables = new ArrayList<TDTable>();
         final String resultCatalog;
-        if (catalog == null) { // On jdbc the default catalog is null but on
-                               // hive it's "default"
+        if (catalog == null) {
+            // On jdbc the default catalog is null but on hive it's "default"
             resultCatalog = "default";
         } else {
             resultCatalog = catalog;
@@ -581,8 +607,17 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
         String regtableNamePattern = convertPattern(tableNamePattern);
         try {
-            tablesstr = null;
-//            tablesstr = client.get_tables(resultCatalog, "*");
+            List<TableSummary> ts = api.showTables();
+            //tablesstr = client.get_tables(resultCatalog, "*");
+            for (TableSummary t : ts) {
+                if (t.getName().matches(regtableNamePattern)) {
+                    resultTables.add(new TDTable(resultCatalog, t.getName(),
+                            "TABLE", "comment")); // TODO
+                } else {
+                    // TODO #MN
+                }
+            }
+
 //            for (String tablestr : tablesstr) {
 //                if (tablestr.matches(regtableNamePattern)) {
 //                    Table tbl = client.get_table(resultCatalog, tablestr);
@@ -607,30 +642,31 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         } catch (Exception e) {
             throw new SQLException(e);
         }
-        ResultSet result = new TDMetaDataResultSet<TDTable>(Arrays.asList(
-                "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE",
-                "REMARKS"), Arrays.asList("STRING", "STRING", "STRING",
-                "STRING", "STRING"), resultTables) {
+
+        ResultSet result = new TDMetaDataResultSet<TDTable>(
+                Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS"),
+                Arrays.asList("STRING", "STRING", "STRING", "STRING", "STRING"),
+                resultTables) {
             private int cnt = 0;
 
             public boolean next() throws SQLException {
                 if (cnt < data.size()) {
                     List<Object> a = new ArrayList<Object>(5);
-                    TDTable table = data.get(cnt);
+                    TDTable t = data.get(cnt);
                     // TABLE_CAT String => table catalog (may be null)
-                    a.add(table.getTableCatalog());
+                    a.add(t.getTableCatalog());
                     // TABLE_SCHEM String => table schema (may be null)
                     a.add(null);
                     // TABLE_NAME String => table name
-                    a.add(table.getTableName());
+                    a.add(t.getTableName());
                     try {
                         // TABLE_TYPE String => "TABLE","VIEW"
-                        a.add(table.getSqlTableType()); 
+                        a.add(t.getSqlTableType());
                     } catch (Exception e) {
                         throw new SQLException(e);
                     }
                     // REMARKS String => explanatory comment on the table
-                    a.add(table.getComment());
+                    a.add(t.getComment());
                     row = a;
                     cnt++;
                     return true;
@@ -638,7 +674,6 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     return false;
                 }
             }
-
         };
         return result;
     }

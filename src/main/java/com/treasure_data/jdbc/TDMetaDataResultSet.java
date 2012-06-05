@@ -7,19 +7,20 @@ import java.util.List;
 public abstract class TDMetaDataResultSet<M> extends TDResultSetBase {
     protected final List<M> data;
 
-    public TDMetaDataResultSet(final List<String> columnNames,
-            final List<String> columnTypes, final List<M> data)
-            throws SQLException {
+    public TDMetaDataResultSet(List<String> columnNames, List<String> columnTypes,
+            List<M> data) throws SQLException {
         if (data != null) {
             this.data = new ArrayList<M>(data);
         } else {
             this.data = new ArrayList<M>();
         }
+
         if (columnNames != null) {
             this.columnNames = new ArrayList<String>(columnNames);
         } else {
             this.columnNames = new ArrayList<String>();
         }
+
         if (columnTypes != null) {
             this.columnTypes = new ArrayList<String>(columnTypes);
         } else {

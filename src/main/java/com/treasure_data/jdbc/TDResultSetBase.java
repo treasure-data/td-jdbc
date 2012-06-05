@@ -427,8 +427,14 @@ public abstract class TDResultSetBase implements ResultSet {
         }
 
         try {
-            Value v = (Value) obj;
-            return v.asRawValue().getString();
+            // TODO #MN
+            if (obj instanceof Value) {
+                return ((Value) obj).asRawValue().getString();
+            } else {
+                return (String) obj;
+            }
+            //Value v = (Value) obj;
+            //return v.asRawValue().getString();
         } catch (Exception e) {
             String msg = String.format("Cannot convert column %d to string: %s",
                     index, e.toString());

@@ -1,1 +1,16 @@
-Release 0.1.0 - 2012/XX/XX
+Release 0.1.2 - 20XX/XX/XX
+
+Release 0.1.1 - 2012/06/04
+  IMPROVEMENTS
+    Implements java.sql.Connection#getMetaData()
+    Implements java.sql.DatabaseMetaData#getTables(..)
+    Implements java.sql.PreparedStatement#addBatch()
+    Implements java.sql.PreparedStatement#executeBatch()
+
+  NEW FEATURES
+    Supports Jasper iReport 4.5.1
+    Supports RJDBC 0.2-1
+    Supports Talend Open Studio for Data Integration 5.0.2
+
+Release 0.1.0 - 2012/05/15
+    

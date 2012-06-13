@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.hsqldb.result.ResultConstants;
-
 import com.treasure_data.jdbc.command.CommandContext;
 import com.treasure_data.logger.TreasureDataLogger;
 
@@ -41,7 +39,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
         super(conn);
-        w = fetchResult(sql, ResultConstants.PREPARE);
+        w = fetchResult(sql, Constants.PREPARE);
     }
 
     public void clearParameters() throws SQLException {

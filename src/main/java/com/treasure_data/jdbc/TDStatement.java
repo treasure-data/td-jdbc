@@ -5,9 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.hsqldb.result.ResultConstants;
-
-public class TDStatement extends TDStatementBase implements Statement {
+public class TDStatement extends TDStatementBase implements Statement, Constants {
     private int fetchSize = 50;
 
     public TDStatement(TDConnection conn) {
@@ -49,7 +47,7 @@ public class TDStatement extends TDStatementBase implements Statement {
     }
 
     public synchronized ResultSet executeQuery(String sql) throws SQLException {
-        fetchResult(sql, ResultConstants.EXECDIRECT);
+        fetchResult(sql, Constants.EXECDIRECT);
         return getResultSet();
     }
 

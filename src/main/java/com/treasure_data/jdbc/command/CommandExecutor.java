@@ -1,18 +1,28 @@
 package com.treasure_data.jdbc.command;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
-import org.hsqldb.result.ResultConstants;
+import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
+import org.msgpack.type.ArrayValue;
+import org.msgpack.type.Value;
+import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.Constants;
+import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.compiler.expr.DateValue;
 import com.treasure_data.jdbc.compiler.expr.DoubleValue;
 import com.treasure_data.jdbc.compiler.expr.Expression;
@@ -36,13 +46,14 @@ import com.treasure_data.jdbc.compiler.stat.Select;
 import com.treasure_data.jdbc.compiler.stat.Show;
 import com.treasure_data.jdbc.compiler.stat.Statement;
 import com.treasure_data.logger.TreasureDataLogger;
+import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.TableSummary;
 
 /**
  * @see org.hsqldb.Session
  * @see org.hsqldb.SessionInterface
  */
-public class CommandExecutor {
+public class CommandExecutor implements Constants {
     private ClientAPI api;
 
     public CommandExecutor(ClientAPI api) {
@@ -56,29 +67,29 @@ public class CommandExecutor {
     public synchronized void execute(CommandContext context)
             throws SQLException {
         switch (context.mode) {
-        case ResultConstants.EXECDIRECT:
+        case Constants.EXECDIRECT:
             executeDirect(context);
             break;
 
-        case ResultConstants.EXECUTE:
-        case ResultConstants.BATCHEXECUTE:
+        case Constants.EXECUTE:
+        case Constants.BATCHEXECUTE:
             throw new SQLException("invalid mode: " + context.mode);
 
-        case ResultConstants.PREPARE:
+        case Constants.PREPARE:
             executePrepare(context);
             break;
 
-        case ResultConstants.LARGE_OBJECT_OP:
-        case ResultConstants.BATCHEXECDIRECT:
-        case ResultConstants.CLOSE_RESULT:
-        case ResultConstants.UPDATE_RESULT:
-        case ResultConstants.FREESTMT:
-        case ResultConstants.GETSESSIONATTR:
-        case ResultConstants.SETSESSIONATTR:
-        case ResultConstants.ENDTRAN:
-        case ResultConstants.SETCONNECTATTR:
-        case ResultConstants.REQUESTDATA:
-        case ResultConstants.DISCONNECT:
+        case Constants.LARGE_OBJECT_OP:
+        case Constants.BATCHEXECDIRECT:
+        case Constants.CLOSE_RESULT:
+        case Constants.UPDATE_RESULT:
+        case Constants.FREESTMT:
+        case Constants.GETSESSIONATTR:
+        case Constants.SETSESSIONATTR:
+        case Constants.ENDTRAN:
+        case Constants.SETCONNECTATTR:
+        case Constants.REQUESTDATA:
+        case Constants.DISCONNECT:
         default:
             throw new SQLException("invalid mode: " + context.mode);
         }
@@ -195,7 +206,7 @@ public class CommandExecutor {
 
     public void validateStatement(CommandContext context, Select stat)
             throws ParseException {
-        if (context.mode == ResultConstants.PREPARE) {
+        if (context.mode == Constants.PREPARE) {
             String s = context.sql;
             if (s.indexOf('?') >= 0) {
                 throw new ParseException(
@@ -208,10 +219,79 @@ public class CommandExecutor {
     public void executeCompiledStatement(CommandContext context,
             Select stat) throws SQLException {
         try {
-            context.resultSet = api.select(context.sql);
+            if (stat.isSelectOne()) {
+                context.resultSet = new TDResultSetSelectOne();
+            } else {
+                context.resultSet = api.select(context.sql);
+            }
         } catch (ClientException e) {
             throw new SQLException(e);
         }
+    }
+
+    public static class TDResultSetSelectOne extends TDResultSetBase {
+        private int rowsFetched = 0;
+
+        private Unpacker fetchedRows;
+
+        private Iterator<Value> fetchedRowsItr;
+
+        @Override
+        public boolean next() throws SQLException {
+            try {
+                if (fetchedRows == null) {
+                    fetchedRows = fetchRows();
+                    fetchedRowsItr = fetchedRows.iterator();
+                }
+
+                if (!fetchedRowsItr.hasNext()) {
+                    return false;
+                }
+
+                ArrayValue vs = (ArrayValue) fetchedRowsItr.next();
+                row = new ArrayList<Object>(vs.size());
+                for (int i = 0; i < vs.size(); i++) {
+                    row.add(i, vs.get(i));
+                }
+                rowsFetched++;
+            } catch (Exception e) {
+                throw new SQLException("Error retrieving next row", e);
+            }
+            // NOTE: fetchOne dosn't throw new SQLException("Method not supported").
+            return true;
+        }
+
+        @Override
+        public ResultSetMetaData getMetaData() throws SQLException {
+                //JobSummary jobSummary = clientApi.waitJobResult(job);
+                //initColumnNamesAndTypes(jobSummary.getResultSchema());
+                //return super.getMetaData();
+            throw new SQLException("Not Implemented");
+        }
+
+        private Unpacker fetchRows() throws SQLException {
+            try {
+                MessagePack msgpack = new MessagePack();
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                Packer packer = msgpack.createPacker(out);
+                List<Integer> src = new ArrayList<Integer>();
+                src.add(1);
+                packer.write(src);
+                byte[] bytes = out.toByteArray();
+                ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+                Unpacker unpacker = msgpack.createUnpacker(in);
+                return unpacker;
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        TDResultSetSelectOne rs = new TDResultSetSelectOne();
+        System.out.println(rs.next());
+        System.out.println(rs.getInt(1));
+        System.out.println(rs.next());
     }
 
     public void executeCompiledPreparedStatement(CommandContext context,

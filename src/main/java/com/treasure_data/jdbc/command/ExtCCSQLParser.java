@@ -21,7 +21,11 @@ public class ExtCCSQLParser {
 
     public Statement Statement() throws ParseException {
         String s = sql.toUpperCase();
-        if (s.startsWith("SELECT ")) {
+        if (s.equals("SELECT 1")) { // TODO
+            Select sel = new Select();
+            sel.selectOne(true);
+            return sel;
+        } else if (s.startsWith("SELECT ")) {
             return new Select();
         }
         return parser.Statement();

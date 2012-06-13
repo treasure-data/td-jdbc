@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.hsqldb.result.ResultConstants;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.Constants;
 import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.NullClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
@@ -37,7 +37,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
-        context.mode = ResultConstants.CHANGE_SET; // without EXECDIRECT and PREPARE
+        context.mode = Constants.CHANGE_SET; // without EXECDIRECT and PREPARE
         try {
             exec.execute(context);
             fail();
@@ -55,7 +55,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
-        context.mode = ResultConstants.EXECDIRECT;
+        context.mode = Constants.EXECDIRECT;
         context.sql = "illigal statement";
         try {
             exec.execute(context);
@@ -75,7 +75,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
-        context.mode = ResultConstants.EXECDIRECT;
+        context.mode = Constants.EXECDIRECT;
         context.sql = "update foo set k='muga' where id = 100";
         try {
             exec.execute(context);
@@ -95,7 +95,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
-        context.mode = ResultConstants.EXECDIRECT;
+        context.mode = Constants.EXECDIRECT;
         context.sql = "insert into foo (k1, k2) values (?, 'muga')";
         try {
             exec.execute(context);
@@ -145,7 +145,7 @@ public class TestCommandExecutor {
 
         { // insert
             CommandContext context = new CommandContext();
-            context.mode = ResultConstants.EXECDIRECT;
+            context.mode = Constants.EXECDIRECT;
             context.sql = "insert into foo (k1, k2) values (1, 'muga')";
             try {
                 exec.execute(context);
@@ -156,7 +156,7 @@ public class TestCommandExecutor {
         }
         { // create table
             CommandContext context = new CommandContext();
-            context.mode = ResultConstants.EXECDIRECT;
+            context.mode = Constants.EXECDIRECT;
             context.sql = "create table foo(name int)";
             try {
                 exec.execute(context);
@@ -167,7 +167,7 @@ public class TestCommandExecutor {
         }
         { // drop table
             CommandContext context = new CommandContext();
-            context.mode = ResultConstants.EXECDIRECT;
+            context.mode = Constants.EXECDIRECT;
             context.sql = "drop table foo";
             try {
                 exec.execute(context);
@@ -178,7 +178,7 @@ public class TestCommandExecutor {
         }
         { // select
             CommandContext context = new CommandContext();
-            context.mode = ResultConstants.EXECDIRECT;
+            context.mode = Constants.EXECDIRECT;
             context.sql = "select v from accesslog";
             try {
                 exec.execute(context);
@@ -198,7 +198,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
-        context.mode = ResultConstants.PREPARE;
+        context.mode = Constants.PREPARE;
         context.sql = "illigal statement";
         try {
             exec.execute(context);
@@ -218,7 +218,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext context = new CommandContext();
-        context.mode = ResultConstants.PREPARE;
+        context.mode = Constants.PREPARE;
         context.sql = "update foo set k='muga' where id = 100";
         try {
             exec.execute(context);
@@ -272,7 +272,7 @@ public class TestCommandExecutor {
 
         { // insert
             CommandContext context = new CommandContext();
-            context.mode = ResultConstants.PREPARE;
+            context.mode = Constants.PREPARE;
             context.sql = "insert into foo (k1, k2) values (?, 'muga')";
             try {
                 exec.execute(context);
@@ -294,7 +294,7 @@ public class TestCommandExecutor {
     public void select01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "select count(*) from mugatbl order by c1 desc";
         exec.execute(w);
     }
@@ -309,7 +309,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
         exec.execute(w);
     }
@@ -318,7 +318,7 @@ public class TestCommandExecutor {
     public void createTable01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
         exec.execute(w);
     }
@@ -333,7 +333,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "create table table01(c0 varchar(255), c1 int)";
         exec.execute(w);
     }
@@ -342,7 +342,7 @@ public class TestCommandExecutor {
     public void dropTable01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "drop table table02";
         exec.execute(w);
     }
@@ -357,7 +357,7 @@ public class TestCommandExecutor {
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "drop table table02";
         exec.execute(w);
     }
@@ -366,7 +366,7 @@ public class TestCommandExecutor {
     public void insert01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
-        w.mode = ResultConstants.EXECDIRECT;
+        w.mode = Constants.EXECDIRECT;
         w.sql = "insert into table02 (k1, k2, k3) values (2, 'muga', 'nishizawa')";
         exec.execute(w);
     }
@@ -383,7 +383,7 @@ public class TestCommandExecutor {
         String sql = "insert into table01 (%s, %s) values (%s, '%s')";
         for (int i = 0; i < 50; i++) {
             CommandContext w = new CommandContext();
-            w.mode = ResultConstants.EXECDIRECT;
+            w.mode = Constants.EXECDIRECT;
             w.sql = String.format(sql, "col1", "col2", "" + i, "muga:" + i);
             exec.execute(w);
         }

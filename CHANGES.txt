@@ -1,4 +1,6 @@
-Release 0.1.2 - 20XX/XX/XX
+Release 0.1.2 - 2012/06/12
+  NEW FEATURES
+    Supports Pentaho Report Designer 3.8.3-GA
 
 Release 0.1.1 - 2012/06/04
   IMPROVEMENTS

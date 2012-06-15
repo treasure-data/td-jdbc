@@ -506,7 +506,6 @@ public class CommandExecutor implements Constants {
             CommandContext context, Show stat) throws SQLException {
         try {
             List<TableSummary> tables = api.showTables();
-            context.resultSet = null; // FIXME #MN
         } catch (ClientException e) {
             throw new SQLException(e);
         }

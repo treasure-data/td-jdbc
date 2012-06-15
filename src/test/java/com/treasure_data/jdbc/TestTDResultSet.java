@@ -46,7 +46,7 @@ public class TestTDResultSet {
             return false;
         }
 
-        public ResultSet select(String sql) throws ClientException {
+        public TDResultSetBase select(String sql) throws ClientException {
             return null;
         }
 

@@ -1,6 +1,5 @@
 package com.treasure_data.jdbc;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
@@ -13,7 +12,7 @@ public abstract class TDStatementBase implements Statement {
 
     protected CommandExecutor exec;
 
-    protected ResultSet currentResultSet = null;
+    protected TDResultSetBase currentResultSet = null;
 
     protected int maxRows = 0;
 
@@ -41,8 +40,9 @@ public abstract class TDStatementBase implements Statement {
         currentResultSet = null;
     }
 
-    public ResultSet getResultSet() throws SQLException {
-        ResultSet tmp = currentResultSet;
+    public TDResultSetBase getResultSet() throws SQLException {
+        TDResultSetBase tmp = currentResultSet;
+        tmp.statement = this;
         currentResultSet = null;
         return tmp;
     }

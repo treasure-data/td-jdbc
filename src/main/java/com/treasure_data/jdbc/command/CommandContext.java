@@ -1,10 +1,11 @@
 package com.treasure_data.jdbc.command;
 
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.treasure_data.jdbc.TDResultSet;
+import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.compiler.stat.Statement;
 
 public class CommandContext {
@@ -21,7 +22,7 @@ public class CommandContext {
 
     public List<Map<Integer, Object>> params0 = new ArrayList<Map<Integer, Object>>();
 
-    public ResultSet resultSet;
+    public TDResultSetBase resultSet;
 
     public CommandContext() {
     }

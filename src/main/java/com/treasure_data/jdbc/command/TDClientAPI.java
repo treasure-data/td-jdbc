@@ -14,6 +14,7 @@ import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
+import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.AuthenticateRequest;
 import com.treasure_data.model.AuthenticateResult;
@@ -97,8 +98,8 @@ public class TDClientAPI implements ClientAPI {
         return logger.log(tableName, record);
     }
 
-    public ResultSet select(String sql) throws ClientException {
-        ResultSet rs = null;
+    public TDResultSetBase select(String sql) throws ClientException {
+        TDResultSetBase rs = null;
 
         Job job = new Job(database, sql);
         SubmitJobRequest request = new SubmitJobRequest(job);

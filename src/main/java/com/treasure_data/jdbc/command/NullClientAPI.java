@@ -7,6 +7,7 @@ import java.util.Map;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.TableSummary;
@@ -35,7 +36,7 @@ public class NullClientAPI implements ClientAPI {
         return true;
     }
 
-    public ResultSet select(String sql) throws ClientException {
+    public TDResultSetBase select(String sql) throws ClientException {
         return null;
     }
 

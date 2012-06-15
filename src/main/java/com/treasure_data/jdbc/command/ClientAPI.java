@@ -7,6 +7,7 @@ import java.util.Map;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.TableSummary;
@@ -25,7 +26,7 @@ public interface ClientAPI {
     boolean insert(String tableName, Map<String, Object> record) throws ClientException;
 
     // select statement
-    ResultSet select(String sql) throws ClientException;
+    TDResultSetBase select(String sql) throws ClientException;
 
     boolean flush(); // for debugging
 

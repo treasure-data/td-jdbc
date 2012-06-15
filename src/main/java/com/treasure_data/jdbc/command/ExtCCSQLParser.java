@@ -21,13 +21,28 @@ public class ExtCCSQLParser {
 
     public Statement Statement() throws ParseException {
         String s = sql.toUpperCase();
-        if (s.equals("SELECT 1")) { // TODO
-            Select sel = new Select();
-            sel.selectOne(true);
-            return sel;
-        } else if (s.startsWith("SELECT ")) {
-            return new Select();
+
+        Statement stat = parseForPentahoReportDesigner(s);
+        if (stat != null) {
+            return stat;
+        }
+
+        if (s.startsWith("SELECT ")) {
+            Select select = new Select();
+            select.setString(sql);
+            return select;
         }
         return parser.Statement();
+    }
+
+    private Statement parseForPentahoReportDesigner(String upperCaseSQL) {
+        if (!upperCaseSQL.equals("SELECT 1")) {
+            return null;
+        }
+
+        Select select = new Select();
+        select.setString(sql);
+        select.selectOne(true);
+        return select;
     }
 }

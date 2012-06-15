@@ -6,6 +6,7 @@ import java.util.List;
 public class Select implements Statement {
     private SelectBody selectBody;
     private List<WithItem> withItemsList;
+    private String body;
     private boolean selectOne = false;
 
     public void accept(StatementVisitor statementVisitor) {
@@ -18,6 +19,14 @@ public class Select implements Statement {
 
     public void setSelectBody(SelectBody body) {
         selectBody = body;
+    }
+
+    public void setString(String body) {
+        this.body = body;
+    }
+
+    public String getString() {
+        return body;
     }
 
     public void selectOne(boolean flag) {

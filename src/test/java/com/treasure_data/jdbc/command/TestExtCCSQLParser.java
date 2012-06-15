@@ -14,10 +14,8 @@ import com.treasure_data.jdbc.compiler.expr.Expression;
 import com.treasure_data.jdbc.compiler.expr.LongValue;
 import com.treasure_data.jdbc.compiler.expr.StringValue;
 import com.treasure_data.jdbc.compiler.expr.ops.ExpressionList;
-import com.treasure_data.jdbc.compiler.expr.ops.ItemsList;
 import com.treasure_data.jdbc.compiler.parser.ParseException;
 import com.treasure_data.jdbc.compiler.schema.Column;
-import com.treasure_data.jdbc.compiler.schema.Table;
 import com.treasure_data.jdbc.compiler.stat.ColumnDefinition;
 import com.treasure_data.jdbc.compiler.stat.CreateTable;
 import com.treasure_data.jdbc.compiler.stat.Drop;
@@ -133,7 +131,7 @@ public class TestExtCCSQLParser {
         {
             String sql = "Insert intttt testtbl(k1, k2) values (1, 'muga')";
             try {
-                Statement stat = s(sql);
+                s(sql);
                 fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof ParseException);
@@ -142,7 +140,7 @@ public class TestExtCCSQLParser {
         {
             String sql = "Insert into testtbl(k1, k2) vvvvlues (1, 'muga')";
             try {
-                Statement stat = s(sql);
+                s(sql);
                 fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof ParseException);
@@ -214,7 +212,7 @@ public class TestExtCCSQLParser {
         {
             String sql = "show foo";
             try {
-                Statement stat = s(sql);
+                s(sql);
                 fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof ParseException);
@@ -239,7 +237,7 @@ public class TestExtCCSQLParser {
         {
             String sql = "show tables error";
             try {
-                Statement stat = s(sql);
+                s(sql);
                 fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof ParseException);

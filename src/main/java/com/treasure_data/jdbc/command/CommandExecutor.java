@@ -236,6 +236,9 @@ public class CommandExecutor implements Constants {
 
         private Iterator<Value> fetchedRowsItr;
 
+        public TDResultSetSelectOne() {
+        }
+
         @Override
         public boolean next() throws SQLException {
             try {

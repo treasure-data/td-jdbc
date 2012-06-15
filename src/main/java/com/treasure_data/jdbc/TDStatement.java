@@ -49,7 +49,6 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     public synchronized ResultSet executeQuery(String sql) throws SQLException {
         fetchResult(sql, Constants.EXECDIRECT);
         TDResultSetBase rs = getResultSet();
-        rs.statement = this;
         return rs;
     }
 

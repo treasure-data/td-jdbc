@@ -42,7 +42,7 @@ public abstract class TDStatementBase implements Statement {
 
     public TDResultSetBase getResultSet() throws SQLException {
         TDResultSetBase tmp = currentResultSet;
-        tmp.statement = this;
+        tmp.setStatement(this);
         currentResultSet = null;
         return tmp;
     }

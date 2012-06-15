@@ -42,7 +42,7 @@ public abstract class TDResultSetBase implements ResultSet {
 
     protected List<String> columnTypes;
 
-    protected TDStatementBase statement;
+    protected TDStatementBase statement = null;
 
     public boolean absolute(int row) throws SQLException {
         throw new SQLException("Method not supported");
@@ -409,6 +409,10 @@ public abstract class TDResultSetBase implements ResultSet {
 
     public short getShort(String name) throws SQLException {
         return getShort(findColumn(name));
+    }
+
+    void setStatement(TDStatementBase stat) {
+        statement = stat;
     }
 
     public Statement getStatement() throws SQLException {

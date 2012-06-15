@@ -17,7 +17,6 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public void cancel() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
     }
 
     public void clearBatch() throws SQLException {

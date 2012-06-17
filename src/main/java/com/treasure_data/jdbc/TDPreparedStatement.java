@@ -64,15 +64,12 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
 
     @Override
     public int[] executeBatch() throws SQLException {
-        LOG.info("fetchResult");
-        // TODO #MN temporal implementation
         fetchResult(w);
         TreasureDataLogger.flushAll();
         int[] ret = new int[w.params0.size()];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = -2;
         }
-        LOG.info("end fetchResult");
         return ret;
     }
 
@@ -82,7 +79,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        return executeQuery().getMetaData();
     }
 
     public ParameterMetaData getParameterMetaData() throws SQLException {

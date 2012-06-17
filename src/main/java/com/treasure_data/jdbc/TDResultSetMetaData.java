@@ -149,7 +149,34 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
     }
 
     public boolean isSigned(int column) throws SQLException {
-        throw new SQLException("Method not supported");
+        if (columnTypes == null) {
+            throw new SQLException(
+                    "Could not determine column type name for ResultSet");
+        }
+
+        if (column < 1 || column > columnTypes.size()) {
+            throw new SQLException("Invalid column value: " + column);
+        }
+
+        // we need to convert the Hive type to the SQL type name
+        // TODO: this would be better handled in an enum
+        String type = columnTypes.get(column - 1);
+        if ("string".equalsIgnoreCase(type) ||
+                "boolean".equalsIgnoreCase(type) ||
+                type.startsWith("map<") ||
+                type.startsWith("array<") ||
+                type.startsWith("struct<")) {
+            return false;
+        } else if ("float".equalsIgnoreCase(type) ||
+                "double".equalsIgnoreCase(type) ||
+                "tinyint".equalsIgnoreCase(type) ||
+                "smallint".equalsIgnoreCase(type) ||
+                "int".equalsIgnoreCase(type) ||
+                "bigint".equalsIgnoreCase(type)) {
+            return true;
+        }
+
+        throw new SQLException("Unrecognized column type: " + type);
     }
 
     public boolean isWritable(int column) throws SQLException {

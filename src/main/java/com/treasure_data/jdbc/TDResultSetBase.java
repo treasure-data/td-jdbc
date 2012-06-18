@@ -23,7 +23,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.msgpack.type.ArrayValue;
 import org.msgpack.type.BooleanValue;
+import org.msgpack.type.MapValue;
 import org.msgpack.type.NumberValue;
 import org.msgpack.type.Value;
 
@@ -434,7 +436,9 @@ public abstract class TDResultSetBase implements ResultSet {
 
         try {
             // TODO #MN
-            if (obj instanceof Value) {
+            if (obj instanceof MapValue) {
+                return ((MapValue) obj).toString();
+            } else if (obj instanceof Value) {
                 return ((Value) obj).asRawValue().getString();
             } else {
                 return (String) obj;

@@ -114,7 +114,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void commit() throws SQLException {
-        // TODO #MN
+        // ignore TODO #MN consider more
     }
 
     public Array createArrayOf(String typeName, Object[] elements)

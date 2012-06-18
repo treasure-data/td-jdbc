@@ -52,20 +52,39 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
         w.params0.add(params);
     }
 
+    public void clearBatch() throws SQLException {
+        params.clear();
+        w.params0.clear();
+    }
+
     public boolean execute() throws SQLException {
         return executeQuery() != null;
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        w.params0.add(params);
+        w.params0.add(deepCopy(params));
         fetchResult(w);
+        clearBatch();
         return getResultSet();
+    }
+
+    private static Map<Integer, Object> deepCopy(Map<Integer, Object> map) {
+        Map<Integer, Object> ret = new HashMap<Integer, Object>(map.size());
+        if (map.isEmpty()) {
+            return ret;
+        }
+
+        for (Map.Entry<Integer, Object> entry : map.entrySet()) {
+            Integer key = entry.getKey();
+            Object val = entry.getValue();
+            ret.put(key, val);
+        }
+        return ret;
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
         fetchResult(w);
-        TreasureDataLogger.flushAll();
         int[] ret = new int[w.params0.size()];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = -2;

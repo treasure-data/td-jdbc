@@ -15,6 +15,7 @@ import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
+import com.treasure_data.logger.Config;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.AuthenticateRequest;
 import com.treasure_data.model.AuthenticateResult;
@@ -56,6 +57,16 @@ public class TDClientAPI implements ClientAPI {
         checkCredentials();
         this.database = database;
         this.maxRows = maxRows;
+        {
+            Properties sysprops = System.getProperties();
+            if (sysprops.getProperty(Config.TD_LOGGER_AGENTMODE) == null) {
+                sysprops.setProperty(Config.TD_LOGGER_AGENTMODE, "false");
+            }
+            if (sysprops.getProperty(Config.TD_LOGGER_API_KEY) == null) {
+                String apiKey = client.getTreasureDataCredentials().getAPIKey();
+                sysprops.setProperty(Config.TD_LOGGER_API_KEY, apiKey);
+            }
+        }
     }
 
     private void checkCredentials() {

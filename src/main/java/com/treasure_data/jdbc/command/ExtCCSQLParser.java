@@ -20,7 +20,7 @@ public class ExtCCSQLParser {
     }
 
     public Statement Statement() throws ParseException {
-        String s = sql.toUpperCase();
+        String s = stripStart(sql.toUpperCase(), " ");
 
         Statement stat = parseForPentahoReportDesigner(s);
         if (stat != null) {
@@ -44,5 +44,30 @@ public class ExtCCSQLParser {
         select.setString(sql);
         select.selectOne(true);
         return select;
+    }
+
+    private static String stripStart(String str, String stripChars) {
+        if (str == null) {
+            return null;
+        }
+        int strLen = str.length();
+        if (strLen == 0) {
+            return str;
+        }
+        int start = 0;
+        if (stripChars == null) {
+            while ((start != strLen)
+                    && Character.isWhitespace(str.charAt(start))) {
+                start++;
+            }
+        } else if (stripChars.length() == 0) {
+            return str;
+        } else {
+            while ((start != strLen)
+                    && (stripChars.indexOf(str.charAt(start)) != -1)) {
+                start++;
+            }
+        }
+        return str.substring(start);
     }
 }

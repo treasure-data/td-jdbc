@@ -35,6 +35,7 @@ import com.treasure_data.jdbc.compiler.expr.ops.ExpressionList;
 import com.treasure_data.jdbc.compiler.expr.ops.ItemsList;
 import com.treasure_data.jdbc.compiler.parser.CCSQLParser;
 import com.treasure_data.jdbc.compiler.parser.ParseException;
+import com.treasure_data.jdbc.compiler.parser.TokenMgrError;
 import com.treasure_data.jdbc.compiler.schema.Column;
 import com.treasure_data.jdbc.compiler.schema.Table;
 import com.treasure_data.jdbc.compiler.stat.ColumnDefinition;
@@ -106,8 +107,10 @@ public class CommandExecutor implements Constants {
                 throw new ParseException("sql includes some jdbcParameters");
             }
             executeCompiledStatement(context);
+        } catch (TokenMgrError e) {
+            throw new SQLException("sql: " + context.sql, e);
         } catch (ParseException e) {
-            throw new SQLException(e);
+            throw new SQLException("sql: " + context.sql, e);
         }
     }
 
@@ -288,13 +291,6 @@ public class CommandExecutor implements Constants {
                 throw new SQLException(e);
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        TDResultSetSelectOne rs = new TDResultSetSelectOne();
-        System.out.println(rs.next());
-        System.out.println(rs.getInt(1));
-        System.out.println(rs.next());
     }
 
     public void executeCompiledPreparedStatement(CommandContext context,

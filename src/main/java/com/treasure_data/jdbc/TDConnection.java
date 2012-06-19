@@ -25,6 +25,8 @@ public class TDConnection implements Connection, Constants {
 
     private boolean autoCommit = false;
 
+    private boolean readOnly = false;
+
     private Properties props;
 
     private Database database;
@@ -110,7 +112,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public boolean isClosed() throws SQLException {
-        return true; // ignore
+        return false;
     }
 
     public void commit() throws SQLException {
@@ -188,7 +190,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
-        return new TDDatabaseMetaData(this); // TODO
+        return new TDDatabaseMetaData(this);
     }
 
     public int getTransactionIsolation() throws SQLException {
@@ -200,7 +202,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public boolean isReadOnly() throws SQLException {
-        return false;
+        return readOnly;
     }
 
     public boolean isValid(int timeout) throws SQLException {
@@ -266,11 +268,11 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void rollback() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        // ignore TODO #MN consider more
     }
 
     public void rollback(Savepoint savepoint) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        // ignore TODO #MN consider more
     }
 
     public void setAutoCommit(boolean autoCommit)
@@ -297,7 +299,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void setReadOnly(boolean readOnly) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        this.readOnly = readOnly;
     }
 
     public Savepoint setSavepoint() throws SQLException {

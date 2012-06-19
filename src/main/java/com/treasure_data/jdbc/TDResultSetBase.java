@@ -523,7 +523,7 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public boolean isClosed() throws SQLException {
-        throw new SQLException("Method not supported");
+        return false;
     }
 
     public boolean isFirst() throws SQLException {

@@ -61,9 +61,12 @@ public class TDResultSet extends TDResultSetBase {
 
     @Override
     public void close() throws SQLException {
+        /**
+         * TODO #MN deleted them
         clientApi = null;
         fetchedRows = null;
         fetchedRowsItr = null;
+         */
     }
 
     /**

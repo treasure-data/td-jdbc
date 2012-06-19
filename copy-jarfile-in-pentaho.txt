@@ -1,0 +1,24 @@
+# report designer
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/design-tools/Pentaho\ Report\ Designer.app/lib/jdbc/
+
+# data integration
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/design-tools/data-integration//libext/JDBC/
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/server/data-integration-server/tomcat/lib/
+
+# biserver-ee
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/server/biserver-ee/tomcat/lib/
+
+# schema workbench
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/design-tools/schema-workbench/drivers/
+
+# aggr designer
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/design-tools/agg-designer/drivers/
+
+# metadata editor
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/design-tools/metadata-editor/libext/JDBC/
+
+# enterprise-console
+cp target/td-jdbc-0.1.4-SNAPSHOT-jar-with-dependencies.jar ~/works/java/pentaho-bi-suite-4.1.0-GA-x64/server/enterprise-console/jdbc/
+
+# server/biserver-ee/tomcat/webapps/pentaho/WEB-INF/lib/pentaho-bi-platform-plugin-services-3.10.0-GA.jar
+

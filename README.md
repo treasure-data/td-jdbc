@@ -158,6 +158,62 @@ the following properties in the file.
     td.logger.agent.host=<your td-agent host>
     td.logger.agent.port=<your td-agent port>
 
+## Implementation Status
+
+Following methods have been implemented already.
+
+### java.sql.Connection
+
+  * createStatement() and createStatement(..)
+  * getMetaData()
+  * prepareStatement(..)
+
+### java.sql.Statement
+
+  * execute(..)
+  * executeQuery(..)
+  * setResultSet()
+
+### java.sql.PreparedStatement
+
+  * addBatch()
+  * clearParameters()
+  * execute()
+  * executeQuery()
+  * getMetaData()
+  * setBoolean(..)
+  * setByte(..)
+  * setDouble(..)
+  * setFloat(..)
+  * setInt(..)
+  * setLong(..)
+  * setShort(..)
+  * setString(..)
+
+### java.sql.ResultSet
+
+    * findColumn(String)
+  * getBoolean(..)
+  * getByte(..)
+  * getDate(int) and getDate(String)
+  * getDouble(int)
+  * getFloat(int)
+  * getInt(int)
+  * getLong(int)
+  * getMetaData()
+  * next()
+  * getObject(int) and getObject(String)
+  * getShort(..)
+
+### java.sql.ResultSetMetaData
+
+  * getColumnCount()
+  * getColumnDisplaySize(int)
+  * getColumnLabel(int)
+  * getColumnName(int)
+  * getColumnType(int)
+  * getColumnTypeName(int)
+
 ## License
 
 Apache License, Version 2.0

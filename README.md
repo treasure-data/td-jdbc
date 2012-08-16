@@ -192,7 +192,7 @@ Following methods have been implemented already.
 
 ### java.sql.ResultSet
 
-    * findColumn(String)
+  * findColumn(String)
   * getBoolean(..)
   * getByte(..)
   * getDate(int) and getDate(String)

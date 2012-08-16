@@ -214,6 +214,14 @@ Following methods have been implemented already.
   * getColumnType(int)
   * getColumnTypeName(int)
 
+### java.sql.DatabaseMetaData
+
+  * getCatalogs()
+  * getColumns(..)
+  * getSchemas(..)
+  * getTableTypes()
+  * getTables(..)
+
 ## License
 
 Apache License, Version 2.0

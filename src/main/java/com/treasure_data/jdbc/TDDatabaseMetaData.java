@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.json.simple.JSONValue;
 
-import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.TableSummary;
@@ -21,8 +20,6 @@ import com.treasure_data.model.TableSummary;
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     private ClientAPI api;
-
-    private static final String CATALOG_SEPARATOR = ".";
 
     private static final char SEARCH_STRING_ESCAPE = '\\';
 
@@ -73,7 +70,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getCatalogSeparator() throws SQLException {
-        return CATALOG_SEPARATOR;
+        return ".";
     }
 
     public String getCatalogTerm() throws SQLException {

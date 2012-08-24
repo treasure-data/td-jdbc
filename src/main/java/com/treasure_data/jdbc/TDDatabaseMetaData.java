@@ -79,13 +79,13 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getCatalogs() throws SQLException {
         try {
-            // TODO a client call to get the schema's after HIVE-675 is
-            // implemented
-            final List<String> catalogs = new ArrayList<String>();
-            catalogs.add("default");
-            return new TDMetaDataResultSet<String>(
-                    Arrays.asList("TABLE_CAT"), Arrays.asList("STRING"),
-                    catalogs) {
+            List<String> names = new ArrayList<String>();
+            names.add("TABLE_CAT");
+            List<String> types = new ArrayList<String>();
+            types.add("STRING");
+            List<String> data0 = new ArrayList<String>();
+            data0.add("default");
+            return new TDMetaDataResultSet<String>(names, types, data0) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {

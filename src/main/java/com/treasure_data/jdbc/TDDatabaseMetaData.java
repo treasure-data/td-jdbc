@@ -482,7 +482,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getPrimaryKeys(String catalog, String schema, String table)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException("TD tables don't have primary keys");
     }
 
     public ResultSet getProcedureColumns(String catalog, String schemaPattern,

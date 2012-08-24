@@ -26,7 +26,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     private static final int maxColumnNameLength = 128;
 
     public TDDatabaseMetaData(TDConnection conn) {
-        api = new TDClientAPI(conn);
+        this(new TDClientAPI(conn));
+    }
+
+    public TDDatabaseMetaData(TDClientAPI api) {
+        this.api = api;
     }
 
     public boolean allProceduresAreCallable() throws SQLException {

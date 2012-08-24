@@ -29,7 +29,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         this(new TDClientAPI(conn));
     }
 
-    public TDDatabaseMetaData(TDClientAPI api) {
+    public TDDatabaseMetaData(ClientAPI api) {
         this.api = api;
     }
 
@@ -1125,11 +1125,5 @@ types: null
 
     public <T> T unwrap(Class<T> iface) throws SQLException {
         throw new SQLException("Method not supported");
-    }
-
-    public static void main(String[] args) throws SQLException {
-        TDDatabaseMetaData meta = new TDDatabaseMetaData(null);
-        System.out.println("DriverName: " + meta.getDriverName());
-        System.out.println("DriverVersion: " + meta.getDriverVersion());
     }
 }

@@ -54,7 +54,7 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         String type = columnTypes.get(column - 1);
 
         // we need to convert the thrift type to the SQL type
-        return Utils.hiveTypeToSqlType(type);
+        return Utils.TDTypeToSqlType(type);
     }
 
     public String getColumnTypeName(int column) throws SQLException {

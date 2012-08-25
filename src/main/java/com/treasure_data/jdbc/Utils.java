@@ -6,11 +6,6 @@ import java.sql.Types;
 
 public class Utils {
 
-    public static SQLWarning sqlWarning(String reason,
-            String state, Throwable t) {
-        return new SQLWarning(reason, state, t);
-    }
-
     /**
      * Convert hive types to sql types.
      * 
@@ -18,7 +13,7 @@ public class Utils {
      * @return Integer java.sql.Types values
      * @throws SQLException
      */
-    public static int hiveTypeToSqlType(String type) throws SQLException {
+    public static int TDTypeToSqlType(String type) throws SQLException {
         if ("string".equalsIgnoreCase(type)) {
             return Types.VARCHAR;
         } else if ("float".equalsIgnoreCase(type)) {
@@ -33,6 +28,8 @@ public class Utils {
             return Types.SMALLINT;
         } else if ("int".equalsIgnoreCase(type)) {
             return Types.INTEGER;
+        } else if ("long".equalsIgnoreCase(type)) {
+            return Types.BIGINT;
         } else if ("bigint".equalsIgnoreCase(type)) {
             return Types.BIGINT;
         } else if (type.startsWith("map<")) {
@@ -44,5 +41,4 @@ public class Utils {
         }
         throw new SQLException("Unrecognized column type: " + type);
     }
-
 }

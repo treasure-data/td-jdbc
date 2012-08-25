@@ -75,7 +75,7 @@ public class TestTDDatabaseMetaData {
                         "2012-02-20T18:31:48Z",
                         "2012-02-20T18:31:48Z"));
                 list.add(new TableSummary(new Database("mugadb"), "tbl02", 12344,
-                        null,
+                        "[]",
                         "2012-02-20T18:31:48Z",
                         "2012-02-20T18:31:48Z"));
                 return list;
@@ -114,6 +114,56 @@ public class TestTDDatabaseMetaData {
                 assertEquals("tbl01", rs.getString("TABLE_NAME"));
                 assertEquals("f03", rs.getString("COLUMN_NAME"));
                 assertEquals("long", rs.getString("TYPE_NAME"));
+
+                assertFalse(rs.next());
+            } finally {
+                if (rs != null) {
+                    rs.close();
+                }
+            }
+        }
+    }
+
+    @Test
+    public void getTables() throws Exception {
+        class MockShowTables extends NullClientAPI {
+            @Override public List<TableSummary> showTables() throws ClientException {
+                List<TableSummary> list = new ArrayList<TableSummary>();
+                list.add(new TableSummary(new Database("mugadb"), "tbl01", 12344,
+                        "[[\"f01\",\"string\"],[\"f02\",\"int\"],[\"f03\",\"long\"]]",
+                        "2012-02-20T18:31:48Z",
+                        "2012-02-20T18:31:48Z"));
+                list.add(new TableSummary(new Database("mugadb"), "tbl02", 12344,
+                        "[]",
+                        "2012-02-20T18:31:48Z",
+                        "2012-02-20T18:31:48Z"));
+                return list;
+            }
+        }
+
+        {
+            TDDatabaseMetaData metadata = new TDDatabaseMetaData(new MockShowTables());
+            ResultSet rs = null;
+            try {
+                rs = metadata.getTables(null, null, null, null);
+
+                try {
+                    rs.getString(1);
+                } catch (Throwable t) {
+                    assertTrue(t instanceof SQLException);
+                }
+
+                assertTrue(rs.next());
+                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals(null, rs.getString("TABLE_SCHEM"));
+                assertEquals("tbl01", rs.getString("TABLE_NAME"));
+                assertEquals("TABLE", rs.getString("TABLE_TYPE"));
+
+                assertTrue(rs.next());
+                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals(null, rs.getString("TABLE_SCHEM"));
+                assertEquals("tbl02", rs.getString("TABLE_NAME"));
+                assertEquals("TABLE", rs.getString("TABLE_TYPE"));
 
                 assertFalse(rs.next());
             } finally {

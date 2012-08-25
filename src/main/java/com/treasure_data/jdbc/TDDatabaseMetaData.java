@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.json.simple.JSONValue;
 
+import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.TableSummary;
@@ -82,28 +83,24 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getCatalogs() throws SQLException {
+        List<String> names = Arrays.asList("TABLE_CAT");
+        List<String> types = Arrays.asList("STRING");
+        List<String> data0 = Arrays.asList("default");
+
         try {
-            List<String> names = new ArrayList<String>();
-            names.add("TABLE_CAT");
-            List<String> types = new ArrayList<String>();
-            types.add("STRING");
-            List<String> data0 = new ArrayList<String>();
-            data0.add("default");
             return new TDMetaDataResultSet<String>(names, types, data0) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {
-                    if (cnt < data.size()) {
-                        List<Object> a = new ArrayList<Object>(1);
-                        // TABLE_CAT String => table
-                        // catalog (may be null)
-                        a.add(data.get(cnt));
-                        row = a;
-                        cnt++;
-                        return true;
-                    } else {
+                    if (cnt >= data.size()) {
                         return false;
                     }
+
+                    List<Object> a = new ArrayList<Object>(1);
+                    a.add(data.get(cnt)); // TABLE_CAT String => table catalog (may be null)
+                    row = a;
+                    cnt++;
+                    return true;
                 }
             };
         } catch (Exception e) {
@@ -164,144 +161,168 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public ResultSet getColumns(String catalog, final String schemaPattern,
             final String tableNamePattern, final String columnNamePattern)
             throws SQLException {
-        List<TDColumn> columns = new ArrayList<TDColumn>();
+        if (catalog == null) {
+            catalog = "default";
+        }
+
+        String tableNamePattern1 = convertPattern(tableNamePattern);
+        String columnNamePattern1 = convertPattern(columnNamePattern);
+
+        List<TableSummary> ts = null;
         try {
-            if (catalog == null) {
-                catalog = "default";
+            ts = api.showTables();
+            if (ts == null) {
+                ts = new ArrayList<TableSummary>();
+            }
+        } catch (ClientException e) {
+            throw new SQLException(e);
+        }
+
+        List<TDColumn> columns = new ArrayList<TDColumn>();
+        for (TableSummary t : ts) {
+            if (!t.getName().matches(tableNamePattern1)) {
+                continue;
             }
 
-            String regtableNamePattern = convertPattern(tableNamePattern);
-            String regcolumnNamePattern = convertPattern(columnNamePattern);
+            List<List<String>> schemaFields = null;
+            try {
+                schemaFields = (List<List<String>>) JSONValue.parse(t.getSchema());
+            } catch (Exception e) {
+                continue;
+            }
 
-            List<TableSummary> ts = api.showTables();
-            for (TableSummary t : ts) {
-                if (t.getName().matches(regtableNamePattern)) {
-                    Object o = JSONValue.parse(t.getSchema());
-                    List<List<String>> schemaFields = (List<List<String>>) o;
-                    int ordinalPos = 1;
-                    for (List<String> schemaField : schemaFields) {
-                        String fieldName = schemaField.get(0);
-                        String fieldType = schemaField.get(1);
-                        if (fieldName.matches(regcolumnNamePattern)) {
-                            columns.add(new TDColumn(fieldName, t.getName(),
-                                    catalog, "TABLE", "comment", ordinalPos)); // TODO
-                            ordinalPos++;
-                        }
+            int ordinal = 1;
+            for (List<String> schemaField : schemaFields) {
+                String fname = schemaField.get(0);
+                String ftype = schemaField.get(1);
+
+                if (!fname.matches(columnNamePattern1)) {
+                    continue;
+                }
+
+                TDColumn c = new TDColumn(fname, t.getName(), catalog, ftype, "comment", ordinal);
+                columns.add(c);
+                ordinal++;
+            }
+        }
+        Collections.sort(columns, new Comparator<TDColumn>() {
+            /**
+             * We sort the output of getColumns to guarantee jdbc compliance.
+             * First check by table name then by ordinal position
+             */
+            public int compare(TDColumn o1, TDColumn o2) {
+                int compareName = o1.getTableName().compareTo(o2.getTableName());
+                if (compareName == 0) {
+                    if (o1.getOrdinal() > o2.getOrdinal()) {
+                        return 1;
+                    } else if (o1.getOrdinal() < o2.getOrdinal()) {
+                        return -1;
                     }
+                    return 0;
+                } else {
+                    return compareName;
                 }
             }
+        });
 
-//            for (String table : tables) {
-//                if (table.matches(regtableNamePattern)) {
-//                    List<FieldSchema> fields = client.get_schema(catalog, table);
-//                    
-//                    int ordinalPos = 1;
-//                    for (FieldSchema field : fields) {
-//                        if (field.getName().matches(regcolumnNamePattern)) {
-//                            columns.add(new JdbcColumn(field.getName(), table,
-//                                    catalog, field.getType(), field
-//                                            .getComment(), ordinalPos));
-//                            ordinalPos++;
-//                        }
-//                    }
-//                }
-//            }
-            Collections.sort(columns, new GetColumnsComparator());
+        List<String> names = Arrays.asList(
+                "TABLE_CAT",
+                "TABLE_SCHEM",
+                "TABLE_NAME",
+                "COLUMN_NAME",
+                "DATA_TYPE",
+                "TYPE_NAME",
+                "COLUMN_SIZE",
+                "BUFFER_LENGTH",
+                "DECIMAL_DIGITS",
+                "NUM_PREC_RADIX",
+                "NULLABLE",
+                "REMARKS",
+                "COLUMN_DEF",
+                "SQL_DATA_TYPE",
+                "SQL_DATETIME_SUB",
+                "CHAR_OCTET_LENGTH",
+                "ORDINAL_POSITION",
+                "IS_NULLABLE",
+                "SCOPE_CATLOG",
+                "SCOPE_SCHEMA",
+                "SCOPE_TABLE",
+                "SOURCE_DATA_TYPE",
+                "IS_AUTOINCREMENT"
+        );
 
-            return new TDMetaDataResultSet<TDColumn>(
-                    Arrays.asList(
-                    "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME",
-                    "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH",
-                    "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS",
-                    "COLUMN_DEF", "SQL_DATA_TYPE", "SQL_DATETIME_SUB",
-                    "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE",
-                    "SCOPE_CATLOG", "SCOPE_SCHEMA", "SCOPE_TABLE",
-                    "SOURCE_DATA_TYPE"),
-                    Arrays.asList("STRING", "STRING",
-                    "STRING", "STRING", "INT", "STRING", "INT", "INT", "INT",
-                    "INT", "INT", "STRING", "STRING", "INT", "INT", "INT",
-                    "INT", "STRING", "STRING", "STRING", "STRING", "INT"),
-                    columns) {
+        List<String> types = Arrays.asList(
+                "STRING", // TABLE_CAT
+                "STRING", // TABLE_SCHEM
+                "STRING", // TABLE_NAME
+                "STRING", // COLUMN_NAME
+                "INT",    // DATA_TYPE
+                "STRING", // TYPE_NAME
+                "INT",    // COLUMN_SIZE
+                "INT",    // BUFFER_LENGTH
+                "INT",    // DECIMAL_DIGITS
+                "INT",    // NUM_PREC_RADIX
+                "INT",    // NULLABLE
+                "STRING", // REMARKS
+                "STRING", // COLUMN_DEF
+                "INT",    // SQL_DATA_TYPE
+                "INT",    // SQL_DATEIME_SUB
+                "INT",    // CHAR_OCTET_LENGTH
+                "INT",    // ORDINAL_POSITION
+                "STRING", // IS_NULLABLE
+                "STRING", // SCOPE_CATLOG
+                "STRING", // SCOPE_SCHEMA
+                "STRING", // SCOPE_TABLE
+                "INT",    // SOURCE_DATA_TYPE
+                "STRING" // IS_AUTOINCREMENT
+        );
 
+        try {
+            return new TDMetaDataResultSet<TDColumn>(names, types, columns) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {
-                    if (cnt < data.size()) {
-                        List<Object> a = new ArrayList<Object>(20);
-                        TDColumn column = data.get(cnt);
-                        a.add(column.getTableCatalog()); // TABLE_CAT String =>
-                                                         // table catalog (may
-                                                         // be null)
-                        a.add(null); // TABLE_SCHEM String => table schema (may
-                                     // be null)
-                        a.add(column.getTableName()); // TABLE_NAME String =>
-                                                      // table name
-                        a.add(column.getColumnName()); // COLUMN_NAME String =>
-                                                       // column name
-                        a.add(column.getSqlType()); // DATA_TYPE short => SQL
-                                                    // type from java.sql.Types
-                        a.add(column.getType()); // TYPE_NAME String => Data
-                                                 // source dependent type name.
-                        a.add(column.getColumnSize()); // COLUMN_SIZE int =>
-                                                       // column size.
-                        a.add(null); // BUFFER_LENGTH is not used.
-                        a.add(column.getDecimalDigits()); // DECIMAL_DIGITS int
-                                                          // => number of
-                                                          // fractional digits
-                        a.add(column.getNumPrecRadix()); // NUM_PREC_RADIX int
-                                                         // => typically either
-                                                         // 10 or 2
-                        a.add(DatabaseMetaData.columnNullable); // NULLABLE int
-                                                                // => is NULL
-                                                                // allowed?
-                        a.add(column.getComment()); // REMARKS String => comment
-                                                    // describing column (may be
-                                                    // null)
-                        a.add(null); // COLUMN_DEF String => default value (may
-                                     // be null)
-                        a.add(null); // SQL_DATA_TYPE int => unused
-                        a.add(null); // SQL_DATETIME_SUB int => unused
-                        a.add(null); // CHAR_OCTET_LENGTH int
-                        a.add(column.getOrdinalPos()); // ORDINAL_POSITION int
-                        a.add("YES"); // IS_NULLABLE String
-                        a.add(null); // SCOPE_CATLOG String
-                        a.add(null); // SCOPE_SCHEMA String
-                        a.add(null); // SCOPE_TABLE String
-                        a.add(null); // SOURCE_DATA_TYPE short
-                        row = a;
-                        cnt++;
-                        return true;
-                    } else {
+                    if (cnt >= data.size()) {
                         return false;
                     }
+
+                    TDColumn column = data.get(cnt);
+                    List<Object> a = new ArrayList<Object>(23);
+                    a.add(column.getTableCatalog());        // TABLE_CAT String => table catalog (may be null)
+                    a.add(null);                            // TABLE_SCHEM String => table schema (may be null)
+                    a.add(column.getTableName());           // TABLE_NAME String => table name
+                    a.add(column.getColumnName());          // COLUMN_NAME String => column name
+                    a.add(column.getSqlType());             // DATA_TYPE short => SQL type from java.sql.Types
+                    a.add(column.getType());                // TYPE_NAME String => Data source dependent type name.
+                    a.add(column.getColumnSize());          // COLUMN_SIZE int => column size.
+                    a.add(null);                            // BUFFER_LENGTH is not used.
+                    a.add(column.getDecimalDigits());       // DECIMAL_DIGITS int => number of fractional digits
+                    a.add(column.getNumPrecRadix());        // NUM_PREC_RADIX int => typically either 10 or 2
+                    a.add(DatabaseMetaData.columnNullable); // NULLABLE int => is NULL allowed?
+                    a.add(column.getComment());             // REMARKS String => comment describing column (may be null)
+                    a.add(null);                            // COLUMN_DEF String => default value (may be null)
+                    a.add(null);                            // SQL_DATA_TYPE int => unused
+                    a.add(null);                            // SQL_DATETIME_SUB int => unused
+                    a.add(null);                            // CHAR_OCTET_LENGTH int
+                    a.add(column.getOrdinal());          // ORDINAL_POSITION int
+                    a.add("YES");                           // IS_NULLABLE String
+                    a.add(null);                            // SCOPE_CATLOG String
+                    a.add(null);                            // SCOPE_SCHEMA String
+                    a.add(null);                            // SCOPE_TABLE String
+                    a.add(null);                            // SOURCE_DATA_TYPE short
+                    a.add("NO");                            // IS_AUTOINCREMENT String
+
+                    row = a;
+                    cnt++;
+                    return true;
                 }
             };
         } catch (Exception e) {
             throw new SQLException(e);
-        }
-    }
-
-    /**
-     * We sort the output of getColumns to guarantee jdbc compliance. First
-     * check by table name then by ordinal position
-     */
-    private class GetColumnsComparator implements Comparator<TDColumn> {
-
-        public int compare(TDColumn o1, TDColumn o2) {
-            int compareName = o1.getTableName().compareTo(o2.getTableName());
-            if (compareName == 0) {
-                if (o1.getOrdinalPos() > o2.getOrdinalPos()) {
-                    return 1;
-                } else if (o1.getOrdinalPos() < o2.getOrdinalPos()) {
-                    return -1;
-                }
-                return 0;
-            } else {
-                return compareName;
-            }
         }
     }
 

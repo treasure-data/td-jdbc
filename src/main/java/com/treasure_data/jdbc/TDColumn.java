@@ -3,9 +3,6 @@ package com.treasure_data.jdbc;
 import java.sql.SQLException;
 import java.sql.Types;
 
-/**
- * Column metadata.
- */
 public class TDColumn {
     private final String columnName;
 
@@ -17,16 +14,16 @@ public class TDColumn {
 
     private final String comment;
 
-    private final int ordinalPos;
+    private final int ordinal;
 
-    TDColumn(String columnName, String tableName, String tableCatalog,
-            String type, String comment, int ordinalPos) {
+    public TDColumn(String columnName, String tableName, String tableCatalog,
+            String type, String comment, int ordinal) {
         this.columnName = columnName;
         this.tableName = tableName;
         this.tableCatalog = tableCatalog;
         this.type = type;
         this.comment = comment;
-        this.ordinalPos = ordinalPos;
+        this.ordinal = ordinal;
     }
 
     public String getColumnName() {
@@ -46,7 +43,7 @@ public class TDColumn {
     }
 
     public Integer getSqlType() throws SQLException {
-        return Utils.hiveTypeToSqlType(type);
+        return Utils.TDTypeToSqlType(type);
     }
 
     static int columnDisplaySize(int columnType) throws SQLException {
@@ -119,13 +116,12 @@ public class TDColumn {
     }
 
     public Integer getColumnSize() throws SQLException {
-        int precision = columnPrecision(Utils.hiveTypeToSqlType(type));
-
+        int precision = columnPrecision(Utils.TDTypeToSqlType(type));
         return precision == 0 ? null : precision;
     }
 
     public Integer getDecimalDigits() throws SQLException {
-        return columnScale(Utils.hiveTypeToSqlType(type));
+        return columnScale(Utils.TDTypeToSqlType(type));
     }
 
     public Integer getNumPrecRadix() {
@@ -150,7 +146,7 @@ public class TDColumn {
         return comment;
     }
 
-    public int getOrdinalPos() {
-        return ordinalPos;
+    public int getOrdinal() {
+        return ordinal;
     }
 }

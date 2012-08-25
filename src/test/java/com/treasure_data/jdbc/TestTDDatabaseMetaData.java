@@ -67,7 +67,7 @@ public class TestTDDatabaseMetaData {
 
     @Test
     public void getColumns() throws Exception {
-        class MockShowTables extends NullClientAPI {
+        NullClientAPI api = new NullClientAPI() {
             @Override public List<TableSummary> showTables() throws ClientException {
                 List<TableSummary> list = new ArrayList<TableSummary>();
                 list.add(new TableSummary(new Database("mugadb"), "tbl01", 12344,
@@ -80,10 +80,10 @@ public class TestTDDatabaseMetaData {
                         "2012-02-20T18:31:48Z"));
                 return list;
             }
-        }
+        };
 
         {
-            TDDatabaseMetaData metadata = new TDDatabaseMetaData(new MockShowTables());
+            TDDatabaseMetaData metadata = new TDDatabaseMetaData(api);
             ResultSet rs = null;
             try {
                 rs = metadata.getColumns(null, null, null, null);
@@ -126,7 +126,7 @@ public class TestTDDatabaseMetaData {
 
     @Test
     public void getTables() throws Exception {
-        class MockShowTables extends NullClientAPI {
+        NullClientAPI api = new NullClientAPI() {
             @Override public List<TableSummary> showTables() throws ClientException {
                 List<TableSummary> list = new ArrayList<TableSummary>();
                 list.add(new TableSummary(new Database("mugadb"), "tbl01", 12344,
@@ -139,10 +139,10 @@ public class TestTDDatabaseMetaData {
                         "2012-02-20T18:31:48Z"));
                 return list;
             }
-        }
+        };
 
         {
-            TDDatabaseMetaData metadata = new TDDatabaseMetaData(new MockShowTables());
+            TDDatabaseMetaData metadata = new TDDatabaseMetaData(api);
             ResultSet rs = null;
             try {
                 rs = metadata.getTables(null, null, null, null);

@@ -135,13 +135,8 @@ public class TestTDResultSet {
         { // ok: int to object
             assertEquals(ValueFactory.createIntegerValue(10), rs.getObject(1));
         }
-        { // error: int to string
-            try {
-                rs.getString(1);
-                fail();
-            } catch (Throwable t) {
-                assertTrue(t instanceof SQLException);
-            }
+        { // ok: int to string
+            assertEquals("10", rs.getString(1));
         }
         { // error: int to boolean
             try {
@@ -184,7 +179,6 @@ public class TestTDResultSet {
         Job job = new Job("12345");
         ResultSet rs = new TDResultSet(clientApi, 100, job);
         for (int i = 0; i < count; i++) {
-            System.out.println("i: " + i);
             assertTrue(rs.next());
             assertEquals("p1:" + i, rs.getString(1));
             assertEquals("p2:" + i, rs.getString(2));

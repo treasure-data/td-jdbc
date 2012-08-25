@@ -211,10 +211,10 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.FLOAT_TYPE_NAME), rsMetaData.getColumnType(2));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.DOUBLE_TYPE_NAME), rsMetaData.getColumnType(3));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.BOOLEAN_TYPE_NAME), rsMetaData.getColumnType(4));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
+            assertEquals(Utils.TDTypeToSqlType(Constants.FLOAT_TYPE_NAME), rsMetaData.getColumnType(2));
+            assertEquals(Utils.TDTypeToSqlType(Constants.DOUBLE_TYPE_NAME), rsMetaData.getColumnType(3));
+            assertEquals(Utils.TDTypeToSqlType(Constants.BOOLEAN_TYPE_NAME), rsMetaData.getColumnType(4));
             try {
                 rsMetaData.getColumnType(5);
                 fail();
@@ -278,10 +278,10 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Utils.hiveTypeToSqlType(Constants.TINYINT_TYPE_NAME), rsMetaData.getColumnType(1));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.SMALLINT_TYPE_NAME), rsMetaData.getColumnType(2));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.INT_TYPE_NAME), rsMetaData.getColumnType(3));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.BIGINT_TYPE_NAME), rsMetaData.getColumnType(4));
+            assertEquals(Utils.TDTypeToSqlType(Constants.TINYINT_TYPE_NAME), rsMetaData.getColumnType(1));
+            assertEquals(Utils.TDTypeToSqlType(Constants.SMALLINT_TYPE_NAME), rsMetaData.getColumnType(2));
+            assertEquals(Utils.TDTypeToSqlType(Constants.INT_TYPE_NAME), rsMetaData.getColumnType(3));
+            assertEquals(Utils.TDTypeToSqlType(Constants.BIGINT_TYPE_NAME), rsMetaData.getColumnType(4));
             try {
                 rsMetaData.getColumnType(5);
                 fail();
@@ -345,9 +345,9 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(2));
-            assertEquals(Utils.hiveTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(3));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(2));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(3));
             try {
                 rsMetaData.getColumnType(4);
                 fail();

@@ -1,4 +1,12 @@
-Release 0.1.5 - 20XX/XX/XX
+Release 0.1.6 - 20XX/XX/XX
+
+Release 0.1.5 - 2012/08/25
+  IMPROVEMENTS
+    Changes the implementations of TDDatabaseMetaData#{getColumns,getTables} methods
+
+  BUG FIXES
+    Cannot convert values of several types in ResultSet data to String type
+    Wait loop doesn't stop when job failed
 
 Release 0.1.4 - 2012/06/19
   NEW FEATURES

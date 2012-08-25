@@ -586,10 +586,10 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getTableTypes() throws SQLException {
-        final TDTableType[] tt = TDTableType.values();
-        ResultSet result = new TDMetaDataResultSet<TDTableType>(
-                Arrays.asList("TABLE_TYPE"), Arrays.asList("STRING"),
-                new ArrayList<TDTableType>(Arrays.asList(tt))) {
+        List<String> names = Arrays.asList("TABLE_TYPE");
+        List<String> types = Arrays.asList("STRING");
+        List<TDTableType> data0 = Arrays.asList(TDTableType.values());
+        ResultSet result = new TDMetaDataResultSet<TDTableType>(names, types, data0) {
             private int cnt = 0;
 
             public boolean next() throws SQLException {
@@ -609,129 +609,125 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getTables(String catalog, String schemaPattern,
             String tableNamePattern, String[] types) throws SQLException {
-        /**
-##
-catalog: null
-schemaPattern: null
-tableNamePattern: %
-types: null
-##
-         */
-        final List<String> tablesstr;
-        final List<TDTable> resultTables = new ArrayList<TDTable>();
-        final String resultCatalog;
         if (catalog == null) {
-            // On jdbc the default catalog is null but on hive it's "default"
-            resultCatalog = "default";
-        } else {
-            resultCatalog = catalog;
+            catalog = "default";
         }
 
-        String regtableNamePattern = convertPattern(tableNamePattern);
-        try {
-            List<TableSummary> ts = api.showTables();
-            //tablesstr = client.get_tables(resultCatalog, "*");
-            for (TableSummary t : ts) {
-                if (t.getName().matches(regtableNamePattern)) {
-                    resultTables.add(new TDTable(resultCatalog, t.getName(),
-                            "TABLE", "comment")); // TODO
-                } else {
-                    // TODO #MN
-                }
-            }
+        String tableNamePattern1 = convertPattern(tableNamePattern);
 
-//            for (String tablestr : tablesstr) {
-//                if (tablestr.matches(regtableNamePattern)) {
-//                    Table tbl = client.get_table(resultCatalog, tablestr);
-//                    if (types == null) {
-//                        resultTables.add(new JdbcTable(resultCatalog, tbl
-//                                .getTableName(), tbl.getTableType(), tbl
-//                                .getParameters().get("comment")));
-//                    } else {
-//                        String tableType = toJdbcTableType(tbl.getTableType());
-//                        for (String type : types) {
-//                            if (type.equalsIgnoreCase(tableType)) {
-//                                resultTables.add(new JdbcTable(resultCatalog,
-//                                        tbl.getTableName(), tbl.getTableType(),
-//                                        tbl.getParameters().get("comment")));
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-            Collections.sort(resultTables, new GetTablesComparator());
-        } catch (Exception e) {
+        List<TableSummary> ts = null;
+        try {
+            ts = api.showTables();
+            if (ts == null) {
+                ts = new ArrayList<TableSummary>();
+            }
+        } catch (ClientException e) {
             throw new SQLException(e);
         }
 
-        ResultSet result = new TDMetaDataResultSet<TDTable>(
-                Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS"),
-                Arrays.asList("STRING", "STRING", "STRING", "STRING", "STRING"),
-                resultTables) {
-            private int cnt = 0;
+        List<TDTable> tables = new ArrayList<TDTable>();
+        for (TableSummary t : ts) {
+            if (!t.getName().matches(tableNamePattern1)) {
+                continue;
+            }
 
-            public boolean next() throws SQLException {
-                if (cnt < data.size()) {
-                    List<Object> a = new ArrayList<Object>(5);
+            TDTable table = new TDTable(catalog, t.getName(), "TABLE", "comment");
+            tables.add(table);
+        }
+        Collections.sort(tables, new Comparator<TDTable>() {
+            /**
+             * We sort the output of getTables to guarantee jdbc compliance. First check
+             * by table type then by table name
+             */
+            public int compare(TDTable o1, TDTable o2) {
+                int compareType = o1.getType().compareTo(o2.getType());
+                if (compareType == 0) {
+                    return o1.getTableName().compareTo(o2.getTableName());
+                } else {
+                    return compareType;
+                }
+            }
+        });
+
+        List<String> nameList = Arrays.asList(
+                "TABLE_CAT",
+                "TABLE_SCHEM",
+                "TABLE_NAME",
+                "TABLE_TYPE",
+                "REMARKS",
+                "TYPE_CAT",
+                "TYPE_SCHEM",
+                "TYPE_NAME",
+                "SELF_REFERENCING_COL_NAME",
+                "REF_GENERATION"
+        );
+
+        List<String> typeList = Arrays.asList(
+                "STRING", // "TABLE_CAT"
+                "STRING", // "TABLE_SCHEM"
+                "STRING", // "TABLE_NAME"
+                "STRING", // "TABLE_TYPE"
+                "STRING", // "REMARKS"
+                "STRING", // "TYPE_CAT"
+                "STRING", // "TYPE_SCHEM"
+                "STRING", // "TYPE_NAME"
+                "STRING", // "SELF_REFERENCING_COL_NAME"
+                "STRING"  // "REF_GENERATION"
+        );
+
+        try {
+            ResultSet result = new TDMetaDataResultSet<TDTable>(nameList, typeList, tables) {
+                private int cnt = 0;
+
+                public boolean next() throws SQLException {
+                    if (cnt >= data.size()) {
+                        return false;
+                    }
+
                     TDTable t = data.get(cnt);
-                    // TABLE_CAT String => table catalog (may be null)
-                    a.add(t.getTableCatalog());
-                    // TABLE_SCHEM String => table schema (may be null)
-                    a.add(null);
-                    // TABLE_NAME String => table name
-                    a.add(t.getTableName());
+                    List<Object> a = new ArrayList<Object>(10);
+                    a.add(t.getTableCatalog());     // TABLE_CAT String => table catalog (may be null)
+                    a.add(null);                    // TABLE_SCHEM String => table schema (may be null)
+                    a.add(t.getTableName());        // TABLE_NAME String => table name
                     try {
-                        // TABLE_TYPE String => "TABLE","VIEW"
-                        a.add(t.getSqlTableType());
+                        a.add(t.getSqlTableType()); // TABLE_TYPE String => "TABLE","VIEW"
                     } catch (Exception e) {
                         throw new SQLException(e);
                     }
-                    // REMARKS String => explanatory comment on the table
-                    a.add(t.getComment());
+                    a.add(t.getComment());          // REMARKS String => explanatory comment on the table
+                    a.add(null);                    // TYPE_CAT String => the types catalog (may be null)
+                    a.add(null);                    // TYPE_SCHEM String => the types schema (may be null)
+                    a.add(null);                    // TYPE_NAME String => type name (may be null)
+                    a.add(null);                    // SELF_REFERENCING_COL_NAME String => ... (may be null)
+                    a.add(null);                    // REF_GENERATION String => ... (may be null)
                     row = a;
                     cnt++;
                     return true;
-                } else {
-                    return false;
                 }
-            }
-        };
-        return result;
-    }
-
-    /**
-     * We sort the output of getTables to guarantee jdbc compliance. First check
-     * by table type then by table name
-     */
-    private class GetTablesComparator implements Comparator<TDTable> {
-        public int compare(TDTable o1, TDTable o2) {
-            int compareType = o1.getType().compareTo(o2.getType());
-            if (compareType == 0) {
-                return o1.getTableName().compareTo(o2.getTableName());
-            } else {
-                return compareType;
-            }
+            };
+            return result;
+        } catch (Exception e) {
+            throw new SQLException(e);
         }
     }
 
     /**
      * Translate hive table types into jdbc table types.
      * 
-     * @param hivetabletype
+     * @param type
      * @return
      */
-    public static String toTDTableType(String hivetabletype) {
-        if (hivetabletype == null) {
+    public static String toTDTableType(String type) {
+        if (type == null) {
             return null;
-        } else if (hivetabletype.equals(TDTableType.MANAGED_TABLE.toString())) {
+        } else if (type.equals(TDTableType.TABLE.toString())) {
             return "TABLE";
-        } else if (hivetabletype.equals(TDTableType.VIRTUAL_VIEW.toString())) {
+        } else if (type.equals(TDTableType.VIEW.toString())) {
             return "VIEW";
-        } else if (hivetabletype.equals(TDTableType.EXTERNAL_TABLE.toString())) {
+        } else if (type.equals(TDTableType.EXTERNAL_TABLE.toString())) {
             return "EXTERNAL TABLE";
         } else {
-            return hivetabletype;
+            return type;
         }
     }
 

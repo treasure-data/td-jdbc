@@ -1,11 +1,14 @@
-package com.treasure_data.jdbc;
+package com.treasure_data.jdbc.model;
 
 import java.sql.SQLException;
 
-/**
- * Table metadata.
- */
+import com.treasure_data.jdbc.TDDatabaseMetaData;
+
 public class TDTable {
+    public enum Type {
+        TABLE, VIEW, EXTERNAL_TABLE
+    }
+
     private String tableCatalog;
     private String tableName;
     private String type;

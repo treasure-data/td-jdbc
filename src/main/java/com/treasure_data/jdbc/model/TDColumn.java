@@ -1,7 +1,9 @@
-package com.treasure_data.jdbc;
+package com.treasure_data.jdbc.model;
 
 import java.sql.SQLException;
 import java.sql.Types;
+
+import com.treasure_data.jdbc.Utils;
 
 public class TDColumn {
     private final String columnName;
@@ -46,7 +48,7 @@ public class TDColumn {
         return Utils.TDTypeToSqlType(type);
     }
 
-    static int columnDisplaySize(int columnType) throws SQLException {
+    public static int columnDisplaySize(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
         case Types.BOOLEAN:
@@ -72,7 +74,7 @@ public class TDColumn {
         }
     }
 
-    static int columnPrecision(int columnType) throws SQLException {
+    public static int columnPrecision(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
         case Types.BOOLEAN:
@@ -96,7 +98,7 @@ public class TDColumn {
         }
     }
 
-    static int columnScale(int columnType) throws SQLException {
+    public static int columnScale(int columnType) throws SQLException {
         // according to hiveTypeToSqlType possible options are:
         switch (columnType) {
         case Types.BOOLEAN:

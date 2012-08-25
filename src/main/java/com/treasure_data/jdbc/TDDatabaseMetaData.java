@@ -16,6 +16,8 @@ import org.json.simple.JSONValue;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
+import com.treasure_data.jdbc.model.TDColumn;
+import com.treasure_data.jdbc.model.TDTable;
 import com.treasure_data.model.TableSummary;
 
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
@@ -589,8 +591,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getTableTypes() throws SQLException {
         List<String> names = Arrays.asList("TABLE_TYPE");
         List<String> types = Arrays.asList("STRING");
-        List<TDTableType> data0 = Arrays.asList(TDTableType.values());
-        ResultSet result = new TDMetaDataResultSet<TDTableType>(names, types, data0) {
+        List<TDTable.Type> data0 = Arrays.asList(TDTable.Type.values());
+        ResultSet result = new TDMetaDataResultSet<TDTable.Type>(names, types, data0) {
             private int cnt = 0;
 
             public boolean next() throws SQLException {
@@ -721,11 +723,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public static String toTDTableType(String type) {
         if (type == null) {
             return null;
-        } else if (type.equals(TDTableType.TABLE.toString())) {
+        } else if (type.equals(TDTable.Type.TABLE.toString())) {
             return "TABLE";
-        } else if (type.equals(TDTableType.VIEW.toString())) {
+        } else if (type.equals(TDTable.Type.VIEW.toString())) {
             return "VIEW";
-        } else if (type.equals(TDTableType.EXTERNAL_TABLE.toString())) {
+        } else if (type.equals(TDTable.Type.EXTERNAL_TABLE.toString())) {
             return "EXTERNAL TABLE";
         } else {
             return type;

@@ -4,6 +4,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.treasure_data.jdbc.model.TDColumn;
+
 public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
     private final List<String> columnNames;
     private final List<String> columnTypes;

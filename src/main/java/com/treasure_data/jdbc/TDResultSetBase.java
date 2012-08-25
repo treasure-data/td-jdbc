@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.msgpack.type.ArrayValue;
 import org.msgpack.type.BooleanValue;
+import org.msgpack.type.FloatValue;
+import org.msgpack.type.IntegerValue;
 import org.msgpack.type.MapValue;
 import org.msgpack.type.NumberValue;
 import org.msgpack.type.Value;
@@ -435,16 +437,19 @@ public abstract class TDResultSetBase implements ResultSet {
         }
 
         try {
-            // TODO #MN
             if (obj instanceof MapValue) {
                 return ((MapValue) obj).toString();
+            } else if (obj instanceof IntegerValue) {
+                return "" + ((IntegerValue) obj).asIntegerValue().getInt();
+            } else if (obj instanceof FloatValue) {
+                return "" + ((FloatValue) obj).asFloatValue().getFloat();
             } else if (obj instanceof Value) {
                 return ((Value) obj).asRawValue().getString();
-            } else {
+            } else if (obj instanceof Integer) {
+                return ((Integer) obj).toString();
+            } else { // } else if (obj instanceof String) {
                 return (String) obj;
             }
-            //Value v = (Value) obj;
-            //return v.asRawValue().getString();
         } catch (Exception e) {
             String msg = String.format("Cannot convert column %d to string: %s",
                     index, e.toString());

@@ -17,7 +17,6 @@ import org.msgpack.unpacker.Unpacker;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.Constants;
-import com.treasure_data.jdbc.NullClientAPI;
 import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.TDClientAPI;

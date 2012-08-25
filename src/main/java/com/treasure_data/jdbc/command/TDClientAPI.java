@@ -133,8 +133,13 @@ public class TDClientAPI implements ClientAPI {
                 LOG.fine("Job status: " + result.getJob().getStatus());
             }
 
-            if (result.getJob().getStatus() == JobSummary.Status.SUCCESS) {
+            JobSummary.Status stat = result.getJob().getStatus();
+            if (stat == JobSummary.Status.SUCCESS) {
                 break;
+            } else if (stat == JobSummary.Status.ERROR) {
+                throw new ClientException("job status: error");
+            } else if (stat == JobSummary.Status.KILLED) {
+                throw new ClientException("job status: killed");
             }
 
             try {

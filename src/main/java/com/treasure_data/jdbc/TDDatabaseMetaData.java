@@ -546,6 +546,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         return getSchemas(null, null);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public ResultSet getSchemas(String catalog, String schemaPattern)
             throws SQLException {
         return new TDMetaDataResultSet(Arrays.asList("TABLE_SCHEM",
@@ -739,6 +740,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         throw new SQLException("Method not supported");
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public ResultSet getUDTs(String catalog, String schemaPattern,
             String typeNamePattern, int[] types) throws SQLException {
 

@@ -1,4 +1,4 @@
-package com.treasure_data.jdbc;
+package com.treasure_data.jdbc.command;
 
 import java.sql.ResultSet;
 import java.util.List;

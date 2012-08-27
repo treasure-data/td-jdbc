@@ -64,6 +64,12 @@ public class TDConnection implements Connection, Constants {
         // set host and port properties to props
         props.setProperty(Config.TD_API_SERVER_HOST, host);
         props.setProperty(Config.TD_API_SERVER_PORT, "" + port);
+        {
+            Properties sprops = System.getProperties();
+            sprops.setProperty(Config.TD_API_SERVER_HOST, host);
+            sprops.setProperty(Config.TD_API_SERVER_PORT, "" + port);
+        }
+
         this.props = props;
 
         // create a Database object

@@ -18,7 +18,8 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 
-import com.treasure_data.logger.TreasureDataLogger;
+import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
 
 public class TDConnection implements Connection, Constants {
@@ -26,6 +27,8 @@ public class TDConnection implements Connection, Constants {
     private boolean autoCommit = false;
 
     private boolean readOnly = false;
+
+    private ClientAPI api;
 
     private Properties props;
 
@@ -57,13 +60,10 @@ public class TDConnection implements Connection, Constants {
             // *ignore*: if an exception is thrown, 80 is
             // inserted into a port variable. 
         }
+
+        // set host and port properties to props
         props.setProperty(Config.TD_API_SERVER_HOST, host);
         props.setProperty(Config.TD_API_SERVER_PORT, "" + port);
-        {
-            Properties sprops = System.getProperties();
-            sprops.setProperty(Config.TD_API_SERVER_HOST, host);
-            sprops.setProperty(Config.TD_API_SERVER_PORT, "" + port);
-        }
         this.props = props;
 
         // create a Database object
@@ -73,6 +73,13 @@ public class TDConnection implements Connection, Constants {
             throw new SQLException(
             "Cannot create a connection because database is not specified");
         }
+
+        // create a ClientAPI object
+        this.api = new TDClientAPI(this);
+    }
+
+    public ClientAPI getClientAPI() {
+        return api;
     }
 
     public Properties getProperties() {
@@ -190,7 +197,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
-        return new TDDatabaseMetaData(this);
+        return new TDDatabaseMetaData(getClientAPI());
     }
 
     public int getTransactionIsolation() throws SQLException {

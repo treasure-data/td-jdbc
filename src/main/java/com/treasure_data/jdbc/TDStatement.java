@@ -67,10 +67,6 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
         return executeUpdate(sql);
     }
 
-    public Connection getConnection() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
-    }
-
     public int getFetchDirection() throws SQLException {
         throw new SQLException(new UnsupportedOperationException());
     }

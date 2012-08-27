@@ -15,7 +15,6 @@ import org.json.simple.JSONValue;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
-import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.jdbc.model.TDColumn;
 import com.treasure_data.jdbc.model.TDTable;
 import com.treasure_data.model.TableSummary;
@@ -23,14 +22,6 @@ import com.treasure_data.model.TableSummary;
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     private ClientAPI api;
-
-    private static final char SEARCH_STRING_ESCAPE = '\\';
-
-    private static final int maxColumnNameLength = 128;
-
-    public TDDatabaseMetaData(TDConnection conn) {
-        this(new TDClientAPI(conn));
-    }
 
     public TDDatabaseMetaData(ClientAPI api) {
         this.api = api;
@@ -141,12 +132,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             for (int i = 0, len = pattern.length(); i < len; i++) {
                 char c = pattern.charAt(i);
                 if (escaped) {
-                    if (c != SEARCH_STRING_ESCAPE) {
+                    if (c != '\\') {
                         escaped = false;
                     }
                     result.append(c);
                 } else {
-                    if (c == SEARCH_STRING_ESCAPE) {
+                    if (c == '\\') {
                         escaped = true;
                         continue;
                     } else if (c == '%') {
@@ -433,7 +424,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * @param int
      */
     public int getMaxColumnNameLength() throws SQLException {
-        return maxColumnNameLength;
+        return 128;
     }
 
     public int getMaxColumnsInGroupBy() throws SQLException {
@@ -562,7 +553,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getSearchStringEscape() throws SQLException {
-        return String.valueOf(SEARCH_STRING_ESCAPE);
+        return String.valueOf('\\');
     }
 
     public String getStringFunctions() throws SQLException {

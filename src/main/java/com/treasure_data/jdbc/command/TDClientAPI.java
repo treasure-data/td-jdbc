@@ -57,7 +57,7 @@ public class TDClientAPI implements ClientAPI {
         checkCredentials();
         this.database = database;
         this.maxRows = maxRows;
-        {
+        { // TODO #MN
             Properties sysprops = System.getProperties();
             if (sysprops.getProperty(Config.TD_LOGGER_AGENTMODE) == null) {
                 sysprops.setProperty(Config.TD_LOGGER_AGENTMODE, "false");

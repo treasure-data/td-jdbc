@@ -1,14 +1,16 @@
 package com.treasure_data.jdbc;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
 import com.treasure_data.jdbc.command.CommandExecutor;
-import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.jdbc.command.CommandContext;
 
 public abstract class TDStatementBase implements Statement {
+
+    protected TDConnection conn;
 
     protected CommandExecutor exec;
 
@@ -29,7 +31,12 @@ public abstract class TDStatementBase implements Statement {
     private boolean isEscapeProcessing;
 
     protected TDStatementBase(TDConnection conn) {
-        exec = new CommandExecutor(new TDClientAPI(conn));
+        this.conn = conn;
+        exec = new CommandExecutor(this.conn.getClientAPI());
+    }
+
+    public Connection getConnection() throws SQLException {
+        return conn;
     }
 
     public CommandExecutor getCommandExecutor() {

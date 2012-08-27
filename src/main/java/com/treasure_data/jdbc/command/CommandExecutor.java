@@ -3,8 +3,6 @@ package com.treasure_data.jdbc.command;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,7 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -33,7 +30,6 @@ import com.treasure_data.jdbc.compiler.expr.StringValue;
 import com.treasure_data.jdbc.compiler.expr.TimeValue;
 import com.treasure_data.jdbc.compiler.expr.ops.ExpressionList;
 import com.treasure_data.jdbc.compiler.expr.ops.ItemsList;
-import com.treasure_data.jdbc.compiler.parser.CCSQLParser;
 import com.treasure_data.jdbc.compiler.parser.ParseException;
 import com.treasure_data.jdbc.compiler.parser.TokenMgrError;
 import com.treasure_data.jdbc.compiler.schema.Column;
@@ -46,8 +42,6 @@ import com.treasure_data.jdbc.compiler.stat.Insert;
 import com.treasure_data.jdbc.compiler.stat.Select;
 import com.treasure_data.jdbc.compiler.stat.Show;
 import com.treasure_data.jdbc.compiler.stat.Statement;
-import com.treasure_data.logger.TreasureDataLogger;
-import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.TableSummary;
 
 /**

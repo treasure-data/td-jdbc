@@ -1,7 +1,5 @@
 package com.treasure_data.jdbc.command;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -18,7 +16,6 @@ import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.logger.Config;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.AuthenticateRequest;
-import com.treasure_data.model.AuthenticateResult;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
@@ -47,8 +44,8 @@ public class TDClientAPI implements ClientAPI {
                 conn.getDatabase(), conn.getMaxRows());
     }
 
-    public TDClientAPI(TreasureDataClient client, Database database) {
-        this(client, System.getProperties(), database, 5000);
+    public TDClientAPI(TreasureDataClient client, Properties props, Database database) {
+        this(client, props, database, 5000);
     }
 
     public TDClientAPI(TreasureDataClient client, Properties props, Database database, int maxRows) {

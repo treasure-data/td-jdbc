@@ -36,7 +36,7 @@ public class TestTDClientAPI {
                 return new ShowJobResult(js);
             }
         };
-        TDClientAPI api = new TDClientAPI(c, new Database("mugadb"));
+        TDClientAPI api = new TDClientAPI(c, props, new Database("mugadb"));
 
         Job job = new Job("12345");
         JobSummary js = api.waitJobResult(job);
@@ -63,7 +63,7 @@ public class TestTDClientAPI {
                     return new ShowJobResult(js);
                 }
             };
-            TDClientAPI api = new TDClientAPI(c, new Database("mugadb"));
+            TDClientAPI api = new TDClientAPI(c, props, new Database("mugadb"));
 
             try {
                 Job job = new Job(jobID);
@@ -85,7 +85,7 @@ public class TestTDClientAPI {
                     return new ShowJobResult(js);
                 }
             };
-            TDClientAPI api = new TDClientAPI(c, new Database("mugadb"));
+            TDClientAPI api = new TDClientAPI(c, props, new Database("mugadb"));
 
             try {
                 Job job = new Job(jobID);
@@ -121,7 +121,7 @@ public class TestTDClientAPI {
                 }
             }
         };
-        TDClientAPI api = new TDClientAPI(c, new Database("mugadb"));
+        TDClientAPI api = new TDClientAPI(c, props, new Database("mugadb"));
 
         Job job = new Job("12345");
         JobSummary js = api.waitJobResult(job);

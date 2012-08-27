@@ -306,7 +306,7 @@ public class TestCommandExecutor {
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
         TDClientAPI clientApi =
-            new TDClientAPI(client, new Database("mugadb"));
+            new TDClientAPI(client, props, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext w = new CommandContext();
@@ -330,7 +330,7 @@ public class TestCommandExecutor {
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
         TDClientAPI clientAdaptor =
-            new TDClientAPI(client, new Database("mugadb"));
+            new TDClientAPI(client, props, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
@@ -354,7 +354,7 @@ public class TestCommandExecutor {
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
         TDClientAPI clientAdaptor =
-            new TDClientAPI(client, new Database("mugadb"));
+            new TDClientAPI(client, props, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
@@ -378,7 +378,7 @@ public class TestCommandExecutor {
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
         TDClientAPI clientAdaptor =
-            new TDClientAPI(client, new Database("mugadb"));
+            new TDClientAPI(client, props, new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         String sql = "insert into table01 (%s, %s) values (%s, '%s')";

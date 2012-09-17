@@ -11,12 +11,12 @@
     <dependency>
       <groupId>com.treasure_data</groupId>
       <artifactId>td-client</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <version>0.1.2</version>
     </dependency>
     <dependency>
       <groupId>com.treasure_data</groupId>
       <artifactId>td-logger</artifactId>
-      <version>0.1.3-SNAPSHOT</version>
+      <version>0.1.3</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -149,7 +149,7 @@
     <repository>
       <id>treasure-data.com</id>
       <name>Treasure Data Maven2 Repository</name>
-      <url>http://treasure-data.com/maven2/</url>
+      <url>http://maven.treasure-data.com/</url>
     </repository>
     <repository>
       <id>local-repo</id>

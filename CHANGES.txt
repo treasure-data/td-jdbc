@@ -1,3 +1,5 @@
+Release 0.1.7 - 2012/XX/XX
+
 Release 0.1.6 - 2012/10/11
   NEW FEATURES
     Supported JasperReports Server 4.7.0

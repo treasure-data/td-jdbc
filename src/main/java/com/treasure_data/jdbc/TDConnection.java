@@ -129,28 +129,27 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void commit() throws SQLException {
-        // ignore TODO #MN consider more
+        // ignore
     }
 
-    public Array createArrayOf(String typeName, Object[] elements)
-            throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException("TDConnection#createArrayOf(String, Object[])"));
     }
 
     public Blob createBlob() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#createBlob()"));
     }
 
     public Clob createClob() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#createClob()"));
     }
 
     public NClob createNClob() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#createNClob()"));
     }
 
     public SQLXML createSQLXML() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#createSQLXML()"));
     }
 
     /**
@@ -179,7 +178,7 @@ public class TDConnection implements Connection, Constants {
 
     public Struct createStruct(String typeName, Object[] attributes)
             throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#createStruct(String, Object[])"));
     }
 
     public boolean getAutoCommit() throws SQLException {
@@ -191,15 +190,15 @@ public class TDConnection implements Connection, Constants {
     }
 
     public Properties getClientInfo() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#getClientInfo()"));
     }
 
     public String getClientInfo(String name) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#getClientInfo(String)"));
     }
 
     public int getHoldability() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#getHoldability()"));
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
@@ -211,7 +210,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public Map<String, Class<?>> getTypeMap() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#getTypeMap()"));
     }
 
     public boolean isReadOnly() throws SQLException {
@@ -219,42 +218,39 @@ public class TDConnection implements Connection, Constants {
     }
 
     public boolean isValid(int timeout) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#isValid(int)"));
     }
 
     public String nativeSQL(String sql) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#nativeSQL(String)"));
     }
 
-    public CallableStatement prepareCall(String sql)
-            throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+    public CallableStatement prepareCall(String sql) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException("TDConnection#prepareCall(String)"));
     }
 
-    public CallableStatement prepareCall(String sql,
-            int resultSetType, int resultSetConcurrency)
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
             throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#prepareCall(String, int, int)"));
     }
 
     public CallableStatement prepareCall(String sql,
             int resultSetType, int resultSetConcurrency,
             int resultSetHoldability) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#prepareCall(String, int, int, int)"));
     }
 
-    public PreparedStatement prepareStatement(String sql)
-            throws SQLException {
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
         return new TDPreparedStatement(this, sql);
     }
 
-    public PreparedStatement prepareStatement(String sql,
-            int autoGeneratedKeys) throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+            throws SQLException {
         return prepareStatement(sql);
     }
 
-    public PreparedStatement prepareStatement(String sql,
-            int[] columnIndexes) throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
+            throws SQLException {
         return prepareStatement(sql);
     }
 
@@ -263,29 +259,26 @@ public class TDConnection implements Connection, Constants {
         return prepareStatement(sql);
     }
 
-    public PreparedStatement prepareStatement(String sql,
-            int resultSetType, int resultSetConcurrency)
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
             throws SQLException {
         return prepareStatement(sql);
     }
 
-    public PreparedStatement prepareStatement(String sql,
-            int resultSetType, int resultSetConcurrency,
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
             int resultSetHoldability) throws SQLException {
         return prepareStatement(sql);
     }
 
-    public void releaseSavepoint(Savepoint savepoint)
-            throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException("TDConnection#releaseSavepoint(Savepoint)"));
     }
 
     public void rollback() throws SQLException {
-        // ignore TODO #MN consider more
+        // ignore
     }
 
     public void rollback(Savepoint savepoint) throws SQLException {
-        // ignore TODO #MN consider more
+        // ignore
     }
 
     public void setAutoCommit(boolean autoCommit)
@@ -294,21 +287,19 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void setCatalog(String catalog) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#setCatalog(String)"));
     }
 
-    public void setClientInfo(Properties properties)
-            throws SQLClientInfoException {
-        throw new SQLClientInfoException("Method not supported", null);
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        throw new SQLClientInfoException("Method not supported: TDConnection#setClientInfo(Properties)", null);
     }
 
-    public void setClientInfo(String name, String value)
-            throws SQLClientInfoException {
-        throw new SQLClientInfoException("Method not supported", null);
+    public void setClientInfo(String name, String value) throws SQLClientInfoException {
+        throw new SQLClientInfoException("Method not supported: TDConnection#setClientInfo(String, String)", null);
     }
 
     public void setHoldability(int holdability) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#setHoldability()"));
     }
 
     public void setReadOnly(boolean readOnly) throws SQLException {
@@ -316,26 +307,26 @@ public class TDConnection implements Connection, Constants {
     }
 
     public Savepoint setSavepoint() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#setSavepoint()"));
     }
 
     public Savepoint setSavepoint(String name) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#setSavepoint(String)"));
     }
 
     public void setTransactionIsolation(int level) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#setTransactionIsolation(int)"));
     }
 
     public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#setTypeMap(Map)"));
     }
 
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#isWrapperFor(Class)"));
     }
 
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDConnection#unwrap(Class)"));
     }
 }

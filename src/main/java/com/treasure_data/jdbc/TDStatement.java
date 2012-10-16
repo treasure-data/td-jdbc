@@ -1,6 +1,5 @@
 package com.treasure_data.jdbc;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -13,14 +12,14 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public void addBatch(String sql) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#addBatch()"));
     }
 
     public void cancel() throws SQLException {
     }
 
     public void clearBatch() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#clearBatch()"));
     }
 
     public boolean execute(String sql) throws SQLException {
@@ -42,7 +41,7 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public int[] executeBatch() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#executeBatch()"));
     }
 
     public synchronized ResultSet executeQuery(String sql) throws SQLException {
@@ -68,7 +67,7 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public int getFetchDirection() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getFetchDirection()"));
     }
 
     public int getFetchSize() throws SQLException {
@@ -76,11 +75,11 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public ResultSet getGeneratedKeys() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getGeneratedKeys()"));
     }
 
     public int getMaxFieldSize() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getMaxFieldSize()"));
     }
 
     public boolean getMoreResults() throws SQLException {
@@ -92,31 +91,31 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public int getQueryTimeout() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getQueryTimeout()"));
     }
 
     public int getResultSetConcurrency() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetConcurrency()"));
     }
 
     public int getResultSetHoldability() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetHoldability()"));
     }
 
     public int getResultSetType() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetType()"));
     }
 
     public boolean isPoolable() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#isPoolable()"));
     }
 
     public void setCursorName(String name) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#setCursorName(String)"));
     }
 
     public void setFetchDirection(int direction) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#setFetchDirection(int)"));
     }
 
     public void setFetchSize(int rows) throws SQLException {
@@ -124,7 +123,7 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public void setMaxFieldSize(int max) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#setMaxFieldSize(int)"));
     }
 
     public void setMaxRows(int max) throws SQLException {
@@ -135,18 +134,18 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public void setPoolable(boolean poolable) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#setPoolable(boolean)"));
     }
 
     public void setQueryTimeout(int seconds) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#setQueryTimeout(int)"));
     }
 
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#isWrapperFor(Class)"));
     }
 
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException("TDStatement#unwrap(Class)"));
     }
 }

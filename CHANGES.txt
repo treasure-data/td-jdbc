@@ -1,9 +1,11 @@
 Release 0.1.7 - 2012/XX/XX
+  NEW FEATURES
+    Supports Statement#{setQueryTimeout(int),getQueryTimeout()}
 
 Release 0.1.6 - 2012/10/11
   NEW FEATURES
     Supports Jasper iReport 4.7.0
-    Supported JasperReports Server 4.7.0
+    Supports JasperReports Server 4.7.0
 
 Release 0.1.5 - 2012/08/25
   IMPROVEMENTS

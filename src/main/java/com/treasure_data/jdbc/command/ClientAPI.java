@@ -1,6 +1,5 @@
 package com.treasure_data.jdbc.command;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +26,8 @@ public interface ClientAPI {
 
     // select statement
     TDResultSetBase select(String sql) throws ClientException;
+
+    TDResultSetBase select(String sql, int queryTimeout) throws ClientException;
 
     boolean flush(); // for debugging
 

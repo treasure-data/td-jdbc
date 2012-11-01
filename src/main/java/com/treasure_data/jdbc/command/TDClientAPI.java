@@ -109,6 +109,10 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public TDResultSetBase select(String sql) throws ClientException {
+        return select(sql, 0);
+    }
+
+    public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
         TDResultSetBase rs = null;
 
         Job job = new Job(database, sql);
@@ -117,7 +121,7 @@ public class TDClientAPI implements ClientAPI {
         job = result.getJob();
 
         if (job != null) {
-            rs = new TDResultSet(this, maxRows, job);
+            rs = new TDResultSet(this, maxRows, job, queryTimeout);
         }
         return rs;
     }

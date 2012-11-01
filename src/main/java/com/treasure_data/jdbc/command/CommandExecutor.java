@@ -213,13 +213,13 @@ public class CommandExecutor implements Constants {
         // ignore
     }
 
-    public void executeCompiledStatement(CommandContext context,
-            Select stat) throws SQLException {
+    public void executeCompiledStatement(CommandContext context, Select stat)
+            throws SQLException {
         try {
             if (stat.isSelectOne()) {
                 context.resultSet = new TDResultSetSelectOne();
             } else {
-                context.resultSet = api.select(context.sql);
+                context.resultSet = api.select(context.sql, context.queryTimeout);
             }
         } catch (ClientException e) {
             throw new SQLException(e);

@@ -12,6 +12,8 @@ public class CommandContext {
 
     public int mode;
 
+    public int queryTimeout = 0; // seconds
+
     public String sql;
 
     public Statement compiledSql;

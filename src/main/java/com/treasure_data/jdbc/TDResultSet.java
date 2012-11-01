@@ -159,7 +159,7 @@ public class TDResultSet extends TDResultSetBase {
                 jobSummary = future.get(queryTimeout, TimeUnit.SECONDS);
             }
         } catch (InterruptedException e) {
-            throw new SQLException(e);
+            // ignore
         } catch (TimeoutException e) {
             throw new SQLException(e);
         } catch (ExecutionException e) {

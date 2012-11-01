@@ -147,7 +147,8 @@ public class TDClientAPI implements ClientAPI {
 
             try {
                 Thread.sleep(2 * 1000);
-            } catch (InterruptedException e) { // ignore
+            } catch (InterruptedException e) {
+                return null;
             }
         }
         return result.getJob();

@@ -90,10 +90,6 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
         return true;
     }
 
-    public int getQueryTimeout() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getQueryTimeout()"));
-    }
-
     public int getResultSetConcurrency() throws SQLException {
         throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetConcurrency()"));
     }
@@ -135,10 +131,6 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
 
     public void setPoolable(boolean poolable) throws SQLException {
         throw new SQLException(new UnsupportedOperationException("TDStatement#setPoolable(boolean)"));
-    }
-
-    public void setQueryTimeout(int seconds) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#setQueryTimeout(int)"));
     }
 
     public boolean isWrapperFor(Class<?> iface) throws SQLException {

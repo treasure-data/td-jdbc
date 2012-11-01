@@ -14,6 +14,8 @@ public abstract class TDStatementBase implements Statement {
 
     protected CommandExecutor exec;
 
+    protected int queryTimeout = -1; // seconds
+
     protected TDResultSetBase currentResultSet = null;
 
     protected int maxRows = 0;
@@ -76,6 +78,34 @@ public abstract class TDStatementBase implements Statement {
         warningChain = null;
     }
 
+    public int getQueryTimeout() throws SQLException {
+        return this.queryTimeout;
+    }
+
+    /*
+     * Sets the number of seconds the driver will wait for a Statement object to
+     * execute to the given number of seconds. If the limit is exceeded, an
+     * SQLException is thrown. A JDBC driver must apply this limit to the
+     * execute, executeQuery and executeUpdate methods. JDBC driver
+     * implementations may also apply this limit to ResultSet methods (consult
+     * your driver vendor documentation for details).
+     *
+     * @param seconds - the new query timeout limit in seconds; zero means there
+     * is no limit
+     *
+     * @throws SQLException - if a database access error occurs, this method is
+     * called on a closed Statement or the condition seconds >= 0 is not
+     * satisfied
+     *
+     * @see java.sql.Statement#setQueryTimeout(int)
+     */
+    public void setQueryTimeout(int seconds) throws SQLException {
+        if (seconds < 0) {
+            throw new SQLException("seconds must be >= 0");
+        }
+        this.queryTimeout = seconds;
+    }
+
     public int getMaxRows() throws SQLException {
         return maxRows;
     }
@@ -92,6 +122,7 @@ public abstract class TDStatementBase implements Statement {
         CommandContext context = new CommandContext();
         context.mode = mode;
         context.sql = sql;
+        context.queryTimeout = queryTimeout;
         fetchResult(context);
         return context;
     }

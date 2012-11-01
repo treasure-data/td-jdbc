@@ -5,8 +5,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.security.auth.callback.Callback;
 
 import org.json.simple.JSONValue;
 import org.msgpack.type.ArrayValue;
@@ -21,6 +31,8 @@ import com.treasure_data.model.JobSummary;
 public class TDResultSet extends TDResultSetBase {
     private static Logger LOG = Logger.getLogger(TDResultSet.class.getName());
 
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+
     private ClientAPI clientApi;
 
     private int maxRows = 0;
@@ -29,6 +41,8 @@ public class TDResultSet extends TDResultSetBase {
 
     private int fetchSize = 50;
 
+    private int queryTimeout = 0; // seconds
+
     private Unpacker fetchedRows;
 
     private Iterator<Value> fetchedRowsItr;
@@ -36,9 +50,15 @@ public class TDResultSet extends TDResultSetBase {
     private Job job;
 
     public TDResultSet(ClientAPI clientApi, int maxRows, Job job) {
+        this(clientApi, maxRows, job, 0);
+    }
+
+    public TDResultSet(ClientAPI clientApi, int maxRows, Job job, int queryTimeout) {
+        // TODO #MN need to change caller-side-program
         this.clientApi = clientApi;
         this.maxRows = maxRows;
         this.job = job;
+        this.queryTimeout = queryTimeout;
     }
 
     @Override
@@ -61,12 +81,16 @@ public class TDResultSet extends TDResultSetBase {
 
     @Override
     public void close() throws SQLException {
-        /**
-         * TODO #MN deleted them
-        clientApi = null;
-        fetchedRows = null;
-        fetchedRowsItr = null;
-         */
+        // TODO #MN should check that this method is really called
+        if (executor != null) {
+            try {
+                executor.shutdownNow();
+            } catch (Throwable t) {
+                throw new SQLException(t);
+            } finally {
+                executor = null;
+            }
+        }
     }
 
     /**
@@ -97,7 +121,11 @@ public class TDResultSet extends TDResultSetBase {
                 LOG.fine(String.format("fetched row(%d): %s", rowsFetched, row));
             }
         } catch (Exception e) {
-            throw new SQLException("Error retrieving next row", e);
+            if (e instanceof SQLException) {
+                throw (SQLException) e;
+            } else {
+                throw new SQLException("Error retrieving next row", e);
+            }
         }
         // NOTE: fetchOne dosn't throw new SQLException("Method not supported").
         return true;
@@ -115,8 +143,35 @@ public class TDResultSet extends TDResultSetBase {
     }
 
     private Unpacker fetchRows() throws SQLException {
+        JobSummary jobSummary = null;
+
+        Callable<JobSummary> callback = new Callable<JobSummary>() {
+            @Override public JobSummary call() throws Exception {
+                JobSummary jobSummary = clientApi.waitJobResult(job);
+                return jobSummary;
+            }
+        };
+
+        Future<JobSummary> future = executor.submit(callback);
         try {
-            JobSummary jobSummary = clientApi.waitJobResult(job);
+            if (queryTimeout <= 0) {
+                jobSummary = future.get();
+            } else {
+                jobSummary = future.get(queryTimeout, TimeUnit.SECONDS);
+            }
+        } catch (InterruptedException e) {
+            throw new SQLException(e);
+        } catch (TimeoutException e) {
+            throw new SQLException(e);
+        } catch (ExecutionException e) {
+            throw new SQLException(e.getCause());
+        }
+
+        if (jobSummary == null) {
+            throw new SQLException("job result is null");
+        }
+
+        try {
             initColumnNamesAndTypes(jobSummary.getResultSchema());
             return clientApi.getJobResult(job);
         } catch (ClientException e) {

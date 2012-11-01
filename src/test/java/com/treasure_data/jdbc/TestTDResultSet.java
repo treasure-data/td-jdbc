@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.junit.Test;
 import org.msgpack.MessagePack;
@@ -64,6 +65,214 @@ public class TestTDResultSet {
 
         public Unpacker getJobResult(Job job) throws ClientException {
             return null;
+        }
+    }
+
+    @Test
+    public void testTimeout01() throws Exception {
+        { // queryTimeout is not specified. it means queryTimeout = 0.
+            int queryTimeout = 0;
+            ClientAPI clientApi = new MockClientAPI() {
+                public JobSummary waitJobResult(Job job) throws ClientException {
+                    String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
+                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                }
+
+                public Unpacker getJobResult(Job job) throws ClientException {
+                    try {
+                        MessagePack msgpack = new MessagePack();
+                        BufferPacker packer = msgpack.createBufferPacker();
+                        List<Object> ret0 = new ArrayList<Object>();
+                        ret0.add(1);
+                        ret0.add("muga");
+                        packer.write(ret0);
+                        List<Object> ret1 = new ArrayList<Object>();
+                        ret1.add(2);
+                        ret1.add("nishizawa");
+                        packer.write(ret1);
+                        byte[] bytes = packer.toByteArray();
+                        return msgpack.createBufferUnpacker(bytes);
+                    } catch (java.io.IOException e) {
+                        throw new ClientException("mock");
+                    }
+                }
+            };
+            Job job = new Job("12345");
+            ResultSet rs = new TDResultSet(clientApi, 50, job);
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt(1));
+            assertEquals("muga", rs.getString(2));
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertEquals("nishizawa", rs.getString(2));
+            assertFalse(rs.next());
+        }
+        { // queryTimeout = 0
+            int queryTimeout = 0;
+            ClientAPI clientApi = new MockClientAPI() {
+                public JobSummary waitJobResult(Job job) throws ClientException {
+                    String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
+                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                }
+
+                public Unpacker getJobResult(Job job) throws ClientException {
+                    try {
+                        MessagePack msgpack = new MessagePack();
+                        BufferPacker packer = msgpack.createBufferPacker();
+                        List<Object> ret0 = new ArrayList<Object>();
+                        ret0.add(1);
+                        ret0.add("muga");
+                        packer.write(ret0);
+                        List<Object> ret1 = new ArrayList<Object>();
+                        ret1.add(2);
+                        ret1.add("nishizawa");
+                        packer.write(ret1);
+                        byte[] bytes = packer.toByteArray();
+                        return msgpack.createBufferUnpacker(bytes);
+                    } catch (java.io.IOException e) {
+                        throw new ClientException("mock");
+                    }
+                }
+            };
+            Job job = new Job("12345");
+            ResultSet rs = new TDResultSet(clientApi, 50, job, queryTimeout);
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt(1));
+            assertEquals("muga", rs.getString(2));
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertEquals("nishizawa", rs.getString(2));
+            assertFalse(rs.next());
+        }
+        { // queryTimeout = 1
+            int queryTimeout = 1;
+            ClientAPI clientApi = new MockClientAPI() {
+                public JobSummary waitJobResult(Job job) throws ClientException {
+                    String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
+                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                }
+
+                public Unpacker getJobResult(Job job) throws ClientException {
+                    try {
+                        MessagePack msgpack = new MessagePack();
+                        BufferPacker packer = msgpack.createBufferPacker();
+                        List<Object> ret0 = new ArrayList<Object>();
+                        ret0.add(1);
+                        ret0.add("muga");
+                        packer.write(ret0);
+                        List<Object> ret1 = new ArrayList<Object>();
+                        ret1.add(2);
+                        ret1.add("nishizawa");
+                        packer.write(ret1);
+                        byte[] bytes = packer.toByteArray();
+                        return msgpack.createBufferUnpacker(bytes);
+                    } catch (java.io.IOException e) {
+                        throw new ClientException("mock");
+                    }
+                }
+            };
+            Job job = new Job("12345");
+            ResultSet rs = new TDResultSet(clientApi, 50, job, queryTimeout);
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt(1));
+            assertEquals("muga", rs.getString(2));
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertEquals("nishizawa", rs.getString(2));
+            assertFalse(rs.next());
+        }
+    }
+
+    @Test
+    public void testTimeout02() throws Exception {
+        { // queryTimeout = 1 and queryTimeout is less than sleep time.
+            int queryTimeout = 1;
+            ClientAPI clientApi = new MockClientAPI() {
+                public JobSummary waitJobResult(Job job) throws ClientException {
+                    try {
+                        Thread.sleep(3 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+
+                    String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
+                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                }
+
+                public Unpacker getJobResult(Job job) throws ClientException {
+                    try {
+                        MessagePack msgpack = new MessagePack();
+                        BufferPacker packer = msgpack.createBufferPacker();
+                        List<Object> ret0 = new ArrayList<Object>();
+                        ret0.add(1);
+                        ret0.add("muga");
+                        packer.write(ret0);
+                        List<Object> ret1 = new ArrayList<Object>();
+                        ret1.add(2);
+                        ret1.add("nishizawa");
+                        packer.write(ret1);
+                        byte[] bytes = packer.toByteArray();
+                        return msgpack.createBufferUnpacker(bytes);
+                    } catch (java.io.IOException e) {
+                        throw new ClientException("mock");
+                    }
+                }
+            };
+            Job job = new Job("12345");
+            try {
+                ResultSet rs = new TDResultSet(clientApi, 50, job, queryTimeout);
+                rs.next();
+                fail();
+            } catch (Throwable t) {
+                assertTrue(t instanceof SQLException); // it is thrown by fetchRows
+                assertTrue(t.getCause() instanceof TimeoutException);
+            }
+        }
+        { // queryTimeout = 3 and queryTimeout is not less than sleep time.
+            int queryTimeout = 3;
+            ClientAPI clientApi = new MockClientAPI() {
+                public JobSummary waitJobResult(Job job) throws ClientException {
+                    try {
+                        Thread.sleep(1 * 1000);
+                    } catch (InterruptedException e) {
+                    }
+
+                    String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
+                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
+                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                }
+
+                public Unpacker getJobResult(Job job) throws ClientException {
+                    try {
+                        MessagePack msgpack = new MessagePack();
+                        BufferPacker packer = msgpack.createBufferPacker();
+                        List<Object> ret0 = new ArrayList<Object>();
+                        ret0.add(1);
+                        ret0.add("muga");
+                        packer.write(ret0);
+                        List<Object> ret1 = new ArrayList<Object>();
+                        ret1.add(2);
+                        ret1.add("nishizawa");
+                        packer.write(ret1);
+                        byte[] bytes = packer.toByteArray();
+                        return msgpack.createBufferUnpacker(bytes);
+                    } catch (java.io.IOException e) {
+                        throw new ClientException("mock");
+                    }
+                }
+            };
+            Job job = new Job("12345");
+            ResultSet rs = new TDResultSet(clientApi, 50, job);
+            assertTrue(rs.next());
+            assertEquals(1, rs.getInt(1));
+            assertEquals("muga", rs.getString(2));
+            assertTrue(rs.next());
+            assertEquals(2, rs.getInt(1));
+            assertEquals("nishizawa", rs.getString(2));
+            assertFalse(rs.next());
         }
     }
 

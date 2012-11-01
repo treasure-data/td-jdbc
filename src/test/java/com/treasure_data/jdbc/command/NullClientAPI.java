@@ -43,6 +43,10 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
+    public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+        return null;
+    }
+
     public JobSummary waitJobResult(Job job) throws ClientException {
         return null;
     }

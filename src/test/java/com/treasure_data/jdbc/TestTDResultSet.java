@@ -50,6 +50,10 @@ public class TestTDResultSet {
             return null;
         }
 
+        public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+            return null;
+        }
+
         public boolean flush() {
             return false;
         }

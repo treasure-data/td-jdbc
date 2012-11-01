@@ -129,6 +129,10 @@ public class TestCommandExecutor {
                 throw new ClientException("mock exception");
             }
 
+            public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
             public boolean flush() {
                 return false;
             }
@@ -253,6 +257,10 @@ public class TestCommandExecutor {
             }
 
             public TDResultSetBase select(String sql) throws ClientException {
+                throw new ClientException("mock exception");
+            }
+
+            public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
                 throw new ClientException("mock exception");
             }
 

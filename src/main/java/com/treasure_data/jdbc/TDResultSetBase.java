@@ -966,7 +966,7 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public void close() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException("TDResultSetBase#close()");
     }
 
     public boolean wasNull() throws SQLException {

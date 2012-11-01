@@ -45,8 +45,17 @@ public abstract class TDStatementBase implements Statement {
         return exec;
     }
 
+    public boolean isClosed() throws SQLException {
+//        if (currentResultSet != null) {
+//            return false && currentResultSet.isClosed();
+//        }
+        return false;
+    }
+
     public void close() throws SQLException {
-        // ignore
+        if (currentResultSet != null) {
+            currentResultSet.close();
+        }
     }
 
     public TDResultSetBase getResultSet() throws SQLException {
@@ -64,10 +73,6 @@ public abstract class TDStatementBase implements Statement {
 
     public void setEscapeProcessing(boolean enable) throws SQLException {
         isEscapeProcessing = enable;
-    }
-
-    public boolean isClosed() throws SQLException {
-        return false;
     }
 
     public SQLWarning getWarnings() throws SQLException {

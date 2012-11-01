@@ -54,7 +54,6 @@ public class TDResultSet extends TDResultSetBase {
     }
 
     public TDResultSet(ClientAPI clientApi, int maxRows, Job job, int queryTimeout) {
-        // TODO #MN need to change caller-side-program
         this.clientApi = clientApi;
         this.maxRows = maxRows;
         this.job = job;

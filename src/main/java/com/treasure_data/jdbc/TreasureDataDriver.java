@@ -91,11 +91,11 @@ public class TreasureDataDriver implements Driver {
     }
 
     public int getMajorVersion() {
-        return Constants.MAJOR_VERSION;
+        return Constants.DRIVER_MAJOR_VERSION;
     }
 
     public int getMinorVersion() {
-        return Constants.MINOR_VERSION;
+        return Constants.DRIVER_MINOR_VERSION;
     }
 
     public boolean jdbcCompliant() {

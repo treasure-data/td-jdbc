@@ -241,19 +241,23 @@ public interface Constants extends com.treasure_data.client.Constants {
      */
     String PORT_PROPERTY_KEY = "PORT";
 
-    int MAJOR_VERSION = 0;
+    // jdbc version
+    int JDBC_MAJOR_VERSION = 3;
+    int JDBC_MINOR_VERSION = 0;
 
-    int MINOR_VERSION = 1;
+    // database version
+    // we define hive version as database version
+    int DATABASE_MAJOR_VERSION = 0;
+    int DATABASE_MINOR_VERSION = 7;
+    int DATABASE_REVISION = 1;
+    String DATABASE_FULL_VERSION = DATABASE_MAJOR_VERSION + "." + DATABASE_MINOR_VERSION + "." + DATABASE_REVISION;
+    String DATABASE_NAME = "Treasure Data Storage Engine";
 
-    String FULL_VERSION = MAJOR_VERSION + "." + MINOR_VERSION;
-
+    // driver version
+    int DRIVER_MAJOR_VERSION = 0;
+    int DRIVER_MINOR_VERSION = 1;
+    int DRIVER_REVISION = 18;
+    String DRIVER_FULL_VERSION = DRIVER_MAJOR_VERSION + "." + DRIVER_MINOR_VERSION + "." + DRIVER_REVISION;
     String DRIVER_NAME = TreasureDataDriver.class.getName();
 
-    int MAJOR_VERSION_DATABASE = 0;
-
-    int MINOR_VERSION_DATABASE = 0;
-
-    String FULL_VERSION_DATABASE = MAJOR_VERSION_DATABASE + "." + MINOR_VERSION_DATABASE;
-
-    String DATABASE_NAME = "td-hadoop";
 }

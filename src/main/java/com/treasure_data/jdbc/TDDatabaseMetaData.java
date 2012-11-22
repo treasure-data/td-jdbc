@@ -329,12 +329,20 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         throw new SQLException("Method not supported");
     }
 
+    public int getJDBCMajorVersion() throws SQLException {
+        return JDBC_MAJOR_VERSION;
+    }
+
+    public int getJDBCMinorVersion() throws SQLException {
+        return JDBC_MINOR_VERSION;
+    }
+
     public int getDatabaseMajorVersion() throws SQLException {
-        throw new SQLException("Method not supported");
+        return Constants.DATABASE_MAJOR_VERSION;
     }
 
     public int getDatabaseMinorVersion() throws SQLException {
-        throw new SQLException("Method not supported");
+        return Constants.DATABASE_MINOR_VERSION;
     }
 
     public String getDatabaseProductName() throws SQLException {
@@ -342,19 +350,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getDatabaseProductVersion() throws SQLException {
-        return FULL_VERSION_DATABASE;
-    }
-
-    public int getDefaultTransactionIsolation() throws SQLException {
-        return Connection.TRANSACTION_NONE;
+        return DATABASE_FULL_VERSION;
     }
 
     public int getDriverMajorVersion() {
-        return MAJOR_VERSION;
+        return DRIVER_MAJOR_VERSION;
     }
 
     public int getDriverMinorVersion() {
-        return MINOR_VERSION;
+        return DRIVER_MINOR_VERSION;
     }
 
     public String getDriverName() throws SQLException {
@@ -362,7 +366,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getDriverVersion() throws SQLException {
-        return FULL_VERSION;
+        return DRIVER_FULL_VERSION;
+    }
+
+    public int getDefaultTransactionIsolation() throws SQLException {
+        return Connection.TRANSACTION_NONE;
     }
 
     public ResultSet getExportedKeys(String catalog, String schema, String table)
@@ -396,14 +404,6 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getIndexInfo(String catalog, String schema, String table,
             boolean unique, boolean approximate) throws SQLException {
         throw new SQLException("Method not supported");
-    }
-
-    public int getJDBCMajorVersion() throws SQLException {
-        return 3;
-    }
-
-    public int getJDBCMinorVersion() throws SQLException {
-        return 0;
     }
 
     public int getMaxBinaryLiteralLength() throws SQLException {

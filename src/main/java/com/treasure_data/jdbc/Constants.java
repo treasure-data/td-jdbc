@@ -241,6 +241,16 @@ public interface Constants extends com.treasure_data.client.Constants {
      */
     String PORT_PROPERTY_KEY = "PORT";
 
+    int MAX_ROW_SIZE = Integer.MAX_VALUE - 1;
+    int MAX_STATEMENT_LENGTH = 60 * 1024;
+    int MAX_TABLE_NAME_LENGTH = 128;
+    int MAX_TABLES_IN_SELECT = 256;
+    int MAX_USER_NAME_LENGTH = 128;
+    int MAX_CATALOG_NAME_LENGTH = 128;
+    int MAX_COLUMN_NAME_LENGTH = 128;
+    int MAX_COLUMNS_IN_SELECT = 256;
+    int MAX_COLUMNS_IN_TABLE = 512;
+
     // jdbc version
     int JDBC_MAJOR_VERSION = 3;
     int JDBC_MINOR_VERSION = 0;

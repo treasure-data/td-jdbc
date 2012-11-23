@@ -410,8 +410,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         throw new SQLException("Method not supported");
     }
 
+    /**
+     * Retrieves the maximum number of characters that this database allows
+     * in a catalog name.
+     */
     public int getMaxCatalogNameLength() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_CATALOG_NAME_LENGTH;
     }
 
     public int getMaxCharLiteralLength() throws SQLException {
@@ -419,12 +423,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Returns the value of maxColumnNameLength.
-     * 
-     * @param int
+     * Retrieves the maximum number of characters this database allows
+     * for a column name.
      */
     public int getMaxColumnNameLength() throws SQLException {
-        return 128;
+        return MAX_COLUMN_NAME_LENGTH;
     }
 
     public int getMaxColumnsInGroupBy() throws SQLException {
@@ -439,12 +442,19 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         throw new SQLException("Method not supported");
     }
 
+    /**
+     * Retrieves the maximum number of columns this database allows in a
+     * <code>SELECT</code> list.
+     */
     public int getMaxColumnsInSelect() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_COLUMNS_IN_SELECT;
     }
 
+    /**
+     * Retrieves the maximum number of columns this database allows in a table.
+     */
     public int getMaxColumnsInTable() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_COLUMNS_IN_TABLE;
     }
 
     public int getMaxConnections() throws SQLException {
@@ -463,32 +473,52 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         throw new SQLException("Method not supported");
     }
 
+    /**
+     * Retrieves the maximum number of bytes this database allows in
+     * a single row.
+     */
     public int getMaxRowSize() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_ROW_SIZE;
     }
 
     public int getMaxSchemaNameLength() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
+    /**
+     * Retrieves the maximum number of characters this database allows in
+     * an SQL statement.
+     */
     public int getMaxStatementLength() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_STATEMENT_LENGTH;
     }
 
     public int getMaxStatements() throws SQLException {
         throw new SQLException("Method not supported");
     }
 
+    /**
+     * Retrieves the maximum number of characters this database allows in
+     * a table name.
+     */
     public int getMaxTableNameLength() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_TABLE_NAME_LENGTH;
     }
 
+    /**
+     * Retrieves the maximum number of tables this database allows in a
+     * <code>SELECT</code> statement.
+     */
     public int getMaxTablesInSelect() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_TABLES_IN_SELECT;
     }
 
+    /**
+     * Retrieves the maximum number of characters this database allows in
+     * a user name.
+     */
     public int getMaxUserNameLength() throws SQLException {
-        throw new SQLException("Method not supported");
+        return MAX_USER_NAME_LENGTH;
     }
 
     public String getNumericFunctions() throws SQLException {

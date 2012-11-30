@@ -1,4 +1,4 @@
-Release 0.1.8 - 20XX/XX/XX
+Release 0.2.0 - 20XX/XX/XX
   NEW FEATURES
     Supports TDDatabaseMetaData#getDatabase{Minor,Major}Version(). They return hive
     version as database.
@@ -8,6 +8,7 @@ Release 0.1.8 - 20XX/XX/XX
     Supports TDDabaseMetaData#getMaxRowSize().
     Supports TDDabaseMetaData#getMaxTableNameLength() and getMaxTablesInSelect().
     Supports TDDatabaseMetaData#getMaxUserNameLength().
+    Supports DriverManager.getConnection(String)
 
 Release 0.1.7 - 2012/11/03
   NEW FEATURES

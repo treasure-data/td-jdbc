@@ -38,50 +38,70 @@ public class TDConnection implements Connection, Constants {
 
     private SQLWarning warnings = null;
 
-    public TDConnection(String uri, Properties props) throws SQLException {
-        if (uri == null || uri.isEmpty() || !uri.startsWith(URI_PREFIX)) {
-            throw new SQLException("Invalid URI: " + uri);
-        }
-
-        // remove prefix
-        uri = uri.substring(Constants.URI_PREFIX.length());
-        if (uri.isEmpty()) {
-            throw new SQLException("Error accessing Treasure Data Cloud");
-        }
-
-        // parse uri form: host:port/db
-        String[] fragments = uri.split("/");
-        String[] hostport = fragments[0].split(":");
-        int port = 80;
-        String host = hostport[0];
-        try {
-            port = Integer.parseInt(hostport[1]);
-        } catch (Exception e) {
-            // *ignore*: if an exception is thrown, 80 is
-            // inserted into a port variable. 
-        }
-
-        // set host and port properties to props
-        props.setProperty(Config.TD_API_SERVER_HOST, host);
-        props.setProperty(Config.TD_API_SERVER_PORT, "" + port);
-        {
-            Properties sprops = System.getProperties();
-            sprops.setProperty(Config.TD_API_SERVER_HOST, host);
-            sprops.setProperty(Config.TD_API_SERVER_PORT, "" + port);
-        }
-
+    public TDConnection(JDBCURLParser.Desc desc, Properties props)
+            throws SQLException {
         this.props = props;
+        overrideProperties(desc, props);
 
         // create a Database object
-        if (fragments.length > 1) {
-            database = new Database(fragments[1]);
-        } else {
-            throw new SQLException(
-            "Cannot create a connection because database is not specified");
-        }
+        database = new Database(desc.database);
 
         // create a ClientAPI object
         this.api = new TDClientAPI(this);
+    }
+
+    /**
+     * This method validates desc's fields and props.
+     *
+     * @param desc
+     * @param props
+     * @throws SQLException
+     */
+    private void overrideProperties(JDBCURLParser.Desc desc, Properties props)
+            throws SQLException {
+        // host
+        String host = props.getProperty(Config.TD_API_SERVER_HOST);
+        if (host == null || host.isEmpty()) {
+            props.setProperty(Config.TD_API_SERVER_HOST, desc.host);
+        }
+
+        // port
+        String port = props.getProperty(Config.TD_API_SERVER_PORT);
+        if (port == null || port.isEmpty()) {
+            props.setProperty(Config.TD_API_SERVER_PORT, desc.port);
+        } else {
+            try {
+                Integer.parseInt(port);
+            } catch (Throwable t) {
+                throw new SQLException("port number is invalid");
+            }
+        }
+
+        // database
+        if (desc.database == null) {
+            throw new NullPointerException(
+                    "Database is not specified within URL: " + desc.url);
+        }
+
+        // user
+        String user = props.getProperty(Config.TD_JDBC_USER);
+        if (user == null || user.isEmpty()) {
+            if (desc.user == null || user.isEmpty()) {
+                throw new NullPointerException(
+                        "User is not specified");
+            }
+            props.setProperty(Config.TD_JDBC_USER, desc.user);
+        }
+
+        // password
+        String password = props.getProperty(Config.TD_JDBC_PASSWORD);
+        if (password == null || password.isEmpty()) {
+            if (desc.password == null || desc.password.isEmpty()) {
+                throw new NullPointerException(
+                        "Password is not specified");
+            }
+            props.setProperty(Config.TD_JDBC_PASSWORD, desc.password);
+        }
     }
 
     public ClientAPI getClientAPI() {

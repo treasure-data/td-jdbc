@@ -169,77 +169,34 @@ public interface Constants extends com.treasure_data.client.Constants {
     int MODE_UPPER_LIMIT = API_BASE + 48;
     
     String VOID_TYPE_NAME = "void";
-
     String BOOLEAN_TYPE_NAME = "boolean";
-
     String TINYINT_TYPE_NAME = "tinyint";
-
     String SMALLINT_TYPE_NAME = "smallint";
-
     String INT_TYPE_NAME = "int";
-
     String BIGINT_TYPE_NAME = "bigint";
-
     String FLOAT_TYPE_NAME = "float";
-
     String DOUBLE_TYPE_NAME = "double";
-
     String STRING_TYPE_NAME = "string";
-
     String DATE_TYPE_NAME = "date";
-
     String DATETIME_TYPE_NAME = "datetime";
-
     String TIMESTAMP_TYPE_NAME = "timestamp";
-
     String BINARY_TYPE_NAME = "binary";
-
     String LIST_TYPE_NAME = "array";
-
     String MAP_TYPE_NAME = "map";
-
     String STRUCT_TYPE_NAME = "struct";
-
     String UNION_TYPE_NAME = "uniontype";
 
     int RESULT_EXECDIRECT = 0;
 
-    /**
-     * Is this driver JDBC compliant?
-     */
-    boolean JDBC_COMPLIANT = false;
-
-    /**
-     * The required prefix for the connection URL.
-     */
+    // The required prefix for the connection URL and URI.
     String URL_PREFIX = "jdbc:td://";
-
     String URL_PREFIX0 = "jdbc:td:";
+    String URI_PREFIX = URL_PREFIX;
+    String DEFAULT_PORT = "80"; // If host is provided, without a port.
 
-    /**
-     * The required prefix for the connection URI.
-     */
-    String URI_PREFIX = "jdbc:td://";
-
-    /**
-     * If host is provided, without a port.
-     */
-    String DEFAULT_PORT = "80";
-
-    /**
-     * Property key for the database name.
-     */
-    String DBNAME_PROPERTY_KEY = "DBNAME";
-
-    /**
-     * Property key for the Hive Server host.
-     */
-    String HOST_PROPERTY_KEY = "HOST";
-
-    /**
-     * Property key for the Hive Server port.
-     */
-    String PORT_PROPERTY_KEY = "PORT";
+    String DBNAME_PROPERTY_KEY = "DBNAME"; // Property key for the database name.
+    String HOST_PROPERTY_KEY = "HOST"; // Property key for the Hive Server host.
+    String PORT_PROPERTY_KEY = "PORT"; // Property key for the Hive Server port.
 
     int MAX_ROW_SIZE = Integer.MAX_VALUE - 1;
     int MAX_STATEMENT_LENGTH = 60 * 1024;
@@ -250,6 +207,14 @@ public interface Constants extends com.treasure_data.client.Constants {
     int MAX_COLUMN_NAME_LENGTH = 128;
     int MAX_COLUMNS_IN_SELECT = 256;
     int MAX_COLUMNS_IN_TABLE = 512;
+
+    public static final String TD_JDBC_HOST_DEFAULT = "api.treasure-data.com";
+    public static final String TD_JDBC_PORT_DEFAULT = "80";
+    public static final String TD_JDBC_USER = "user";
+    public static final String TD_JDBC_PASSWORD = "password";
+
+    // JDBC compliance
+    boolean JDBC_COMPLIANT = false;
 
     // jdbc version
     int JDBC_MAJOR_VERSION = 3;

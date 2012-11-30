@@ -6,6 +6,12 @@ import java.sql.Types;
 
 public class Utils {
 
+    public static void validateJDBCType(String url) throws SQLException {
+        if (url == null || url.isEmpty() || !url.startsWith(Constants.URL_PREFIX)) {
+            throw new SQLException("Invalid URL: " + url);
+        }
+    }
+
     /**
      * Convert hive types to sql types.
      * 

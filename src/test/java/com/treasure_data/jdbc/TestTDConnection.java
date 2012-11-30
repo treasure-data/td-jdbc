@@ -16,7 +16,7 @@ public class TestTDConnection {
         props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
 
         TDConnection conn =
-            new TDConnection("jdbc:td://192.168.0.23:80/mugadb", props);
+            new TDConnection(JDBCURLParser.parse("jdbc:td://192.168.0.23:80/mugadb"), props);
         String sql = "insert into table02 (k1, k2, k3) values (?, 1, ?)";
         TDPreparedStatement ps = (TDPreparedStatement) conn.prepareStatement(sql);
         for (int i = 0; i < 10; i++) {

@@ -26,7 +26,7 @@ public class TestTDPreparedStatement {
     public void testSimple() throws Exception {
         Properties props = new Properties();
         TDConnection conn =
-            new TDConnection("jdbc:td://localhost:9999/mugadb", props);
+            new TDConnection(JDBCURLParser.parse("jdbc:td://localhost:9999/mugadb"), props);
         PreparedStatement ps = conn.prepareStatement("select v['uid'] as uid from mugatbl;");
         ResultSet rs = ps.executeQuery();
         System.out.println("rs: " + rs);
@@ -43,7 +43,7 @@ public class TestTDPreparedStatement {
     public void testSimple02() throws Exception {
         Properties props = new Properties();
         TDConnection conn =
-            new TDConnection("jdbc:td://localhost:9999/mugadb", props);
+            new TDConnection(JDBCURLParser.parse("jdbc:td://localhost:9999/mugadb"), props);
         PreparedStatement ps = conn.prepareStatement(
                 "select v['id'] as id, v['name'] as name, v['score'] as score from score order by score desc;");
 

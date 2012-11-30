@@ -22,15 +22,10 @@ public class TDDataSource implements DataSource {
         return getConnection(getUser(), getPassword());
     }
 
-    public Connection getConnection(String username, String password)
+    public Connection getConnection(String user, String password)
             throws SQLException {
-        // TODO #MN
-        try {
-            return new TDConnection("", null);
-        } catch (Exception e) {
-            throw new SQLException(
-                    "Error in getting TreasureDataConnection", e);
-        }
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDataSource#getConection(String, String)"));
     }
 
     public void setUser(String user) {

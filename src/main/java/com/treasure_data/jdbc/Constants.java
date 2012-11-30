@@ -230,8 +230,8 @@ public interface Constants extends com.treasure_data.client.Constants {
 
     // driver version
     int DRIVER_MAJOR_VERSION = 0;
-    int DRIVER_MINOR_VERSION = 1;
-    int DRIVER_REVISION = 18;
+    int DRIVER_MINOR_VERSION = 2;
+    int DRIVER_REVISION = 0;
     String DRIVER_FULL_VERSION = DRIVER_MAJOR_VERSION + "." + DRIVER_MINOR_VERSION + "." + DRIVER_REVISION;
     String DRIVER_NAME = TreasureDataDriver.class.getName();
 

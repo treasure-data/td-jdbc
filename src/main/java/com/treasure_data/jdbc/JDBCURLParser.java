@@ -1,7 +1,6 @@
 package com.treasure_data.jdbc;
 
 import java.sql.SQLException;
-import java.util.Properties;
 
 //
 // jdbc:td://api.treasure-data.com:80/testdb;k1=v1;k2=v2

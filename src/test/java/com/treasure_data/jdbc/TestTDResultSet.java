@@ -351,13 +351,8 @@ public class TestTDResultSet {
         { // ok: int to string
             assertEquals("10", rs.getString(1));
         }
-        { // error: int to boolean
-            try {
-                rs.getBoolean(1);
-                fail();
-            } catch (Throwable t) {
-                assertTrue(t instanceof SQLException);
-            }
+        { // ok: int to boolean
+            assertTrue(rs.getBoolean(1));
         }
     }
 

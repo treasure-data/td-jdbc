@@ -28,7 +28,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public boolean allProceduresAreCallable() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#allProceduresAreCallable()"));
     }
 
     public boolean allTablesAreSelectable() throws SQLException {
@@ -36,35 +37,42 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#autoCommitFailureClosesAllResultSets()"));
     }
 
     public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#dataDefinitionCausesTransactionCommit()"));
     }
 
     public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#dataDefinitionIgnoredInTransactions()"));
     }
 
     public boolean deletesAreDetected(int type) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#deletesAreDetected(int)"));
     }
 
     public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#doesMaxRowSizeIncludeBlobs()"));
     }
 
     public ResultSet getAttributes(String catalog,
             String schemaPattern, String typeNamePattern,
             String attributeNamePattern) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#getAttributes(String, String, String, String)"));
     }
 
     public ResultSet getBestRowIdentifier(String catalog,
             String schema, String table, int scope, boolean nullable)
             throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#getBestRowIdentifier(String, String, String, int, boolean)"));
     }
 
     public String getCatalogSeparator() throws SQLException {
@@ -102,13 +110,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getClientInfoProperties() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#getClientInfoProperties()"));
     }
 
     public ResultSet getColumnPrivileges(String catalog,
             String schema, String table, String columnNamePattern)
             throws SQLException {
-        throw new SQLException(new UnsupportedOperationException());
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#getColumnPrivileges(String, String, String, String)"));
     }
 
     /**
@@ -320,13 +330,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public Connection getConnection() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#getConnection()"));
     }
 
     public ResultSet getCrossReference(String primaryCatalog,
             String primarySchema, String primaryTable, String foreignCatalog,
             String foreignSchema, String foreignTable) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDDatabaseMetaData#getCrossReference(String, String, String, String, String, String)"));
     }
 
     public int getJDBCMajorVersion() throws SQLException {

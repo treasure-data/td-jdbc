@@ -28,7 +28,7 @@
   </dependencies>
 
   <description>JDBC Driver for Treasure Data Cloud.</description>
-  <url>https://github.com/treasure-data/td-jdbc-driver</url>
+  <url>https://github.com/treasure-data/td-jdbc</url>
   <build>
     <resources>
       <resource>

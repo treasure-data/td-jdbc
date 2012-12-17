@@ -29,6 +29,7 @@ import org.msgpack.type.FloatValue;
 import org.msgpack.type.IntegerValue;
 import org.msgpack.type.MapValue;
 import org.msgpack.type.NumberValue;
+import org.msgpack.type.RawValue;
 import org.msgpack.type.Value;
 
 /**
@@ -49,144 +50,266 @@ public abstract class TDResultSetBase implements ResultSet {
     protected TDStatementBase statement = null;
 
     public boolean absolute(int row) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#absolute(int)"));
     }
 
     public void afterLast() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#afterLast()"));
     }
 
     public void beforeFirst() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#beforeFirst()"));
     }
 
     public void cancelRowUpdates() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#cancelRowUpdates()"));
     }
 
     public void deleteRow() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#deleteRow()"));
     }
 
     public int findColumn(String columnName) throws SQLException {
         int columnIndex = columnNames.indexOf(columnName);
         if (columnIndex == -1) {
-            throw new SQLException();
+            throw new SQLException("columnIndex: -1");
         } else {
             return ++columnIndex;
         }
     }
 
     public boolean first() throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public Array getArray(int i) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public Array getArray(String colName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#first()"));
     }
 
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getAsciiStream(int)"));
     }
 
     public InputStream getAsciiStream(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getAsciiStream(String)"));
+    }
+
+    public InputStream getBinaryStream(int columnIndex) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBinaryStream(int)"));
+    }
+
+    public InputStream getBinaryStream(String columnName) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBinaryStream(String)"));
+    }
+
+    public Reader getCharacterStream(int columnIndex) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getCharacterStream(String)"));
+    }
+
+    public Reader getCharacterStream(String columnName) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getCharacterStream(String)"));
+    }
+
+    public Reader getNCharacterStream(int index) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getNCharacterStream(int)"));
+    }
+
+    public Reader getNCharacterStream(String name) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getNCharacterStream(String)"));
+    }
+
+    public Array getArray(int i) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getArray(int)"));
+    }
+
+    public Array getArray(String colName) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getArray(String)"));
     }
 
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBigDecimal(int)"));
     }
 
     public BigDecimal getBigDecimal(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBigDecimal(String)"));
     }
 
     public BigDecimal getBigDecimal(int columnIndex, int scale)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBigDecimal(int, int)"));
     }
 
     public BigDecimal getBigDecimal(String columnName, int scale)
             throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public InputStream getBinaryStream(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBigDecimal(String, int)"));
     }
 
     public Blob getBlob(int i) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBlob(int)"));
     }
 
     public Blob getBlob(String colName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBlob(String)"));
     }
-
     public boolean getBoolean(int index) throws SQLException {
-        try {
-            Object obj = getObject(index);
-            return obj == null ? false :
-                ((BooleanValue) obj).getBoolean();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to boolean: %s",
-                    index, e.toString());
-            throw new SQLException(msg);
-        }
+        return this.getBooleanWithTypeConversion(index);
     }
 
     public boolean getBoolean(String name) throws SQLException {
         return getBoolean(findColumn(name));
     }
 
-    public byte getByte(int index) throws SQLException {
+    public boolean getBooleanWithTypeConversion(int index) throws SQLException {
+        Throwable e = null;
+        Object obj = null;
         try {
-            Object obj = getObject(index);
-            return obj == null ? 0 :
-                ((NumberValue) obj).byteValue();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to byte: %s",
-                    index, e.toString());
+            obj = getObject(index);
+
+            if (obj == null) {
+                return false;
+            }
+
+            if (obj instanceof BooleanValue) { // msgpack's Boolean type
+                return ((BooleanValue) obj).getBoolean();
+            } else if (obj instanceof Boolean) { // java's Boolean type
+                return ((Boolean) obj).booleanValue();
+            } else if (obj instanceof NumberValue) { // msgpack's Number type
+                return ((NumberValue) obj).asIntegerValue().intValue() != 0;
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).intValue() != 0;
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return parseStringToBoolean(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return parseStringToBoolean((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to boolean",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
             throw new SQLException(msg);
         }
+    }
+
+    private static boolean parseStringToBoolean(String from) {
+        if (from.toLowerCase().equals("false")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public byte getByte(int index) throws SQLException {
+        return getByteWithImplicitTypeConversion(index);
     }
 
     public byte getByte(String name) throws SQLException {
         return getByte(findColumn(name));
     }
 
+    private byte getByteWithImplicitTypeConversion(int index) throws SQLException {
+        Throwable e = null;
+        Object obj = null;
+        try {
+            obj = getObject(index);
+
+            if (obj == null) {
+                return 0;
+            }
+
+            // TODO should implement more carefully
+            if (obj instanceof NumberValue) { // msgpack's Number type
+                // TODO more implementing
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    return (byte) ((IntegerValue) v).intValue();
+                } else {
+                    return (byte) ((FloatValue) v).doubleValue();
+                }
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).byteValue();
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return Byte.parseByte(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return Byte.parseByte((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to byte",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
+            throw new SQLException(msg);
+        }
+    }
+
     public byte[] getBytes(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported"); // TODO
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBytes(int)"));
     }
 
     public byte[] getBytes(String columnName) throws SQLException {
-        throw new SQLException("Method not supported"); // TODO
-    }
-
-    public Reader getCharacterStream(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public Reader getCharacterStream(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getBytes(String)"));
     }
 
     public Clob getClob(int i) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getClob(int)"));
     }
 
     public Clob getClob(String colName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getClob(String)"));
+    }
+
+    public NClob getNClob(int index) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getNClob(int)"));
+    }
+
+    public NClob getNClob(String columnLabel) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getNClob(String)"));
+    }
+
+    public String getNString(int columnIndex) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getNString(int)"));
+    }
+
+    public String getNString(String columnLabel) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getNString(String)"));
     }
 
     public int getConcurrency() throws SQLException {
@@ -194,10 +317,13 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public String getCursorName() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getCursorName()"));
     }
 
-    public Date getDate(int index) throws SQLException { // TODO
+    public Date getDate(int index) throws SQLException {
+        // TODO should implement more carefully
+        // TODO
         Object obj = getObject(index);
         if (obj == null) {
             return null;
@@ -214,35 +340,67 @@ public abstract class TDResultSetBase implements ResultSet {
         }
     }
 
-    public Date getDate(String columnName) throws SQLException { // TODO
+    public Date getDate(String columnName) throws SQLException {
         return getDate(findColumn(columnName));
     }
 
-    public Date getDate(int columnIndex, Calendar cal)
-            throws SQLException { // TODO
-        throw new SQLException("Method not supported");
+    public Date getDate(int columnIndex, Calendar cal) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getDate(int, Calendar)"));
     }
 
-    public Date getDate(String columnName, Calendar cal)
-            throws SQLException { // TODO
-        throw new SQLException("Method not supported");
+    public Date getDate(String columnName, Calendar cal) throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getDate(String, Calendar)"));
     }
 
     public double getDouble(int index) throws SQLException {
-        try {
-            Object obj = getObject(index);
-            return obj == null ? 0.0 :
-                ((NumberValue) obj).doubleValue();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to double: %s",
-                    index, e.toString());
-            throw new SQLException(msg);
-        }
+        return getDoubleWithImplicitTypeConversion(index);
     }
 
     public double getDouble(String name) throws SQLException {
         return getDouble(findColumn(name));
+    }
+
+    private double getDoubleWithImplicitTypeConversion(int index)
+            throws SQLException {
+        Throwable e = null;
+        Object obj = null;
+        try {
+            obj = getObject(index);
+
+            if (obj == null) {
+                return 0.0;
+            }
+
+            if (obj instanceof NumberValue) { // msgpack's Number type
+                // TODO more implementing
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    return (double) ((IntegerValue) v).intValue();
+                } else {
+                    return ((FloatValue) v).doubleValue();
+                }
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).doubleValue();
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return Double.parseDouble(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return Double.parseDouble((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to double",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
+            throw new SQLException(msg);
+        }
     }
 
     public int getFetchDirection() throws SQLException {
@@ -254,20 +412,51 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public float getFloat(int index) throws SQLException {
-        try {
-            Object obj = getObject(index);
-            return obj == null ? (float) 0.0 :
-                ((NumberValue) obj).floatValue();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to float: %s",
-                    index, e.toString());
-            throw new SQLException(msg);
-        }
+        return getFloatWithImplicitTypeConversion(index);
     }
 
     public float getFloat(String name) throws SQLException {
         return getFloat(findColumn(name));
+    }
+
+    private float getFloatWithImplicitTypeConversion(int index) throws SQLException {
+        Throwable e = null;
+        Object obj = null;
+        try {
+            obj = getObject(index);
+
+            if (obj == null) {
+                return 0.0f;
+            }
+
+            if (obj instanceof NumberValue) { // msgpack's Number type
+                // TODO more implementing
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    return (float) ((IntegerValue) v).intValue();
+                } else {
+                    return ((FloatValue) v).floatValue();
+                }
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).floatValue();
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return Float.parseFloat(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return Float.parseFloat((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to float",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
+            throw new SQLException(msg);
+        }
     }
 
     public int getHoldability() throws SQLException {
@@ -275,64 +464,96 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public int getInt(int index) throws SQLException {
-        try {
-            Object obj = getObject(index);
-            return obj == null ? 0 :
-                ((NumberValue) obj).intValue();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to integer: %s",
-                    index, e.toString());
-            throw new SQLException(msg);
-        }
+        return getIntWithImplicitTypeConversion(index);
     }
 
     public int getInt(String name) throws SQLException {
         return getInt(findColumn(name));
     }
 
-    public long getLong(int index) throws SQLException {
+    private int getIntWithImplicitTypeConversion(int index) throws SQLException {
+        Throwable e = null;
+        Object obj = null;
         try {
-            Object obj = getObject(index);
-            return obj == null ? 0 :
-                ((NumberValue) obj).longValue();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to long", index);
+            obj = getObject(index);
+
+            if (obj == null) {
+                return 0;
+            }
+
+            if (obj instanceof NumberValue) { // msgpack's Number type
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    return ((IntegerValue) v).getInt();
+                } else {
+                    return (int) ((FloatValue) v).doubleValue();
+                }
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).intValue();
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return Integer.parseInt(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return Integer.parseInt((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to integer",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
             throw new SQLException(msg);
         }
+    }
+
+    public long getLong(int index) throws SQLException {
+        return getLongWithImplicitTypeConversion(index);
     }
 
     public long getLong(String name) throws SQLException {
         return getLong(findColumn(name));
     }
 
+    public long getLongWithImplicitTypeConversion(int index) throws SQLException {
+        Throwable e = null;
+        Object obj = null;
+        try {
+            obj = getObject(index);
+
+            if (obj == null) {
+                return 0;
+            }
+
+            if (obj instanceof NumberValue) { // msgpack's Number type
+                return ((NumberValue) obj).asIntegerValue().getLong();
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).longValue();
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return Long.parseLong(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return Long.parseLong((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to long",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
+            throw new SQLException(msg);
+        }
+    }
+
     public ResultSetMetaData getMetaData() throws SQLException {
         return new TDResultSetMetaData(columnNames, columnTypes);
-    }
-
-    public Reader getNCharacterStream(int arg0) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public Reader getNCharacterStream(String arg0) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public NClob getNClob(int arg0) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public NClob getNClob(String columnLabel) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public String getNString(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public String getNString(String columnLabel) throws SQLException {
-        throw new SQLException("Method not supported");
     }
 
     public Object getObject(int columnIndex) throws SQLException {
@@ -399,20 +620,52 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public short getShort(int index) throws SQLException {
-        try {
-            Object obj = getObject(index);
-            return obj == null ? 0 :
-                ((NumberValue) obj).shortValue();
-        } catch (Exception e) {
-            String msg = String.format(
-                    "Cannot convert column %d to short: %s",
-                    index, e.toString());
-            throw new SQLException(msg);
-        }
+        return getShortWithImplicitTypeConversion(index);
     }
 
     public short getShort(String name) throws SQLException {
         return getShort(findColumn(name));
+    }
+
+    private short getShortWithImplicitTypeConversion(int index)
+            throws SQLException {
+        Throwable e = null;
+        Object obj = null;
+        try {
+            obj = getObject(index);
+
+            if (obj == null) {
+                return 0;
+            }
+
+            if (obj instanceof NumberValue) { // msgpack's Number type
+                // TODO more implementing
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    return (short) ((IntegerValue) v).intValue();
+                } else {
+                    return (short) ((FloatValue) v).doubleValue();
+                }
+            } else if (obj instanceof Number) { // java's Number type
+                return ((Number) obj).shortValue();
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return Short.parseShort(((RawValue) obj).getString());
+            } else if (obj instanceof String) { // java's raw type
+                return Short.parseShort((String) obj);
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to byte",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
+            throw new SQLException(msg);
+        }
     }
 
     void setStatement(TDStatementBase stat) {
@@ -428,37 +681,69 @@ public abstract class TDResultSetBase implements ResultSet {
      *            - the first column is 1, the second is 2, ...
      * @see java.sql.ResultSet#getString(int)
      */
-
     public String getString(int index) throws SQLException {
-        // Column index starts from 1, not 0.
-        Object obj = getObject(index);
-        if (obj == null) {
-            return null;
-        }
-
-        try {
-            if (obj instanceof MapValue) {
-                return ((MapValue) obj).toString();
-            } else if (obj instanceof IntegerValue) {
-                return "" + ((IntegerValue) obj).asIntegerValue().getInt();
-            } else if (obj instanceof FloatValue) {
-                return "" + ((FloatValue) obj).asFloatValue().getFloat();
-            } else if (obj instanceof Value) {
-                return ((Value) obj).asRawValue().getString();
-            } else if (obj instanceof Integer) {
-                return ((Integer) obj).toString();
-            } else { // } else if (obj instanceof String) {
-                return (String) obj;
-            }
-        } catch (Exception e) {
-            String msg = String.format("Cannot convert column %d to string: %s",
-                    index, e.toString());
-            throw new SQLException(msg);
-        }
+        return getStringWithImplicitTypeConversion(index);
     }
 
     public String getString(String name) throws SQLException {
         return getString(findColumn(name));
+    }
+
+    public String getStringWithImplicitTypeConversion(int index) throws SQLException {
+        Throwable e = null;
+        Object obj = null;
+        try {
+            obj = getObject(index);
+
+            if (obj == null) {
+                return null;
+            }
+
+            // TODO should implement more carefully
+            if (obj instanceof MapValue) { // msgpack's map type
+                return ((MapValue) obj).toString();
+            } else if (obj instanceof ArrayValue) { // msgpack's array type
+                return ((ArrayValue) obj).toString();
+            } else if (obj instanceof NumberValue) { // msgpack's number type
+                // TODO bigdecimal, integer
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    return "" + ((IntegerValue) v).intValue();
+                } else {
+                    return "" + ((FloatValue) v).doubleValue();
+                }
+            } else if (obj instanceof Number) { // java's number type
+                // TODO bigdecimal, biginteger
+                Number v = (Number) obj;
+                if (v instanceof Byte) {
+                    return "" + ((Byte) v).byteValue();
+                } else if (v instanceof Double) {
+                    return "" + ((Double) v).doubleValue();
+                } else if (v instanceof Float) {
+                    return "" + ((Float) v).floatValue();
+                } else if (v instanceof Integer) {
+                    return "" + ((Integer) v).intValue();
+                } else if (v instanceof Short) {
+                    return "" + ((Short) v).shortValue();
+                }
+            } else if (obj instanceof RawValue) { // msgpack's raw type
+                return ((Value) obj).asRawValue().getString();
+            } else { // java's raw type
+                return (String) obj;
+            }
+        } catch (Throwable t) {
+            e = t;
+        }
+
+        // implicit type conversion failed
+        String msg = String.format(
+                "Cannot convert column %d from value of %s class to string",
+                index, obj.getClass().getName());
+        if (e != null) {
+            throw new SQLException(msg, e);
+        } else {
+            throw new SQLException(msg);
+        }
     }
 
     public Time getTime(int columnIndex) throws SQLException {

@@ -177,7 +177,7 @@ public abstract class TDResultSetBase implements ResultSet {
         return getBoolean(findColumn(name));
     }
 
-    public boolean getBooleanWithTypeConversion(int index) throws SQLException {
+    private boolean getBooleanWithTypeConversion(int index) throws SQLException {
         Throwable e = null;
         Object obj = null;
         try {
@@ -207,7 +207,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to boolean",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -264,7 +264,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to byte",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -395,7 +395,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to double",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -451,7 +451,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to float",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -502,7 +502,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to integer",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -518,7 +518,7 @@ public abstract class TDResultSetBase implements ResultSet {
         return getLong(findColumn(name));
     }
 
-    public long getLongWithImplicitTypeConversion(int index) throws SQLException {
+    private long getLongWithImplicitTypeConversion(int index) throws SQLException {
         Throwable e = null;
         Object obj = null;
         try {
@@ -544,7 +544,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to long",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -660,7 +660,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to byte",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {
@@ -738,7 +738,7 @@ public abstract class TDResultSetBase implements ResultSet {
         // implicit type conversion failed
         String msg = String.format(
                 "Cannot convert column %d from value of %s class to string",
-                index, obj.getClass().getName());
+                index, obj);
         if (e != null) {
             throw new SQLException(msg, e);
         } else {

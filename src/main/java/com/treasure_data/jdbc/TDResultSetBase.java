@@ -241,14 +241,20 @@ public abstract class TDResultSetBase implements ResultSet {
                 return 0;
             }
 
-            // TODO should implement more carefully
             if (obj instanceof NumberValue) { // msgpack's Number type
-                // TODO more implementing
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    return (byte) ((IntegerValue) v).intValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return (byte) ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return (byte) ((IntegerValue) v).getLong();
+                    }
                 } else {
-                    return (byte) ((FloatValue) v).doubleValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return (byte) ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return (byte) ((FloatValue) v).floatValue();
+                    }
                 }
             } else if (obj instanceof Number) { // java's Number type
                 return ((Number) obj).byteValue();
@@ -374,12 +380,19 @@ public abstract class TDResultSetBase implements ResultSet {
             }
 
             if (obj instanceof NumberValue) { // msgpack's Number type
-                // TODO more implementing
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    return (double) ((IntegerValue) v).intValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return (double) ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return (double) ((IntegerValue) v).getLong();
+                    }
                 } else {
-                    return ((FloatValue) v).doubleValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return (double) ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return (double) ((FloatValue) v).floatValue();
+                    }
                 }
             } else if (obj instanceof Number) { // java's Number type
                 return ((Number) obj).doubleValue();
@@ -430,12 +443,19 @@ public abstract class TDResultSetBase implements ResultSet {
             }
 
             if (obj instanceof NumberValue) { // msgpack's Number type
-                // TODO more implementing
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    return (float) ((IntegerValue) v).intValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return (float) ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return (float) ((IntegerValue) v).getLong();
+                    }
                 } else {
-                    return ((FloatValue) v).floatValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return (float) ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return (float) ((FloatValue) v).floatValue();
+                    }
                 }
             } else if (obj instanceof Number) { // java's Number type
                 return ((Number) obj).floatValue();
@@ -484,9 +504,17 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    return ((IntegerValue) v).getInt();
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return (int) ((IntegerValue) v).getLong();
+                    }
                 } else {
-                    return (int) ((FloatValue) v).doubleValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return (int) ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return (int) ((FloatValue) v).floatValue();
+                    }
                 }
             } else if (obj instanceof Number) { // java's Number type
                 return ((Number) obj).intValue();
@@ -529,7 +557,20 @@ public abstract class TDResultSetBase implements ResultSet {
             }
 
             if (obj instanceof NumberValue) { // msgpack's Number type
-                return ((NumberValue) obj).asIntegerValue().getLong();
+                NumberValue v = (NumberValue) obj;
+                if (v instanceof IntegerValue) {
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return (long) ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return (long) ((IntegerValue) v).getLong();
+                    }
+                } else {
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return (long) ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return (long) ((FloatValue) v).floatValue();
+                    }
+                }
             } else if (obj instanceof Number) { // java's Number type
                 return ((Number) obj).longValue();
             } else if (obj instanceof RawValue) { // msgpack's raw type
@@ -639,12 +680,19 @@ public abstract class TDResultSetBase implements ResultSet {
             }
 
             if (obj instanceof NumberValue) { // msgpack's Number type
-                // TODO more implementing
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    return (short) ((IntegerValue) v).intValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return (short) ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return (short) ((IntegerValue) v).getLong();
+                    }
                 } else {
-                    return (short) ((FloatValue) v).doubleValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return (short) ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return (short) ((FloatValue) v).floatValue();
+                    }
                 }
             } else if (obj instanceof Number) { // java's Number type
                 return ((Number) obj).shortValue();
@@ -699,21 +747,26 @@ public abstract class TDResultSetBase implements ResultSet {
                 return null;
             }
 
-            // TODO should implement more carefully
             if (obj instanceof MapValue) { // msgpack's map type
                 return ((MapValue) obj).toString();
             } else if (obj instanceof ArrayValue) { // msgpack's array type
                 return ((ArrayValue) obj).toString();
             } else if (obj instanceof NumberValue) { // msgpack's number type
-                // TODO bigdecimal, integer
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    return "" + ((IntegerValue) v).intValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                        return "" + ((IntegerValue) v).getInt();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                        return "" + ((IntegerValue) v).getLong();
+                    }
                 } else {
-                    return "" + ((FloatValue) v).doubleValue();
+                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                        return "" + ((FloatValue) v).doubleValue();
+                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                        return "" + ((FloatValue) v).floatValue();
+                    }
                 }
             } else if (obj instanceof Number) { // java's number type
-                // TODO bigdecimal, biginteger
                 Number v = (Number) obj;
                 if (v instanceof Byte) {
                     return "" + ((Byte) v).byteValue();

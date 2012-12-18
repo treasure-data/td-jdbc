@@ -16,7 +16,9 @@ import org.json.simple.JSONValue;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.model.TDColumn;
+import com.treasure_data.jdbc.model.TDDatabase;
 import com.treasure_data.jdbc.model.TDTable;
+import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.TableSummary;
 
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
@@ -84,12 +86,27 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getCatalogs() throws SQLException {
+        List<DatabaseSummary> ds = null;
+        try {
+            ds = api.showDatabases();
+            if (ds == null) {
+                ds = new ArrayList<DatabaseSummary>();
+            }
+        } catch (ClientException e) {
+            throw new SQLException(e);
+        }
+
+        List<TDDatabase> databases = new ArrayList<TDDatabase>();
+        for (DatabaseSummary d : ds) {
+            TDDatabase database = new TDDatabase(d.getName());
+            databases.add(database);
+        }
+
         List<String> names = Arrays.asList("TABLE_CAT");
         List<String> types = Arrays.asList("STRING");
-        List<String> data0 = Arrays.asList("default");
 
         try {
-            return new TDMetaDataResultSet<String>(names, types, data0) {
+            ResultSet result = new TDMetaDataResultSet<TDDatabase>(names, types, databases) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {
@@ -97,13 +114,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                         return false;
                     }
 
+                    TDDatabase d = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(1);
-                    a.add(data.get(cnt)); // TABLE_CAT String => table catalog (may be null)
+                    a.add(d.getDatabaseName()); // TABLE_CAT String => table catalog (may be null)
                     row = a;
                     cnt++;
                     return true;
                 }
             };
+            return result;
         } catch (Exception e) {
             throw new SQLException(e);
         }

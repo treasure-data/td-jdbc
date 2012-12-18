@@ -37,6 +37,11 @@ import org.msgpack.type.Value;
  * resultsets.
  */
 public abstract class TDResultSetBase implements ResultSet {
+    private static final String INTVALUE_CLASSNAME = "org.msgpack.type.IntValueImpl";
+    private static final String LONGVALUE_CLASSNAME = "org.msgpack.type.LongValueImpl";
+    private static final String DOUBLEVALUE_CLASSNAME = "org.msgpack.type.DoubleValueImpl";
+    private static final String FLOATVALUE_CLASSNAME = "org.msgpack.type.FloatValueImpl";
+
     protected SQLWarning warningChain = null;
 
     protected boolean wasNull = false;
@@ -244,15 +249,15 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return (byte) ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return (byte) ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return (byte) ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return (byte) ((FloatValue) v).floatValue();
                     }
                 }
@@ -382,15 +387,15 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return (double) ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return (double) ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return (double) ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return (double) ((FloatValue) v).floatValue();
                     }
                 }
@@ -445,15 +450,15 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return (float) ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return (float) ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return (float) ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return (float) ((FloatValue) v).floatValue();
                     }
                 }
@@ -504,15 +509,15 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return (int) ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return (int) ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return (int) ((FloatValue) v).floatValue();
                     }
                 }
@@ -559,15 +564,15 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return (long) ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return (long) ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return (long) ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return (long) ((FloatValue) v).floatValue();
                     }
                 }
@@ -624,40 +629,49 @@ public abstract class TDResultSetBase implements ResultSet {
 
     public Object getObject(int i, Map<String, Class<?>> map)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getObject(int, Map)"));
     }
 
     public Object getObject(String colName, Map<String, Class<?>> map)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getObject(String, Map)"));
     }
 
     public Ref getRef(int i) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getRef(int)"));
     }
 
     public Ref getRef(String colName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getRef(String)"));
     }
 
     public int getRow() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getRow(int)"));
     }
 
     public RowId getRowId(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getRowId(int)"));
     }
 
     public RowId getRowId(String columnLabel) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getRowId(String)"));
     }
 
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getSQLXML(int)"));
     }
 
     public SQLXML getSQLXML(String columnLabel) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getSQLXML(String)"));
     }
 
     public short getShort(int index) throws SQLException {
@@ -682,15 +696,15 @@ public abstract class TDResultSetBase implements ResultSet {
             if (obj instanceof NumberValue) { // msgpack's Number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return (short) ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return (short) ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return (short) ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return (short) ((FloatValue) v).floatValue();
                     }
                 }
@@ -754,15 +768,15 @@ public abstract class TDResultSetBase implements ResultSet {
             } else if (obj instanceof NumberValue) { // msgpack's number type
                 NumberValue v = (NumberValue) obj;
                 if (v instanceof IntegerValue) {
-                    if (v.getClass().getName().equals("org.msgpack.type.IntValueImpl")) {
+                    if (v.getClass().getName().equals(INTVALUE_CLASSNAME)) {
                         return "" + ((IntegerValue) v).getInt();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.LongValueImpl")) {
+                    } else if (v.getClass().getName().equals(LONGVALUE_CLASSNAME)) {
                         return "" + ((IntegerValue) v).getLong();
                     }
                 } else {
-                    if (v.getClass().getName().equals("org.msgpack.type.DoubleValueImpl")) {
+                    if (v.getClass().getName().equals(DOUBLEVALUE_CLASSNAME)) {
                         return "" + ((FloatValue) v).doubleValue();
-                    } else if (v.getClass().getName().equals("org.msgpack.type.FloatValueImpl")) {
+                    } else if (v.getClass().getName().equals(FLOATVALUE_CLASSNAME)) {
                         return "" + ((FloatValue) v).floatValue();
                     }
                 }
@@ -800,37 +814,45 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public Time getTime(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTime(int)"));
     }
 
     public Time getTime(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTime(String)"));
     }
 
     public Time getTime(int columnIndex, Calendar cal) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTime(int, Calendar)"));
     }
 
     public Time getTime(String columnName, Calendar cal) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTime(String, Calendar)"));
     }
 
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTimestamp(int)"));
     }
 
     public Timestamp getTimestamp(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTimestamp(String)"));
     }
 
     public Timestamp getTimestamp(int columnIndex, Calendar cal)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTimestamp(int, Calendar)"));
     }
 
     public Timestamp getTimestamp(String columnName, Calendar cal)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getTimestamp(String, Calendar)"));
     }
 
     public int getType() throws SQLException {
@@ -838,47 +860,57 @@ public abstract class TDResultSetBase implements ResultSet {
     }
 
     public URL getURL(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getURL(int)"));
     }
 
     public URL getURL(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getURL(String)"));
     }
 
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getUnicodeStream(int)"));
     }
 
     public InputStream getUnicodeStream(String columnName) throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#getUnicodeStream(String)"));
     }
 
     public void insertRow() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#insertRow()"));
     }
 
     public boolean isAfterLast() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#isAfterLast()"));
+    }
+
+    public boolean isLast() throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#isLast()"));
+    }
+
+    public boolean last() throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#last()"));
     }
 
     public boolean isBeforeFirst() throws SQLException {
-        throw new SQLException("Method not supported");
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#isBeforeFirst()"));
+    }
+
+    public boolean isFirst() throws SQLException {
+        throw new SQLException(new UnsupportedOperationException(
+                "TDResultSetBase#isFirst()"));
     }
 
     public boolean isClosed() throws SQLException {
         return false;
-    }
-
-    public boolean isFirst() throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public boolean isLast() throws SQLException {
-        throw new SQLException("Method not supported");
-    }
-
-    public boolean last() throws SQLException {
-        throw new SQLException("Method not supported");
     }
 
     public void moveToCurrentRow() throws SQLException {

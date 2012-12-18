@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.NullClientAPI;
 import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.TableSummary;
 
 
@@ -34,33 +35,52 @@ public class TestTDDatabaseMetaData {
 
     @Test
     public void getCatalogs() throws Exception {
-        TDDatabaseMetaData metadata = new TDDatabaseMetaData(new NullClientAPI());
-        ResultSet rs = null;
-        try {
-            rs = metadata.getCatalogs();
-
-            try {
-                rs.getString("TABLE_CAT");
-                fail();
-            } catch (Throwable t) {
-                assertTrue(t instanceof SQLException);
+        NullClientAPI api = new NullClientAPI() {
+            @Override public List<DatabaseSummary> showDatabases() throws ClientException {
+                List<DatabaseSummary> list = new ArrayList<DatabaseSummary>();
+                list.add(new DatabaseSummary("db01", 10, "created_at01", "updated_at01"));
+                list.add(new DatabaseSummary("db02", 10, "created_at02", "updated_at02"));
+                list.add(new DatabaseSummary("db03", 10, "created_at03", "updated_at03"));
+                return list;
             }
+        };
 
-            assertTrue(rs.next());
-            assertEquals("default", rs.getString(1));
-            assertEquals("default", rs.getString("TABLE_CAT"));
-            assertEquals(1003, rs.getType());
-
+        {
+            TDDatabaseMetaData metadata = new TDDatabaseMetaData(api);
+            ResultSet rs = null;
             try {
-                rs.getString("notfound");
-            } catch (Throwable t) {
-                assertTrue(t instanceof SQLException);
-            }
+                rs = metadata.getCatalogs();
 
-            assertFalse(rs.next());
-        } finally {
-            if (rs != null) {
-                rs.close();
+                try {
+                    rs.getString("TABLE_CAT");
+                    fail();
+                } catch (Throwable t) {
+                    assertTrue(t instanceof SQLException);
+                }
+
+                assertTrue(rs.next());
+                assertEquals("db01", rs.getString(1));
+                assertEquals("db01", rs.getString("TABLE_CAT"));
+
+                try {
+                    rs.getString("notfound");
+                } catch (Throwable t) {
+                    assertTrue(t instanceof SQLException);
+                }
+
+                assertTrue(rs.next());
+                assertEquals("db02", rs.getString(1));
+                assertEquals("db02", rs.getString("TABLE_CAT"));
+
+                assertTrue(rs.next());
+                assertEquals("db03", rs.getString(1));
+                assertEquals("db03", rs.getString("TABLE_CAT"));
+
+                assertFalse(rs.next());
+            } finally {
+                if (rs != null) {
+                    rs.close();
+                }
             }
         }
     }
@@ -90,6 +110,7 @@ public class TestTDDatabaseMetaData {
 
                 try {
                     rs.getString(1);
+                    fail();
                 } catch (Throwable t) {
                     assertTrue(t instanceof SQLException);
                 }

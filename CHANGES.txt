@@ -8,6 +8,7 @@ Release 0.2.0 - 20XX/XX/XX
     Supports TDDabaseMetaData#getMaxRowSize().
     Supports TDDabaseMetaData#getMaxTableNameLength() and getMaxTablesInSelect().
     Supports TDDatabaseMetaData#getMaxUserNameLength().
+    Supports TDDatabaseMetaData#getCatalogs().
     Supports DriverManager.getConnection(String)
 
   IMPROVEMENTS

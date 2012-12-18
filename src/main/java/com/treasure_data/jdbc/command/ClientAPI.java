@@ -7,11 +7,15 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.TDResultSetBase;
+import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.TableSummary;
 
 public interface ClientAPI {
+    // show database statement
+    List<DatabaseSummary> showDatabases() throws ClientException;
+
     // show table statement
     List<TableSummary> showTables() throws ClientException;
 

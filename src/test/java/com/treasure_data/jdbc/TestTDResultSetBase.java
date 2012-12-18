@@ -20,6 +20,7 @@ import org.msgpack.unpacker.Unpacker;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.JobSummary.Status;
@@ -28,6 +29,10 @@ import com.treasure_data.model.TableSummary;
 public class TestTDResultSetBase {
 
     public static class MockClientAPI implements ClientAPI {
+        public List<DatabaseSummary> showDatabases() throws ClientException {
+            return null;
+        }
+
         public List<TableSummary> showTables() throws ClientException {
             return null;
         }

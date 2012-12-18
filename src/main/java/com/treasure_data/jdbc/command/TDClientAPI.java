@@ -17,6 +17,7 @@ import com.treasure_data.logger.Config;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.AuthenticateRequest;
 import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
@@ -86,6 +87,10 @@ public class TDClientAPI implements ClientAPI {
             LOG.throwing(this.getClass().getName(), "checkCredentials", e);
             return;
         }
+    }
+
+    public List<DatabaseSummary> showDatabases() throws ClientException {
+        return client.listDatabases();
     }
 
     public List<TableSummary> showTables() throws ClientException {

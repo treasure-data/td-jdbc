@@ -21,6 +21,7 @@ import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.TableSummary;
@@ -108,6 +109,10 @@ public class TestCommandExecutor {
     @Test
     public void testExecute05() throws Exception {
         ClientAPI clientApi = new ClientAPI() {
+            public List<DatabaseSummary> showDatabases() throws ClientException {
+                return null;
+            }
+
             public List<TableSummary> showTables() throws ClientException {
                 return null;
             }
@@ -239,6 +244,10 @@ public class TestCommandExecutor {
     @Test @Ignore
     public void testExecute08() throws Exception { // FIXME #MN
         ClientAPI api = new ClientAPI() {
+            public List<DatabaseSummary> showDatabases() throws ClientException {
+                return null;
+            }
+
             public List<TableSummary> showTables() throws ClientException {
                 return null;
             }

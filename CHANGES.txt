@@ -14,6 +14,9 @@ Release 0.2.0 - 20XX/XX/XX
   IMPROVEMENTS
     Improves implicit type conversion in TDResultSetBase class
 
+  BUG FIXES
+    Cannot flush inserted data with insert statements and upload it on Treasure Data
+
 Release 0.1.7 - 2012/11/03
   NEW FEATURES
     Supports Statement#{setQueryTimeout(int),getQueryTimeout()}
@@ -66,4 +69,3 @@ Release 0.1.1 - 2012/06/04
     Supports Talend Open Studio for Data Integration 5.0.2
 
 Release 0.1.0 - 2012/05/15
-    

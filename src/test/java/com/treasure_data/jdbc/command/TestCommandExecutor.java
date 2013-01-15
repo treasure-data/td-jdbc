@@ -149,6 +149,9 @@ public class TestCommandExecutor {
             public Unpacker getJobResult(Job job) throws ClientException {
                 return null;
             }
+
+            public void close() throws ClientException {
+            }
         };
         CommandExecutor exec = new CommandExecutor(clientApi);
 
@@ -283,6 +286,9 @@ public class TestCommandExecutor {
 
             public Unpacker getJobResult(Job job) throws ClientException {
                 return null;
+            }
+
+            public void close() throws ClientException {
             }
         };
         CommandExecutor exec = new CommandExecutor(api);

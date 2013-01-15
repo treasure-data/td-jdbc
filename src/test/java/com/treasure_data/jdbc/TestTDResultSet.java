@@ -71,6 +71,9 @@ public class TestTDResultSet {
         public Unpacker getJobResult(Job job) throws ClientException {
             return null;
         }
+
+        public void close() throws ClientException {
+        }
     }
 
     @Test

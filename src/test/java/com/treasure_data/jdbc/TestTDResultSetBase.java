@@ -69,6 +69,9 @@ public class TestTDResultSetBase {
         public Unpacker getJobResult(Job job) throws ClientException {
             return null;
         }
+
+        public void close() throws ClientException {
+        }
     }
 
     public static class MockStringClientAPI extends MockClientAPI {

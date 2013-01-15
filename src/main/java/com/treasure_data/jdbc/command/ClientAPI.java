@@ -38,4 +38,6 @@ public interface ClientAPI {
     JobSummary waitJobResult(Job job) throws ClientException;
 
     Unpacker getJobResult(Job job) throws ClientException;
+
+    void close() throws ClientException;
 }

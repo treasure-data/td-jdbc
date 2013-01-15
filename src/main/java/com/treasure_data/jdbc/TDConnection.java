@@ -144,7 +144,12 @@ public class TDConnection implements Connection, Constants {
     }
 
     public void close() throws SQLException {
-        // ignore
+        // basically ignore
+        try {
+            api.close();
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
     }
 
     public boolean isClosed() throws SQLException {

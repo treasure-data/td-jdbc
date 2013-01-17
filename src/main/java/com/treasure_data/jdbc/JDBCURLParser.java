@@ -46,9 +46,9 @@ public class JDBCURLParser {
                 }
 
                 String k = kv[0];
-                if (k.equals("user")) {
+                if (k.equals(Config.TD_JDBC_USER)) {
                     d.user = kv[1];
-                } else if (k.equals("password")) {
+                } else if (k.equals(Config.TD_JDBC_PASSWORD)) {
                     d.password = kv[1];
                 }
             }

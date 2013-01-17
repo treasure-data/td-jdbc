@@ -178,7 +178,7 @@ public class TDResultSet extends TDResultSetBase {
 
         try {
             initColumnNamesAndTypes(jobSummary.getResultSchema());
-            return clientApi.getJobResult(job);
+            return clientApi.getJobResult2(job);
         } catch (ClientException e) {
             throw new SQLException(e);
         }

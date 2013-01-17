@@ -71,7 +71,7 @@ public class TestTDResultSetBase {
         }
 
         public Unpacker getJobResult2(Job job) throws ClientException {
-            return null;
+            return getJobResult(job);
         }
 
         public void close() throws ClientException {

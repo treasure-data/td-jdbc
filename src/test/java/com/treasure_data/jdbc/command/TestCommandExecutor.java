@@ -3,7 +3,6 @@ package com.treasure_data.jdbc.command;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -150,6 +149,10 @@ public class TestCommandExecutor {
                 return null;
             }
 
+            public Unpacker getJobResult2(Job job) throws ClientException {
+                return null;
+            }
+
             public void close() throws ClientException {
             }
         };
@@ -285,6 +288,10 @@ public class TestCommandExecutor {
             }
 
             public Unpacker getJobResult(Job job) throws ClientException {
+                return null;
+            }
+
+            public Unpacker getJobResult2(Job job) throws ClientException {
                 return null;
             }
 

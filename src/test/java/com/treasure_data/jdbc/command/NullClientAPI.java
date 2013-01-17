@@ -59,6 +59,10 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
+    public Unpacker getJobResult2(Job job) throws ClientException {
+        return null;
+    }
+
     public void close() throws ClientException {
     }
 }

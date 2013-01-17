@@ -1,5 +1,6 @@
 package com.treasure_data.jdbc;
 
+import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -7,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.security.auth.callback.Callback;
 
 import org.json.simple.JSONValue;
 import org.msgpack.type.ArrayValue;
@@ -80,6 +78,14 @@ public class TDResultSet extends TDResultSetBase {
 
     @Override
     public void close() throws SQLException {
+        if (fetchedRows != null) {
+            try {
+                fetchedRows.close();
+            } catch (IOException e) {
+                throw new SQLException(e);
+            }
+        }
+
         // TODO #MN should check that this method is really called
         if (executor != null) {
             try {

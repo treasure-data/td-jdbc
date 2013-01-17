@@ -39,5 +39,7 @@ public interface ClientAPI {
 
     Unpacker getJobResult(Job job) throws ClientException;
 
+    Unpacker getJobResult2(Job job) throws ClientException;
+
     void close() throws ClientException;
 }

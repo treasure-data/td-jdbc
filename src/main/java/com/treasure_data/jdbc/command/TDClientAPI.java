@@ -22,6 +22,7 @@ import com.treasure_data.model.GetJobResultRequest;
 import com.treasure_data.model.GetJobResultResult;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobResult;
+import com.treasure_data.model.JobResult2;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
@@ -161,6 +162,12 @@ public class TDClientAPI implements ClientAPI {
 
     public Unpacker getJobResult(Job job) throws ClientException {
         GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
+        GetJobResultResult result = client.getJobResult(request);
+        return result.getJobResult().getResult();
+    }
+
+    public Unpacker getJobResult2(Job job) throws ClientException {
+        GetJobResultRequest request = new GetJobResultRequest(new JobResult2(job));
         GetJobResultResult result = client.getJobResult(request);
         return result.getJobResult().getResult();
     }

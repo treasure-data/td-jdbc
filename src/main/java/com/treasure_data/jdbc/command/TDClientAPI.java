@@ -1,11 +1,22 @@
 package com.treasure_data.jdbc.command;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
+import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
@@ -169,7 +180,58 @@ public class TDClientAPI implements ClientAPI {
     public Unpacker getJobResult2(Job job) throws ClientException {
         GetJobResultRequest request = new GetJobResultRequest(new JobResult2(job));
         GetJobResultResult result = client.getJobResult(request);
-        return result.getJobResult().getResult();
+
+        // download data of job result and write it to temp file
+        InputStream rin = new BufferedInputStream(
+                ((JobResult2) result.getJobResult()).getResultInputStream());
+        File file = null;
+        OutputStream fout = null;
+        try {
+            file = File.createTempFile("td-jdbc", ".tmp");
+            LOG.info("created temp file: " + file.getAbsolutePath());
+            LOG.info("write the result to file: " + file.getAbsolutePath());
+            fout = new BufferedOutputStream(new FileOutputStream(file));
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = rin.read(buf)) != -1){
+                fout.write(buf,0,len);
+            }
+            fout.flush();
+        } catch (IOException e) {
+            throw new ClientException(e);
+        } finally {
+            if (fout != null) {
+                try {
+                    fout.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (rin != null) {
+                try {
+                    rin.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+
+        if (file == null) {
+            return null;
+        }
+
+        LOG.info("finished writing the result to file: " + file.getAbsolutePath());
+
+        // return the data in the temp file
+        LOG.info("read the result to file: " + file.getAbsolutePath());
+        try {
+            InputStream fin = new GZIPInputStream(new BufferedInputStream(
+                    new FileInputStream(file)));
+            return new MessagePack()
+                    .createUnpacker(new BufferedInputStream(fin));
+        } catch (IOException e) {
+            throw new ClientException(e);
+        }
     }
 
     public boolean flush() {

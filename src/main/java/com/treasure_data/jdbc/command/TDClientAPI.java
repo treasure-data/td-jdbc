@@ -157,9 +157,11 @@ public class TDClientAPI implements ClientAPI {
             if (stat == JobSummary.Status.SUCCESS) {
                 break;
             } else if (stat == JobSummary.Status.ERROR) {
-                throw new ClientException("job status: error");
+                throw new ClientException("job status: error, job_id: "
+                        + result.getJobID());
             } else if (stat == JobSummary.Status.KILLED) {
-                throw new ClientException("job status: killed");
+                throw new ClientException("job status: killed, job_id: "
+                        + result.getJobID());
             }
 
             try {

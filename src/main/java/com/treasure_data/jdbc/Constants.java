@@ -1,6 +1,6 @@
 package com.treasure_data.jdbc;
 
-public interface Constants extends com.treasure_data.client.Constants {
+public interface Constants extends com.treasure_data.logger.Constants {
 
     // The offset at which HSQLDB API Result mode values start.
     int API_BASE = 0; 
@@ -212,6 +212,13 @@ public interface Constants extends com.treasure_data.client.Constants {
     public static final String TD_JDBC_PORT_DEFAULT = "80";
     public static final String TD_JDBC_USER = "user";
     public static final String TD_JDBC_PASSWORD = "password";
+
+    public static final String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD = "td.jdbc.result.retrycount.threshold";
+    public static final String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE = "" + 0;
+
+    public static final String TD_JDBC_RESULT_RETRY_WAITTIME = "td.jdbc.result.retry.waittime";
+    public static final String TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE = ""
+            + (20 * 1000); // millis
 
     // JDBC compliance
     boolean JDBC_COMPLIANT = false;

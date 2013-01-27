@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,7 @@ import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
-import com.treasure_data.logger.Config;
+import com.treasure_data.jdbc.Config;
 import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.AuthenticateRequest;
 import com.treasure_data.model.Database;
@@ -129,7 +128,8 @@ public class TDClientAPI implements ClientAPI {
         return select(sql, 0);
     }
 
-    public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+    public TDResultSetBase select(String sql, int queryTimeout)
+            throws ClientException {
         TDResultSetBase rs = null;
 
         Job job = new Job(database, sql);
@@ -144,6 +144,8 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public JobSummary waitJobResult(Job job) throws ClientException {
+        String jobID = job.getJobID();
+
         ShowJobResult result;
         while (true) {
             ShowJobRequest request = new ShowJobRequest(job);
@@ -157,11 +159,9 @@ public class TDClientAPI implements ClientAPI {
             if (stat == JobSummary.Status.SUCCESS) {
                 break;
             } else if (stat == JobSummary.Status.ERROR) {
-                throw new ClientException("job status: error, job_id: "
-                        + result.getJobID());
+                throw new ClientException("job error: job = " + jobID);
             } else if (stat == JobSummary.Status.KILLED) {
-                throw new ClientException("job status: killed, job_id: "
-                        + result.getJobID());
+                throw new ClientException("job killed: job = " + jobID);
             }
 
             try {
@@ -180,27 +180,91 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public Unpacker getJobResult2(Job job) throws ClientException {
+        File file = null;
+
+        int retryCount = 0;
+        int retryCountThreshold = Integer.parseInt(props.getProperty(
+                Config.TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD,
+                Config.TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE));
+        while (true) {
+            try {
+                LOG.info("write the result to file");
+                file = writeJobResultToTempFile(job);
+                break;
+            } catch (Throwable t) {
+                LOG.warning("cought exception: message = " + t.getMessage());
+                t.printStackTrace();
+
+                // catch ClientException, IOException
+                if (!(retryCount < retryCountThreshold)) {
+                    throw new ClientException(
+                            "re-try out writing: threashold = "
+                                    + retryCountThreshold);
+                }
+
+                retryCount++;
+                LOG.info("re-try writing: imcremented retryCount = " + retryCount);
+                long retryWaitTime = Long.parseLong(props.getProperty(
+                        Config.TD_JDBC_RESULT_RETRY_WAITTIME,
+                        Config.TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE));
+                try {
+                    LOG.info("wait for re-try: timeout = " + retryWaitTime);
+                    Thread.sleep(retryWaitTime);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+        }
+
+        if (file == null) {
+            throw new ClientException("cannot write job result: file is null.");
+        }
+
+        // return the data in the temp file
+        try {
+            LOG.info("read the result to file: paht = "
+                    + file.getAbsolutePath());
+            InputStream fin = new GZIPInputStream(new BufferedInputStream(
+                    new FileInputStream(file)));
+            return new MessagePack()
+                    .createUnpacker(new BufferedInputStream(fin));
+        } catch (IOException e) {
+            throw new ClientException(e);
+        }
+    }
+
+    private File writeJobResultToTempFile(Job job) throws ClientException,
+            IOException {
         GetJobResultRequest request = new GetJobResultRequest(new JobResult2(job));
         GetJobResultResult result = client.getJobResult(request);
 
         // download data of job result and write it to temp file
+        long readSize = 0;
+        long resultSize = result.getJobResult().getResultSize();
+        LOG.info("check the size of the job result: size = " + resultSize);
         InputStream rin = new BufferedInputStream(
                 ((JobResult2) result.getJobResult()).getResultInputStream());
         File file = null;
         OutputStream fout = null;
         try {
-            file = File.createTempFile("td-jdbc", ".tmp");
+            file = File.createTempFile("td-jdbc-", ".tmp");
             LOG.info("created temp file: " + file.getAbsolutePath());
-            LOG.info("write the result to file: " + file.getAbsolutePath());
             fout = new BufferedOutputStream(new FileOutputStream(file));
             byte[] buf = new byte[1024];
             int len;
-            while ((len = rin.read(buf)) != -1){
-                fout.write(buf,0,len);
+            while ((len = rin.read(buf)) != -1) {
+                readSize += len;
+                fout.write(buf, 0, len);
             }
             fout.flush();
-        } catch (IOException e) {
-            throw new ClientException(e);
+
+            LOG.info("read the size of the job result: " + readSize);
+            if (readSize < resultSize) {
+                throw new IOException("Cannot read all data of the job result");
+            }
+
+            LOG.info("finished writing file");
+            return file;
         } finally {
             if (fout != null) {
                 try {
@@ -217,23 +281,6 @@ public class TDClientAPI implements ClientAPI {
                 }
             }
         }
-
-        if (file == null) {
-            return null;
-        }
-
-        LOG.info("finished writing the result to file: " + file.getAbsolutePath());
-
-        // return the data in the temp file
-        LOG.info("read the result to file: " + file.getAbsolutePath());
-        try {
-            InputStream fin = new GZIPInputStream(new BufferedInputStream(
-                    new FileInputStream(file)));
-            return new MessagePack()
-                    .createUnpacker(new BufferedInputStream(fin));
-        } catch (IOException e) {
-            throw new ClientException(e);
-        }
     }
 
     public boolean flush() {
@@ -245,5 +292,6 @@ public class TDClientAPI implements ClientAPI {
     public void close() throws ClientException {
         TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
         logger.flush();
+        logger.close();
     }
 }

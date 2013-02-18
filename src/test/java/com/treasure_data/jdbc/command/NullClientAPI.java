@@ -9,6 +9,7 @@ import org.msgpack.unpacker.Unpacker;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.command.ClientAPI.ExtUnpacker;
 import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
@@ -59,8 +60,8 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
-    public Unpacker getJobResult2(Job job) throws ClientException {
-        return null;
+    public ExtUnpacker getJobResult2(Job job) throws ClientException {
+        return new ExtUnpacker(null, getJobResult(job));
     }
 
     public void close() throws ClientException {

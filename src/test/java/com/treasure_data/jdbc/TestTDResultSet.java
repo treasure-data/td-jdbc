@@ -72,8 +72,8 @@ public class TestTDResultSet {
             return null;
         }
 
-        public Unpacker getJobResult2(Job job) throws ClientException {
-            return getJobResult(job);
+        public ExtUnpacker getJobResult2(Job job) throws ClientException {
+            return new ExtUnpacker(null, getJobResult(job));
         }
 
         public void close() throws ClientException {

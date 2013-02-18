@@ -19,6 +19,7 @@ import com.treasure_data.jdbc.Constants;
 import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.command.CommandExecutor;
 import com.treasure_data.jdbc.command.TDClientAPI;
+import com.treasure_data.jdbc.command.ClientAPI.ExtUnpacker;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.Job;
@@ -149,8 +150,8 @@ public class TestCommandExecutor {
                 return null;
             }
 
-            public Unpacker getJobResult2(Job job) throws ClientException {
-                return null;
+            public ExtUnpacker getJobResult2(Job job) throws ClientException {
+                return new ExtUnpacker(null, getJobResult(job));
             }
 
             public void close() throws ClientException {
@@ -291,8 +292,8 @@ public class TestCommandExecutor {
                 return null;
             }
 
-            public Unpacker getJobResult2(Job job) throws ClientException {
-                return null;
+            public ExtUnpacker getJobResult2(Job job) throws ClientException {
+                return new ExtUnpacker(null, getJobResult(job));
             }
 
             public void close() throws ClientException {

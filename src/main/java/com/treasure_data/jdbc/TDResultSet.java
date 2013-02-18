@@ -83,13 +83,17 @@ public class TDResultSet extends TDResultSetBase {
         if (fetchedRows != null) {
             try {
                 fetchedRows.getUnpacker().close();
+                LOG.info("closed file based unpacker");
             } catch (IOException e) {
                 throw new SQLException(e);
             }
 
-            if (fetchedRows.getFile() != null) {
+            File f = fetchedRows.getFile();
+            if (f != null) {
                 // temp file is deleted
-                fetchedRows.getFile().delete();
+                String fname = f.getAbsolutePath();
+                f.delete();
+                LOG.info("deleted temp file: " + fname);
             }
         }
 

@@ -1,5 +1,6 @@
 package com.treasure_data.jdbc;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -23,6 +24,7 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.command.ClientAPI.ExtUnpacker;
 import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 
@@ -41,7 +43,7 @@ public class TDResultSet extends TDResultSetBase {
 
     private int queryTimeout = 0; // seconds
 
-    private Unpacker fetchedRows;
+    private ExtUnpacker fetchedRows;
 
     private Iterator<Value> fetchedRowsItr;
 
@@ -80,9 +82,14 @@ public class TDResultSet extends TDResultSetBase {
     public void close() throws SQLException {
         if (fetchedRows != null) {
             try {
-                fetchedRows.close();
+                fetchedRows.getUnpacker().close();
             } catch (IOException e) {
                 throw new SQLException(e);
+            }
+
+            if (fetchedRows.getFile() != null) {
+                // temp file is deleted
+                fetchedRows.getFile().delete();
             }
         }
 
@@ -108,7 +115,7 @@ public class TDResultSet extends TDResultSetBase {
         try {
             if (fetchedRows == null) {
                 fetchedRows = fetchRows();
-                fetchedRowsItr = fetchedRows.iterator();
+                fetchedRowsItr = fetchedRows.getUnpacker().iterator();
             }
 
             if (!fetchedRowsItr.hasNext()) {
@@ -147,7 +154,7 @@ public class TDResultSet extends TDResultSetBase {
         }
     }
 
-    private Unpacker fetchRows() throws SQLException {
+    private ExtUnpacker fetchRows() throws SQLException {
         JobSummary jobSummary = null;
 
         Callable<JobSummary> callback = new Callable<JobSummary>() {

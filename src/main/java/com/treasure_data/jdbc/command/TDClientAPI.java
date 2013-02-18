@@ -179,7 +179,7 @@ public class TDClientAPI implements ClientAPI {
         return result.getJobResult().getResult();
     }
 
-    public Unpacker getJobResult2(Job job) throws ClientException {
+    public ExtUnpacker getJobResult2(Job job) throws ClientException {
         File file = null;
 
         int retryCount = 0;
@@ -226,8 +226,8 @@ public class TDClientAPI implements ClientAPI {
                     + file.getAbsolutePath());
             InputStream fin = new GZIPInputStream(new BufferedInputStream(
                     new FileInputStream(file)));
-            return new MessagePack()
-                    .createUnpacker(new BufferedInputStream(fin));
+            return new ExtUnpacker(file, new MessagePack()
+                    .createUnpacker(new BufferedInputStream(fin)));
         } catch (IOException e) {
             throw new ClientException(e);
         }

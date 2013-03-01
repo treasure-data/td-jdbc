@@ -91,7 +91,7 @@ public class TDConnection implements Connection, Constants {
         // user
         String user = props.getProperty(Config.TD_JDBC_USER);
         if (user == null || user.isEmpty()) {
-            if (desc.user == null || user.isEmpty()) {
+            if (desc.user == null || desc.user.isEmpty()) {
                 throw new NullPointerException("User is not specified");
             }
             props.setProperty(Config.TD_JDBC_USER, desc.user);

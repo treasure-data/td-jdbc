@@ -4,7 +4,7 @@
   <groupId>com.treasure_data</groupId>
   <name>JDBC Driver for Treasure Data Cloud</name>
   <!-- the version must be synchronized with versions in Constants class -->
-  <version>0.2.1</version>
+  <version>0.2.2-SNAPSHOT</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
 

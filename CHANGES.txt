@@ -1,3 +1,5 @@
+Release 0.2.2 - 20XX/XX/XX
+
 Release 0.2.1 - 2013/03/01
   IMPROVEMENTS
     Improves TDResultSet class for writing job results to temporal files

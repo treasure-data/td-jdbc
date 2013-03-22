@@ -1,4 +1,6 @@
 Release 0.2.2 - 20XX/XX/XX
+  IMPROVEMENTS
+    Improves log messages TDClientAPI class
 
 Release 0.2.1 - 2013/03/01
   IMPROVEMENTS

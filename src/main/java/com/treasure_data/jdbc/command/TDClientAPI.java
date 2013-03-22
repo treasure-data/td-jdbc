@@ -158,7 +158,7 @@ public class TDClientAPI implements ClientAPI {
             JobSummary js = result.getJob();
             JobSummary.Status stat = js.getStatus();
             if (stat == JobSummary.Status.SUCCESS) {
-                LOG.info("Job worked successfully.");
+                LOG.fine("Job worked successfully.");
                 break;
             } else if (stat == JobSummary.Status.ERROR) {
                 String msg = String.format("Job '%s' failed: got Job status 'error'", jobID);

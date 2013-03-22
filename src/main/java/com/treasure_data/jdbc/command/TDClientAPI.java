@@ -155,13 +155,25 @@ public class TDClientAPI implements ClientAPI {
                 LOG.fine("Job status: " + result.getJob().getStatus());
             }
 
-            JobSummary.Status stat = result.getJob().getStatus();
+            JobSummary js = result.getJob();
+            JobSummary.Status stat = js.getStatus();
             if (stat == JobSummary.Status.SUCCESS) {
+                LOG.info("Job worked successfully.");
                 break;
             } else if (stat == JobSummary.Status.ERROR) {
-                throw new ClientException("job error: job = " + jobID);
+                String msg = String.format("Job '%s' failed: got Job status 'error'", jobID);
+                LOG.severe(msg);
+                if (js.getDebug() != null) {
+                    LOG.severe("cmdout:");
+                    LOG.severe(js.getDebug().getCmdout());
+                    LOG.severe("stderr:");
+                    LOG.severe(js.getDebug().getStderr());
+                }
+                throw new ClientException(msg);
             } else if (stat == JobSummary.Status.KILLED) {
-                throw new ClientException("job killed: job = " + jobID);
+                String msg = String.format("Job '%s' failed: got Job status 'killed'", jobID);
+                LOG.severe(msg);
+                throw new ClientException(msg);
             }
 
             try {

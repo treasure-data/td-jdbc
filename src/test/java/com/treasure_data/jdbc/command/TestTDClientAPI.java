@@ -2,6 +2,7 @@ package com.treasure_data.jdbc.command;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Properties;
 
@@ -17,6 +18,8 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
+import com.treasure_data.model.JobSummary.Debug;
+import com.treasure_data.model.JobSummary.Status;
 
 public class TestTDClientAPI {
 
@@ -58,8 +61,9 @@ public class TestTDClientAPI {
                 }
 
                 @Override public ShowJobResult showJob(ShowJobRequest request) {
-                    JobSummary js = new JobSummary(jobID, Job.Type.HIVE, null, null, null,
-                            JobSummary.Status.ERROR, null, null, "query", "rschema");
+                    JobSummary js = new JobSummary(jobID, Job.Type.HIVE, new Database("mugadb"),
+                            "url", "resultTable", JobSummary.Status.ERROR, "startAt", "endAt",
+                            "query", "rschema", new Debug("cmdout", "stderr"));
                     return new ShowJobResult(js);
                 }
             };
@@ -68,6 +72,7 @@ public class TestTDClientAPI {
             try {
                 Job job = new Job(jobID);
                 JobSummary js = api.waitJobResult(job);
+                fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof ClientException);
             }
@@ -80,8 +85,9 @@ public class TestTDClientAPI {
                 }
 
                 @Override public ShowJobResult showJob(ShowJobRequest request) {
-                    JobSummary js = new JobSummary(jobID, Job.Type.HIVE, null, null, null,
-                            JobSummary.Status.KILLED, null, null, "query", "rschema");
+                    JobSummary js = new JobSummary(jobID, Job.Type.HIVE, new Database("mugadb"),
+                            "url", "resultTable", JobSummary.Status.ERROR, "startAt", "endAt",
+                            "query", "rschema", new Debug("cmdout", "stderr"));
                     return new ShowJobResult(js);
                 }
             };
@@ -90,6 +96,7 @@ public class TestTDClientAPI {
             try {
                 Job job = new Job(jobID);
                 JobSummary js = api.waitJobResult(job);
+                fail();
             } catch (Throwable t) {
                 assertTrue(t instanceof ClientException);
             }

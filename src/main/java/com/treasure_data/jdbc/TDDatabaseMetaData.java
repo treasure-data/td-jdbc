@@ -892,7 +892,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public boolean storesLowerCaseIdentifiers() throws SQLException {
-        throw new SQLException("Method not supported");
+        return false;
     }
 
     public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
@@ -900,7 +900,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public boolean storesMixedCaseIdentifiers() throws SQLException {
-        throw new SQLException("Method not supported");
+        return false;
     }
 
     public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {

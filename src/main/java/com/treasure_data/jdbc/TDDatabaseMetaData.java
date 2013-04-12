@@ -17,6 +17,7 @@ import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.model.TDColumn;
 import com.treasure_data.jdbc.model.TDDatabase;
+import com.treasure_data.jdbc.model.TDImportedKey;
 import com.treasure_data.jdbc.model.TDTable;
 import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.TableSummary;
@@ -424,12 +425,20 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getIdentifierQuoteString() throws SQLException {
-        throw new SQLException("Method not supported");
+        return "\"";
     }
 
     public ResultSet getImportedKeys(String catalog, String schema, String table)
             throws SQLException {
-        throw new SQLException("Method not supported");
+        try {
+            return new TDMetaDataResultSet<TDImportedKey>(null, null, null) {
+                public boolean next() throws SQLException {
+                    return false;
+                }
+            };
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
     }
 
     public ResultSet getIndexInfo(String catalog, String schema, String table,
@@ -899,7 +908,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public boolean storesUpperCaseIdentifiers() throws SQLException {
-        throw new SQLException("Method not supported");
+        return true;
     }
 
     public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {

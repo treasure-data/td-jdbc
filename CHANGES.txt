@@ -1,4 +1,8 @@
 Release 0.2.2 - 20XX/XX/XX
+  NEW FEATURES
+    Supports TDDatabaseMetaData#getIdentifierQuoteString(), storesUpperCaseIdentifiers()
+    and getImportedKeys().
+
   IMPROVEMENTS
     Improves log messages TDClientAPI class
 

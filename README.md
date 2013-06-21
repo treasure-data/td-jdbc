@@ -20,6 +20,20 @@ The following link is how to use the JDBC driver.
 
 Java >= 1.6
 
+## Install
+
+### Install from GitHub repository
+
+You can get latest source code using git.
+
+    $ git clone https://github.com/treasure-data/td-jdbc.git
+    $ cd td-jdbc
+    $ mvn package
+
+You will get the td-jdbc jar file in td-jdbc/target
+directory.  File name will be td-jdbc-${jdbc.version}-jar-with-dependencies.jar.
+For more detail, see pom.xml.
+
 ## Quickstart
 
 The following program is a small example of the JDBC Driver.

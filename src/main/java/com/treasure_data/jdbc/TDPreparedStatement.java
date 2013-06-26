@@ -27,7 +27,6 @@ import java.util.logging.Logger;
 import com.treasure_data.jdbc.command.CommandContext;
 
 public class TDPreparedStatement extends TDStatement implements PreparedStatement {
-
     private static Logger LOG = Logger.getLogger(
             TDPreparedStatement.class.getName());
 
@@ -48,7 +47,8 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void addBatch() throws SQLException {
-        w.params0.add(params);
+        w.params0.add(deepCopy(params));
+        params.clear();
     }
 
     public void clearBatch() throws SQLException {
@@ -61,7 +61,9 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        w.params0.add(deepCopy(params));
+        if (!params.isEmpty()) {
+            w.params0.add(deepCopy(params));
+        }
         fetchResult(w);
         clearBatch();
         return getResultSet();
@@ -83,7 +85,8 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
 
     @Override
     public int[] executeBatch() throws SQLException {
-        fetchResult(w);
+        executeQuery();
+        //fetchResult(w);
         int[] ret = new int[w.params0.size()];
         for (int i = 0; i < ret.length; i++) {
             ret[i] = -2;

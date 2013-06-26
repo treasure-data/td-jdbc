@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.msgpack.MessagePack;
 import org.msgpack.packer.Packer;
@@ -49,6 +50,8 @@ import com.treasure_data.model.TableSummary;
  * @see org.hsqldb.SessionInterface
  */
 public class CommandExecutor implements Constants {
+    private static final Logger LOG = Logger.getLogger(CommandExecutor.class.getName());
+
     private ClientAPI api;
 
     public CommandExecutor(ClientAPI api) {

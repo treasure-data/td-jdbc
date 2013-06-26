@@ -1,4 +1,9 @@
 Release 0.2.3 - 20XX/XX/XX
+  NEW FEATURES
+    Supports TDPreparedStatement#setNull(int, int).
+
+  BUG FIXES
+    Cannot valid batch data with TDPreparedStatement#addBatch().
 
 Release 0.2.2 - 2013/04/12
   NEW FEATURES

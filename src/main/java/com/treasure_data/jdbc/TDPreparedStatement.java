@@ -237,7 +237,17 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNull(int i, int sqlType) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
+        switch (sqlType) {
+        case java.sql.Types.TINYINT:
+        case java.sql.Types.INTEGER:
+        case java.sql.Types.BIGINT:
+        case java.sql.Types.FLOAT:
+        case java.sql.Types.DOUBLE:
+        case java.sql.Types.VARCHAR:
+            params.put(i, "null");
+        default:
+            throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
+        }
     }
 
     public void setNull(int i, int sqlType, String typeName) throws SQLException {

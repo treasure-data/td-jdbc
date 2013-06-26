@@ -64,6 +64,15 @@
   </distributionManagement>
 
   <dependencies>
+    <!-- need debug for integration with talend -->
+    <!-- 
+    <dependency>
+	  <groupId>log4j</groupId>
+	  <artifactId>log4j</artifactId>
+	  <version>1.2.17</version>
+    </dependency>
+     -->
+
     <dependency>
       <groupId>com.treasure_data</groupId>
       <artifactId>td-client</artifactId>

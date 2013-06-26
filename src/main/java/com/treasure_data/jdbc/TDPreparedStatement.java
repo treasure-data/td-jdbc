@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.treasure_data.jdbc.command.CommandContext;
-import com.treasure_data.logger.TreasureDataLogger;
 
 public class TDPreparedStatement extends TDStatement implements PreparedStatement {
 

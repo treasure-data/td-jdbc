@@ -3,6 +3,9 @@ Release 0.2.3 - 20XX/XX/XX
     Supports TDDatabaseMetaData#isReadOnly(). It always returns 'true'.
     Supports TDPreparedStatement#setNull(int, int).
 
+  IMPROVEMENTS
+    Changes return value of getIdentifierQuoteString method: '\"' to '`'.
+
   BUG FIXES
     Cannot valid batch data with TDPreparedStatement#addBatch().
 

@@ -840,7 +840,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public boolean isReadOnly() throws SQLException {
-        throw new SQLException("Method not supported");
+        return true;
     }
 
     public boolean locatorsUpdateCopy() throws SQLException {

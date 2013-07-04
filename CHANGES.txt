@@ -1,5 +1,6 @@
 Release 0.2.3 - 20XX/XX/XX
   NEW FEATURES
+    Supports TDDatabaseMetaData#isReadOnly(). It always returns 'true'.
     Supports TDPreparedStatement#setNull(int, int).
 
   BUG FIXES

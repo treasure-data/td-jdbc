@@ -5,6 +5,7 @@ Release 0.2.3 - 20XX/XX/XX
 
   IMPROVEMENTS
     Changes return value of getIdentifierQuoteString method: '\"' to '`'.
+    Updates the version of td-client: 0.2.7 to 0.2.14
 
   BUG FIXES
     Cannot valid batch data with TDPreparedStatement#addBatch().

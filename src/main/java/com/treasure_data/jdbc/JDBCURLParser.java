@@ -2,6 +2,8 @@ package com.treasure_data.jdbc;
 
 import java.sql.SQLException;
 
+import com.treasure_data.model.Job;
+
 //
 // jdbc:td://api.treasure-data.com:80/testdb;k1=v1;k2=v2
 // +-------+ +-------------------+ ++ +----+ +---------+
@@ -11,13 +13,14 @@ import java.sql.SQLException;
 //
 public class JDBCURLParser {
 
-    static class Desc {
-        String url = null;
-        String host = Constants.TD_JDBC_HOST_DEFAULT;
-        String port = Constants.TD_JDBC_PORT_DEFAULT;
-        String database = null;
-        String user = null;
-        String password = null;
+    public static class Desc {
+        public String url = null;
+        public String host = Constants.TD_JDBC_HOST_DEFAULT;
+        public String port = Constants.TD_JDBC_PORT_DEFAULT;
+        public String database = null;
+        public String user = null;
+        public String password = null;
+        public Job.Type type = null;
 
         public Desc() {
         }
@@ -45,11 +48,16 @@ public class JDBCURLParser {
                     throw new SQLException("invalid parameters within URL: " + url);
                 }
 
-                String k = kv[0];
+                String k = kv[0].toLowerCase();
                 if (k.equals(Config.TD_JDBC_USER)) {
                     d.user = kv[1];
                 } else if (k.equals(Config.TD_JDBC_PASSWORD)) {
                     d.password = kv[1];
+                } else if (k.equals(Config.TD_JDBC_TYPE)) {
+                    d.type = Job.toType(kv[1]);
+                    if (d.type == null || !(d.type.equals(Job.Type.HIVE) || d.type.equals(Job.Type.IMPALA))) {
+                        throw new SQLException("invalid job type within URL: " + kv[1]);
+                    }
                 }
             }
         } else {

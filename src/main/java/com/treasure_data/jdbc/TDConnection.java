@@ -47,7 +47,7 @@ public class TDConnection implements Connection, Constants {
         database = new Database(desc.database);
 
         // create a ClientAPI object
-        this.api = new TDClientAPI(this);
+        this.api = new TDClientAPI(desc, this);
     }
 
     /**

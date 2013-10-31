@@ -20,6 +20,7 @@ import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.JDBCURLParser;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
@@ -45,6 +46,8 @@ public class TDClientAPI implements ClientAPI {
 
     private TreasureDataClient client;
 
+    private JDBCURLParser.Desc desc;
+
     private Properties props;
 
     private Database database;
@@ -52,19 +55,25 @@ public class TDClientAPI implements ClientAPI {
     private int maxRows = 5000;
 
     public TDClientAPI(TDConnection conn) {
-        this(new TreasureDataClient(conn.getProperties()), conn.getProperties(),
+        this(null, new TreasureDataClient(conn.getProperties()), conn.getProperties(),
+                conn.getDatabase(), conn.getMaxRows());
+    }
+
+    public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn) {
+        this(desc, new TreasureDataClient(conn.getProperties()), conn.getProperties(),
                 conn.getDatabase(), conn.getMaxRows());
     }
 
     public TDClientAPI(TreasureDataClient client, Properties props, Database database) {
-        this(client, props, database, 5000);
+        this(null, client, props, database, 5000);
     }
 
-    public TDClientAPI(TreasureDataClient client, Properties props, Database database, int maxRows) {
+    public TDClientAPI(JDBCURLParser.Desc desc, TreasureDataClient client, Properties props, Database database, int maxRows) {
         this.client = client;
         this.props = props;
         this.database = database;
         this.maxRows = maxRows;
+        this.desc = desc;
 
         checkCredentials();
 
@@ -132,7 +141,12 @@ public class TDClientAPI implements ClientAPI {
             throws ClientException {
         TDResultSetBase rs = null;
 
-        Job job = new Job(database, sql);
+        Job job;
+        if (desc == null || desc.type == null) {
+            job = new Job(database, sql); // It's, by default, executed by hive.
+        } else {
+            job = new Job(database, desc.type, sql, null);
+        }
         SubmitJobRequest request = new SubmitJobRequest(job);
         SubmitJobResult result = client.submitJob(request);
         job = result.getJob();

@@ -2,6 +2,7 @@ Release 0.2.3 - 20XX/XX/XX
   NEW FEATURES
     Supports TDDatabaseMetaData#isReadOnly(). It always returns 'true'.
     Supports TDPreparedStatement#setNull(int, int).
+    Supports Impala queries.
 
   IMPROVEMENTS
     Changes return value of getIdentifierQuoteString method: '\"' to '`'.

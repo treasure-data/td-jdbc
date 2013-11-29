@@ -1,8 +1,9 @@
-Release 0.2.3 - 20XX/XX/XX
+Release 0.2.3 - 2013/11/29
   NEW FEATURES
     Supports TDDatabaseMetaData#isReadOnly(). It always returns 'true'.
     Supports TDPreparedStatement#setNull(int, int).
     Supports Impala queries.
+    Supports Squirrel SQL 3.5
 
   IMPROVEMENTS
     Changes return value of getIdentifierQuoteString method: '\"' to '`'.
@@ -10,6 +11,7 @@ Release 0.2.3 - 20XX/XX/XX
 
   BUG FIXES
     Cannot valid batch data with TDPreparedStatement#addBatch().
+    Fixes bug: TDStatement#getResultSet method returns Null when the mehod is called after execute method invocation.
 
 Release 0.2.2 - 2013/04/12
   NEW FEATURES

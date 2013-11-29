@@ -59,12 +59,10 @@ public abstract class TDStatementBase implements Statement {
     }
 
     public TDResultSetBase getResultSet() throws SQLException {
-        TDResultSetBase tmp = currentResultSet;
-        if (tmp != null) {
-            tmp.setStatement(this);
+        if (currentResultSet != null) {
+            currentResultSet.setStatement(this);
         }
-        currentResultSet = null;
-        return tmp;
+        return currentResultSet;
     }
 
     public int getUpdateCount() throws SQLException {

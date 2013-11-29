@@ -16,6 +16,7 @@ import org.json.simple.JSONValue;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.model.TDColumn;
+import com.treasure_data.jdbc.model.TDDataType;
 import com.treasure_data.jdbc.model.TDDatabase;
 import com.treasure_data.jdbc.model.TDImportedKey;
 import com.treasure_data.jdbc.model.TDTable;
@@ -577,7 +578,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getProcedureTerm() throws SQLException {
-        throw new SQLException("Method not supported");
+        return "UDF";
     }
 
     public ResultSet getProcedures(String catalog, String schemaPattern,
@@ -594,7 +595,18 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getSQLKeywords() throws SQLException {
-        throw new SQLException("Method not supported");
+        return "TRUE,FALSE,ALL,AND,OR,NOT,LIKE,ASC,DESC,ORDER,BY,GROUP,WHERE," +
+                "FROM,AS,SELECT,DISTINCT,INSERT,OVERWRITE,OUTER,JOIN,LEFT,RIGHT," +
+                "FULL,ON,PARTITION,PARTITIONS,TABLE,TABLES,TBLPROPERTIES,SHOW,MSCK," +
+                "DIRECTORY,LOCAL,TRANSFORM,USING,CLUSTER,DISTRIBUTE,SORT,UNION,LOAD," +
+                "DATA,INPATH,IS,NULL,CREATE,EXTERNAL,ALTER,DESCRIBE,DROP,REANME,TO," +
+                "COMMENT,BOOLEAN,TINYINT,SMALLINT,INT,BIGINT,FLOAT,DOUBLE,DATE," +
+                "DATETIME,TIMESTAMP,STRING,BINARY,ARRAY,MAP,REDUCE,PARTITIONED," +
+                "CLUSTERED,SORTED,INTO,BUCKETS,ROW,FORMAT,DELIMITED,FIELDS,TERMINATED," +
+                "COLLECTION,ITEMS,KEYS,LINES,STORED,SEQUENCEFILE,TEXTFILE,INPUTFORMAT," +
+                "OUTPUTFORMAT,LOCATION,TABLESAMPLE,BUCKET,OUT,OF,CAST,ADD,REPLACE," +
+                "COLUMNS,RLIKE,REGEXP,TEMPORARY,FUNCTION,EXPLAIN,EXTENDED,SERDE,WITH," +
+                "SERDEPROPERTIES,LIMIT,SET,TBLPROPERTIES";
     }
 
     public int getSQLStateType() throws SQLException {
@@ -800,7 +812,45 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getTypeInfo() throws SQLException {
-        throw new SQLException("Method not supported");
+        List<TDDataType> types = new ArrayList<TDDataType>();
+        try {
+            ResultSet result = new TDMetaDataResultSet<TDDataType>(null, null, types) {
+                private int cnt = 0;
+
+                public boolean next() throws SQLException {
+                    if (cnt >= data.size()) {
+                        return false;
+                    }
+
+                    TDDataType t = data.get(cnt);
+                    List<Object> a = new ArrayList<Object>(18);
+                    a.add(t.typeName()); // TYPE_NAME String
+                    a.add(t.dataType()); // DATA_TYPE Integer
+                    a.add(t.precision()); // PRECISION Integer
+                    a.add(t.literalPrefix()); // LITERAL_PREFIX String
+                    a.add(t.literalSuffix()); // LITERAL_SUFFIX String
+                    a.add(t.createParams()); // CREATE_PARAMS String
+                    a.add(t.nullable()); // NULLABLE Short
+                    a.add(t.caseSensitive()); // CASE_SENSITIVE Boolean
+                    a.add(t.searchable()); // SEARCHABLE Short
+                    a.add(t.unsignedAttribute()); // UNSIGNED_ATTRIBUTE Boolean
+                    a.add(t.fixedPrecScale()); // FIXED_PREC_SCALE Boolean
+                    a.add(t.autoIncrement()); // AUTO_INCREMENT Boolean
+                    a.add(t.localTypeName()); // LOCAL_TYPE_NAME String
+                    a.add(t.minimunScale()); // MINIMUM_SCALE Short
+                    a.add(t.maximumScale()); // MAXIMUM_SCALE Short
+                    a.add(t.sqlDataType()); // SQL_DATA_TYPE Integer
+                    a.add(t.sqlDatetimeSub()); // SQL_DATETIME_SUB Integer
+                    a.add(t.numPrecRadix()); // NUM_PREC_RADIX Integer
+                    row = a;
+                    cnt++;
+                    return true;
+                }
+            };
+            return result;
+        } catch (Exception e) {
+            throw new SQLException(e);
+        }
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

@@ -1,3 +1,5 @@
+Release 0.2.5 - 20XX/XX/XX
+
 Release 0.2.4 - 2013/12/17
   IMPROVEMENTS
     Updates the version of td-client: 0.2.14 to 0.3.3

@@ -37,6 +37,8 @@ import com.treasure_data.model.JobResult2;
 import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
+import com.treasure_data.model.ShowJobStatusRequest;
+import com.treasure_data.model.ShowJobStatusResult;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 import com.treasure_data.model.TableSummary;
@@ -160,24 +162,22 @@ public class TDClientAPI implements ClientAPI {
     public JobSummary waitJobResult(Job job) throws ClientException {
         String jobID = job.getJobID();
 
-        ShowJobResult result;
         while (true) {
-            ShowJobRequest request = new ShowJobRequest(job);
-            result = client.showJob(request);
+            JobSummary.Status stat = client.showJobStatus(job);
 
             if (LOG.isLoggable(Level.FINE)) {
-                LOG.fine("Job status: " + result.getJob().getStatus());
+                LOG.fine("Job status: " + stat);
             }
 
-            JobSummary js = result.getJob();
-            JobSummary.Status stat = js.getStatus();
             if (stat == JobSummary.Status.SUCCESS) {
                 LOG.fine("Job worked successfully.");
                 break;
             } else if (stat == JobSummary.Status.ERROR) {
+                JobSummary js = client.showJob(job);
                 String msg = String.format("Job '%s' failed: got Job status 'error'", jobID);
                 LOG.severe(msg);
                 if (js.getDebug() != null) {
+                    msg = msg + "\n" + js.getDebug().getStderr();
                     LOG.severe("cmdout:");
                     LOG.severe(js.getDebug().getCmdout());
                     LOG.severe("stderr:");
@@ -196,7 +196,8 @@ public class TDClientAPI implements ClientAPI {
                 return null;
             }
         }
-        return result.getJob();
+
+        return client.showJob(job);
     }
 
     public Unpacker getJobResult(Job job) throws ClientException {

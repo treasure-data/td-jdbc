@@ -1,4 +1,4 @@
-Release 0.2.5 - 20XX/XX/XX
+Release 0.2.5 - 2013/12/19
   IMPROVEMENTS
     Inserts code for showing error messages on SQL error into TDClientAPI class.
 

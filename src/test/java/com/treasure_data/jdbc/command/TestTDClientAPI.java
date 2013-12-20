@@ -19,7 +19,8 @@ import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 import com.treasure_data.model.JobSummary.Debug;
-import com.treasure_data.model.JobSummary.Status;
+import com.treasure_data.model.ShowJobStatusRequest;
+import com.treasure_data.model.ShowJobStatusResult;
 
 public class TestTDClientAPI {
 
@@ -31,6 +32,10 @@ public class TestTDClientAPI {
         TreasureDataClient c = new TreasureDataClient() {
             @Override public AuthenticateResult authenticate(AuthenticateRequest request) {
                 return null;
+            }
+
+            @Override public ShowJobStatusResult showJobStatus(ShowJobStatusRequest request) {
+                return new ShowJobStatusResult(JobSummary.Status.SUCCESS);
             }
 
             @Override public ShowJobResult showJob(ShowJobRequest request) {
@@ -60,6 +65,10 @@ public class TestTDClientAPI {
                     return null;
                 }
 
+                @Override public ShowJobStatusResult showJobStatus(ShowJobStatusRequest request) {
+                    return new ShowJobStatusResult(JobSummary.Status.ERROR);
+                }
+
                 @Override public ShowJobResult showJob(ShowJobRequest request) {
                     JobSummary js = new JobSummary(jobID, Job.Type.HIVE, new Database("mugadb"),
                             "url", "resultTable", JobSummary.Status.ERROR, "startAt", "endAt",
@@ -82,6 +91,10 @@ public class TestTDClientAPI {
             TreasureDataClient c = new TreasureDataClient() {
                 @Override public AuthenticateResult authenticate(AuthenticateRequest request) {
                     return null;
+                }
+
+                @Override public ShowJobStatusResult showJobStatus(ShowJobStatusRequest request) {
+                    return new ShowJobStatusResult(JobSummary.Status.ERROR);
                 }
 
                 @Override public ShowJobResult showJob(ShowJobRequest request) {
@@ -114,18 +127,20 @@ public class TestTDClientAPI {
                 return null;
             }
 
-            @Override public ShowJobResult showJob(ShowJobRequest request) {
+            @Override public ShowJobStatusResult showJobStatus(ShowJobStatusRequest request) {
                 if (count > 2) {
-                    JobSummary js = new JobSummary("12345", Job.Type.HIVE, null, null, null,
-                            JobSummary.Status.SUCCESS, null, null, "query", "rschema");
                     count++;
-                    return new ShowJobResult(js);
+                    return new ShowJobStatusResult(JobSummary.Status.SUCCESS);
                 } else {
-                    JobSummary js = new JobSummary("12345", Job.Type.HIVE, null, null, null,
-                            JobSummary.Status.RUNNING, null, null, "query", "rschema");
                     count++;
-                    return new ShowJobResult(js);
+                    return new ShowJobStatusResult(JobSummary.Status.RUNNING);
                 }
+            }
+
+            @Override public ShowJobResult showJob(ShowJobRequest request) {
+                JobSummary js = new JobSummary("12345", Job.Type.HIVE, null, null, null,
+                        JobSummary.Status.SUCCESS, null, null, "query", "rschema");
+                    return new ShowJobResult(js);
             }
         };
         TDClientAPI api = new TDClientAPI(c, props, new Database("mugadb"));

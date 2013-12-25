@@ -1,4 +1,6 @@
 Release 0.2.6 - 20XX/XX/XX
+  BUG FIXES
+    Fixes bug: cannot convert NilValue objects into String.
 
 Release 0.2.5 - 2013/12/19
   IMPROVEMENTS

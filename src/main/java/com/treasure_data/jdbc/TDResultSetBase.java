@@ -28,6 +28,7 @@ import org.msgpack.type.BooleanValue;
 import org.msgpack.type.FloatValue;
 import org.msgpack.type.IntegerValue;
 import org.msgpack.type.MapValue;
+import org.msgpack.type.NilValue;
 import org.msgpack.type.NumberValue;
 import org.msgpack.type.RawValue;
 import org.msgpack.type.Value;
@@ -795,6 +796,8 @@ public abstract class TDResultSetBase implements ResultSet {
                 }
             } else if (obj instanceof RawValue) { // msgpack's raw type
                 return ((Value) obj).asRawValue().getString();
+            } else if (obj instanceof NilValue) { // msgpack's nil type
+                return null;
             } else { // java's raw type
                 return (String) obj;
             }

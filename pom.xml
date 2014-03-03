@@ -7,7 +7,7 @@
   <groupId>com.treasure_data</groupId>
   <name>JDBC Driver for Treasure Data Cloud</name>
   <description>JDBC Driver for Treasure Data Cloud.</description>
-  <version>0.2.7-SNAPSHOT</version>
+  <version>0.2.7</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
   <url>https://github.com/treasure-data/td-jdbc</url>

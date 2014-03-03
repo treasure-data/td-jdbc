@@ -1,6 +1,0 @@
-td.api.key=xxxx
-td.api.server.host=xxxx
-td.api.server.port=80
-td.api.user=yyyy
-td.api.password=zzzz
-td.logger.agentmode=false

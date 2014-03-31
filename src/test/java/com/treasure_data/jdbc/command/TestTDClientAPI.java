@@ -23,11 +23,17 @@ import com.treasure_data.model.ShowJobStatusRequest;
 import com.treasure_data.model.ShowJobStatusResult;
 
 public class TestTDClientAPI {
+    private static void mockProperties(Properties props) {
+	props.setProperty("user", "xxxx");
+	props.setProperty("password", "xxxx");
+	props.setProperty("password", "xxxx");
+	props.setProperty("td.logger.api.key", "xxxx");
+    }
 
     @Test
     public void testWaitJobResult01() throws Exception {
         Properties props = System.getProperties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties.default"));
+	mockProperties(props);
 
         TreasureDataClient c = new TreasureDataClient() {
             @Override public AuthenticateResult authenticate(AuthenticateRequest request) {
@@ -56,7 +62,7 @@ public class TestTDClientAPI {
     @Test
     public void testWaitJobResult02() throws Exception {
         Properties props = System.getProperties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties.default"));
+	mockProperties(props);
 
         { // error occurred
             final String jobID = "12345";
@@ -119,7 +125,7 @@ public class TestTDClientAPI {
     @Test
     public void testWaitJobResult03() throws Exception {
         Properties props = System.getProperties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties.default"));
+	mockProperties(props);
 
         TreasureDataClient c = new TreasureDataClient() {
             private int count = 0;

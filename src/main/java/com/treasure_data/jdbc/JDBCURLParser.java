@@ -55,7 +55,7 @@ public class JDBCURLParser {
                     d.password = kv[1];
                 } else if (k.equals(Config.TD_JDBC_TYPE)) {
                     d.type = Job.toType(kv[1]);
-                    if (d.type == null || !(d.type.equals(Job.Type.HIVE) || d.type.equals(Job.Type.IMPALA))) {
+                    if (d.type == null || !(d.type.equals(Job.Type.HIVE) || d.type.equals(Job.Type.IMPALA) || d.type.equals(Job.Type.PRESTO))) {
                         throw new SQLException("invalid job type within URL: " + kv[1]);
                     }
                 }

@@ -1,4 +1,7 @@
 Release 0.2.8 - 2014/03/31
+  NEW FEATURES
+    Supports Presto queries.
+
   IMPROVEMENTS
     Upgrades td-client-java: 0.3.3 to 0.3.6
 

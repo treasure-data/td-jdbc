@@ -82,6 +82,15 @@ public class TDConnection implements Connection, Constants {
             throw new SQLException("port number is invalid: " + port);
         }
 
+        // scheme
+        if (!props.containsKey(Config.TD_CK_API_SERVER_SCHEME)) {
+            if (port.equals("80")) {
+                props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTP);
+            } else {
+                props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTPS);
+            }
+        }
+
         // database
         if (desc.database == null) {
             throw new NullPointerException(

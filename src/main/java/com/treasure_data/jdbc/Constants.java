@@ -192,7 +192,7 @@ public interface Constants extends com.treasure_data.logger.Constants {
     String URL_PREFIX = "jdbc:td://";
     String URL_PREFIX0 = "jdbc:td:";
     String URI_PREFIX = URL_PREFIX;
-    String DEFAULT_PORT = "80"; // If host is provided, without a port.
+    String DEFAULT_PORT = "443"; // If host is provided, without a port.
 
     String DBNAME_PROPERTY_KEY = "DBNAME"; // Property key for the database name.
     String HOST_PROPERTY_KEY = "HOST"; // Property key for the Hive Server host.
@@ -209,7 +209,7 @@ public interface Constants extends com.treasure_data.logger.Constants {
     int MAX_COLUMNS_IN_TABLE = 512;
 
     public static final String TD_JDBC_HOST_DEFAULT = "api.treasure-data.com";
-    public static final String TD_JDBC_PORT_DEFAULT = "80";
+    public static final String TD_JDBC_PORT_DEFAULT = DEFAULT_PORT;
     public static final String TD_JDBC_USER = "user";
     public static final String TD_JDBC_PASSWORD = "password";
     public static final String TD_JDBC_TYPE = "type";

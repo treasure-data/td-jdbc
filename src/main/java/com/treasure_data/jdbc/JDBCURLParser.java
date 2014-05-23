@@ -21,6 +21,7 @@ public class JDBCURLParser {
         public String user = null;
         public String password = null;
         public Job.Type type = null;
+        public boolean ssl = false;
 
         public Desc() {
         }
@@ -58,6 +59,8 @@ public class JDBCURLParser {
                     if (d.type == null || !(d.type.equals(Job.Type.HIVE) || d.type.equals(Job.Type.IMPALA) || d.type.equals(Job.Type.PRESTO))) {
                         throw new SQLException("invalid job type within URL: " + kv[1]);
                     }
+                } else if (k.equals(Config.TD_CK_JDBC_USESSL)) {
+                    d.ssl = Boolean.parseBoolean(kv[1].toLowerCase());
                 }
             }
         } else {

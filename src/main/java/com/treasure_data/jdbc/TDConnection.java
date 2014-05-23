@@ -84,7 +84,7 @@ public class TDConnection implements Connection, Constants {
 
         // scheme
         if (!props.containsKey(Config.TD_CK_API_SERVER_SCHEME)) {
-            if (port.equals("80")) {
+            if (!desc.ssl) {
                 props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTP);
             } else {
                 props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTPS);

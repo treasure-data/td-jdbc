@@ -1,3 +1,7 @@
+Release 0.3.0 - 20XX/XX/XX
+  NEW FEATURES
+    Supports SSL. td-jdbc, by default, uses HTTPS for accessing TD endpoint.
+
 Release 0.2.8 - 2014/03/31
   NEW FEATURES
     Supports Presto queries.

@@ -62,7 +62,7 @@ The following program is a small example of the JDBC Driver.
         }
 
         Connection conn = DriverManager.getConnection(
-          "jdbc:td://api.treasure-data.com/testdb",
+          "jdbc:td://api.treasure-data.com/testdb;useSSL=true",
           "YOUR_MAIL_ADDRESS_HERE",
           "YOUR_PASSWORD_HERE");
         Statement stmt = conn.createStatement();

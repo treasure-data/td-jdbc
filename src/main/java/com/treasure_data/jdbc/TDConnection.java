@@ -72,8 +72,16 @@ public class TDConnection implements Connection, Constants {
         if (port == null || port.isEmpty()) {
             // if port is specified as sysprops, the sysprop is used in JDBC
             // driver
-            props.setProperty(Config.TD_API_SERVER_PORT, desc.port);
-            port = desc.port;
+            if (desc.port == null) {
+                if (desc.ssl) {
+                    port = Config.TD_API_SERVER_PORT_HTTPS;
+                } else {
+                    port = Config.TD_API_SERVER_PORT_HTTP;
+                }
+            } else {
+                port = desc.port;
+            }
+            props.setProperty(Config.TD_API_SERVER_PORT, port);
         }
         try {
             // validate bad port number

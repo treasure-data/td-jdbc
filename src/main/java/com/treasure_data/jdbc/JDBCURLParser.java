@@ -16,7 +16,7 @@ public class JDBCURLParser {
     public static class Desc {
         public String url = null;
         public String host = Constants.TD_JDBC_HOST_DEFAULT;
-        public String port = Constants.TD_JDBC_PORT_DEFAULT;
+        public String port = null;
         public String database = null;
         public String user = null;
         public String password = null;

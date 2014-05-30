@@ -318,7 +318,9 @@ public class TDClientAPI implements ClientAPI {
 
     public void close() throws ClientException {
         TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
-        logger.flush();
-        logger.close();
+        if (logger != null) {
+            logger.flush();
+            logger.close();
+        }
     }
 }

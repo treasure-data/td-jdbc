@@ -62,7 +62,7 @@ The following program is a small example of the JDBC Driver.
         }
 
         Connection conn = DriverManager.getConnection(
-          "jdbc:td://api.treasure-data.com/testdb;useSSL=true",
+          "jdbc:td://api.treasuredata.com/testdb",
           "YOUR_MAIL_ADDRESS_HERE",
           "YOUR_PASSWORD_HERE");
         Statement stmt = conn.createStatement();
@@ -79,6 +79,12 @@ When a SELECT statement is sent to the driver, the driver will issue the
 query to the cloud. The driver will regularly poll the job results while
 the jobs run on the cloud. The query may take several hours, we recommend
 that you use a background thread.
+
+You specify useSSL=true in JDBC URL as parameter, you can use SSL for
+connecting our API server like following:
+
+    jdbc:td://api.treasuredata.com/testdb;useSSL=true
+
 
 When a INSERT statement is sent to the driver, the data is first buffered
 in local memory. The data is uploaded into the cloud every 5 minutes.

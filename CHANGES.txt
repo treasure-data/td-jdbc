@@ -1,4 +1,4 @@
-Release 0.3.0 - 20XX/XX/XX
+Release 0.2.9 - 2014/06/03
   NEW FEATURES
     Supports SSL. By using useSSL parameter, td-jdbc can connect to TD via HTTPS.
 

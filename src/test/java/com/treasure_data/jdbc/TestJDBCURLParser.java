@@ -49,7 +49,7 @@ public class TestJDBCURLParser {
         final String url = "jdbc:td://:9999/db01;user=user01;password=pass01;k01=v01;k02=v02";
         JDBCURLParser.Desc d = JDBCURLParser.parse(url);
         assertEquals(url, d.url);
-        assertEquals("api.treasure-data.com", d.host);
+        assertEquals("api.treasuredata.com", d.host);
         assertEquals("9999", d.port);
         assertEquals("db01", d.database);
         assertEquals("user01", d.user);
@@ -62,7 +62,7 @@ public class TestJDBCURLParser {
         JDBCURLParser.Desc d = JDBCURLParser.parse(url);
         assertEquals(url, d.url);
         assertEquals("host01", d.host);
-        assertEquals("80", d.port);
+        assertEquals(null, d.port);
         assertEquals("db01", d.database);
         assertEquals("user01", d.user);
         assertEquals("pass01", d.password);
@@ -95,8 +95,8 @@ public class TestJDBCURLParser {
         final String url = "jdbc:td:///db01;user=user01;password=pass01;k01=v01;k02=v02";
         JDBCURLParser.Desc d = JDBCURLParser.parse(url);
         assertEquals(url, d.url);
-        assertEquals("api.treasure-data.com", d.host);
-        assertEquals("80", d.port);
+        assertEquals("api.treasuredata.com", d.host);
+        assertEquals(null, d.port);
         assertEquals("db01", d.database);
         assertEquals("user01", d.user);
         assertEquals("pass01", d.password);
@@ -140,8 +140,8 @@ public class TestJDBCURLParser {
             final String url = "jdbc:td:///db01";
             JDBCURLParser.Desc d = JDBCURLParser.parse(url);
             assertEquals(url, d.url);
-            assertEquals("api.treasure-data.com", d.host);
-            assertEquals("80", d.port);
+            assertEquals("api.treasuredata.com", d.host);
+            assertEquals(null, d.port);
             assertEquals("db01", d.database);
             assertEquals(null, d.user);
             assertEquals(null, d.password);

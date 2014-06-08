@@ -41,7 +41,7 @@ public class TDConnection implements Connection, Constants {
     public TDConnection(JDBCURLParser.Desc desc, Properties props)
             throws SQLException {
         this.props = props;
-        overrideProperties(desc, props);
+        overrideProperties(desc);
 
         // create a Database object
         database = new Database(desc.database);
@@ -54,10 +54,9 @@ public class TDConnection implements Connection, Constants {
      * This method overrides system properties that are used for JDBC driver
      *
      * @param desc
-     * @param props
      * @throws SQLException
      */
-    private void overrideProperties(JDBCURLParser.Desc desc, Properties props)
+    private void overrideProperties(JDBCURLParser.Desc desc)
             throws SQLException {
         // host
         String host = props.getProperty(Config.TD_API_SERVER_HOST);
@@ -121,6 +120,24 @@ public class TDConnection implements Connection, Constants {
                 throw new NullPointerException("Password is not specified");
             }
             props.setProperty(Config.TD_JDBC_PASSWORD, desc.password);
+        }
+
+        // proxy settings
+        if (desc.httpProxyHost != null) {
+            props.setProperty("http.proxyHost", desc.httpProxyHost);
+            System.setProperty("http.proxyHost", desc.httpProxyHost);
+        }
+        if (desc.httpProxyPort != null) {
+            props.setProperty("http.proxyPort", desc.httpProxyPort);
+            System.setProperty("http.proxyPort", desc.httpProxyPort);
+        }
+        if (desc.httpProxyUser != null) {
+            props.setProperty("http.proxyUser", desc.httpProxyUser);
+            System.setProperty("http.proxyUser", desc.httpProxyPassword);
+        }
+        if (desc.httpProxyPassword != null) {
+            props.setProperty("http.proxyPassword", desc.httpProxyPassword);
+            System.setProperty("http.proxyPassword", desc.httpProxyPassword);
         }
     }
 

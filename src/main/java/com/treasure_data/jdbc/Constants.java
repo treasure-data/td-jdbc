@@ -215,6 +215,11 @@ public interface Constants extends com.treasure_data.logger.Constants {
     public static final String TD_JDBC_TYPE = "type";
     public static final String TD_CK_JDBC_USESSL = "usessl";
 
+    public static final String TD_CK_JDBC_HTTP_PROXY_HOST = "httpproxyhost";
+    public static final String TD_CK_JDBC_HTTP_PROXY_PORT = "httpproxyport";
+    public static final String TD_CK_JDBC_HTTP_PROXY_USER = "httpproxyuser";
+    public static final String TD_CK_JDBC_HTTP_PROXY_PASSWORD = "httpproxypassword";
+
     public static final String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD = "td.jdbc.result.retrycount.threshold";
     public static final String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE = "" + 0;
 

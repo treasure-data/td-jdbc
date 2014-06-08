@@ -23,6 +23,11 @@ public class JDBCURLParser {
         public Job.Type type = null;
         public boolean ssl = false;
 
+        public String httpProxyHost = null;
+        public String httpProxyPort = null;
+        public String httpProxyUser = null;
+        public String httpProxyPassword = null;
+
         public Desc() {
         }
     }
@@ -61,6 +66,14 @@ public class JDBCURLParser {
                     }
                 } else if (k.equals(Config.TD_CK_JDBC_USESSL)) {
                     d.ssl = Boolean.parseBoolean(kv[1].toLowerCase());
+                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_HOST)) {
+                    d.httpProxyHost = kv[1];
+                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_PORT)) {
+                    d.httpProxyPort = kv[1];
+                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_USER)) {
+                    d.httpProxyUser = kv[1];
+                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_PASSWORD)) {
+                    d.httpProxyPassword = kv[1];
                 }
             }
         } else {

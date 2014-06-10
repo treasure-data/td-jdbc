@@ -4,7 +4,7 @@
 
 Many web/mobile applications generate huge amount of event logs (c,f. login,
 logout, purchase, follow, etc).  Analyzing these event logs can be quite
-valuable for improving services.  However, collecting these logs easily and 
+valuable for improving services.  However, collecting these logs easily and
 reliably is a challenging task.
 
 This driver enables you to use Treasure Data with a standard JDBC interface.
@@ -80,15 +80,27 @@ query to the cloud. The driver will regularly poll the job results while
 the jobs run on the cloud. The query may take several hours, we recommend
 that you use a background thread.
 
-You specify useSSL=true in JDBC URL as parameter, you can use SSL for
+You can specify `useSSL=true` in JDBC URL as parameter, you can use SSL for
 connecting our API server like following:
 
     jdbc:td://api.treasuredata.com/testdb;useSSL=true
 
-
 When a INSERT statement is sent to the driver, the data is first buffered
 in local memory. The data is uploaded into the cloud every 5 minutes.
-Please note that the upload doesn’t occur in realtime.
+Please note that the upload doesn't occur in realtime.
+
+If you are trying to connect from behind a proxy, you can specify the proxy
+settings using the following properties:
+
+* httpproxyhost
+* httpproxyport
+* httpproxyuser
+* httpproxypassword
+
+For example:
+
+    jdbc:td://api.treasuredata.com/testdb;httpproxyhost=myproxy.com;httpproxyport=myport;httpproxyuser=myusername;httpproxypassword=mypassword
+
 
 ## Implementation Status
 

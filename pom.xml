@@ -7,7 +7,7 @@
   <groupId>com.treasure_data</groupId>
   <name>JDBC Driver for Treasure Data Cloud</name>
   <description>JDBC Driver for Treasure Data Cloud.</description>
-  <version>0.2.9</version>
+  <version>0.2.10</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
   <url>https://github.com/treasure-data/td-jdbc</url>
@@ -65,7 +65,7 @@
 
   <dependencies>
     <!-- need debug for integration with talend -->
-    <!-- 
+    <!--
     <dependency>
 	  <groupId>log4j</groupId>
 	  <artifactId>log4j</artifactId>

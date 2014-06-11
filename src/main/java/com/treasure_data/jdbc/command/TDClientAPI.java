@@ -249,7 +249,7 @@ public class TDClientAPI implements ClientAPI {
 
         // return the data in the temp file
         try {
-            LOG.info("read the result to file: paht = "
+            LOG.info("read the result to file: path = "
                     + file.getAbsolutePath());
             InputStream fin = new GZIPInputStream(new BufferedInputStream(
                     new FileInputStream(file)));

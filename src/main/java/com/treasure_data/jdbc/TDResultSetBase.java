@@ -605,7 +605,7 @@ public abstract class TDResultSetBase implements ResultSet {
 
     public Object getObject(int columnIndex) throws SQLException {
         if (row == null) {
-            throw new SQLException("No row found. If you don't use ResultSet#next method, please use it to fetch rows.");
+            throw new SQLException("No row found. If you don't call ResultSet#next method, please call it before calling getObject method to fetch rows.");
         }
 
         if (columnIndex > row.size()) {

@@ -75,7 +75,7 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         if ("string".equalsIgnoreCase(type)) {
             return Constants.STRING_TYPE_NAME;
         } else if ("varchar".equalsIgnoreCase(type)) {
-            return Constants.STRING_TYPE_NAME;
+            return Constants.VARCHAR_TYPE_NAME;
         } else if ("float".equalsIgnoreCase(type)) {
             return Constants.FLOAT_TYPE_NAME;
         } else if ("double".equalsIgnoreCase(type)) {

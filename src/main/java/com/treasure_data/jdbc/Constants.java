@@ -186,6 +186,9 @@ public interface Constants extends com.treasure_data.logger.Constants {
     String STRUCT_TYPE_NAME = "struct";
     String UNION_TYPE_NAME = "uniontype";
 
+    // for Presto
+    String VARCHAR_TYPE_NAME = "varchar";
+
     int RESULT_EXECDIRECT = 0;
 
     // The required prefix for the connection URL and URI.

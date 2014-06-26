@@ -1,6 +1,10 @@
+Release 0.2.11 - 2014/XX/XX
+  NEW FEATURES
+    Supports varchar type provided by Presto.
+
 Release 0.2.10 - 2014/06/10
   NEW FEATURES
-    Support specifying Proxy settings as URL parameters.
+    Supports specifying Proxy settings as URL parameters.
 
 Release 0.2.9 - 2014/06/03
   NEW FEATURES

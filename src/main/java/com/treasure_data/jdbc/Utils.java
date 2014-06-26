@@ -22,6 +22,8 @@ public class Utils {
     public static int TDTypeToSqlType(String type) throws SQLException {
         if ("string".equalsIgnoreCase(type)) {
             return Types.VARCHAR;
+        } else if ("varchar".equalsIgnoreCase(type)) {
+                return Types.VARCHAR;
         } else if ("float".equalsIgnoreCase(type)) {
             return Types.FLOAT;
         } else if ("double".equalsIgnoreCase(type)) {

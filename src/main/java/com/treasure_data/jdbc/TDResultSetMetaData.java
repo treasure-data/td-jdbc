@@ -91,11 +91,11 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         } else if ("bigint".equalsIgnoreCase(type)) {
             return Constants.BIGINT_TYPE_NAME;
         } else if (type.startsWith("map<")) {
-            // ignore
+            return Constants.STRING_TYPE_NAME;
         } else if (type.startsWith("array<")) {
-            // ignore
+            return Constants.STRING_TYPE_NAME;
         } else if (type.startsWith("struct<")) {
-            // ignore
+            return Constants.STRING_TYPE_NAME;
         }
 
         throw new SQLException("Unrecognized column type: " + type);

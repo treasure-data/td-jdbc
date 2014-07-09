@@ -16,6 +16,8 @@ The following link is how to use the JDBC driver.
 
   * Treasure Data JDBC Driver: [http://docs.treasure-data.com/articles/jdbc-driver](http://docs.treasure-data.com/articles/jdbc-driver)
 
+The `td-jdbc` library is based off the [`td-client-java` Java client library](https://github.com/treasure-data/td-client-java).
+
 ## Requirements
 
 Java >= 1.6
@@ -30,9 +32,78 @@ You can get latest source code using git.
     $ cd td-jdbc
     $ mvn package
 
-You will get the td-jdbc jar file in td-jdbc/target
-directory.  File name will be td-jdbc-${jdbc.version}-jar-with-dependencies.jar.
-For more detail, see pom.xml.
+You will get the td-jdbc jar file in `td-jdbc/target` folder
+The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
+See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
+for more details.
+
+## Configuration
+
+The principal options can all be provided as part of the JDBC custom URL. The
+information is parsed from the URL and used to configure the `td-client-java`
+library used to communicate with the Treasure Data service. See the
+[`td-client-java` README](https://github.com/treasure-data/td-client-java/blob/master/README.md#configuration)
+for more information.
+
+In its simplest form the URL is composed by:
+
+* URL prefix / custom protocol: 'jdbc:td://'
+* API endpoint: e.g. 'api.treasuredata.com'
+* database name: e.g. 'mydb'
+
+For example:
+
+    jdbc:td://api.treasuredata.com/mydb
+
+All the above information are required. Optionally, one can use the various URL
+options listed below.
+
+### Engine Type
+
+Specifying the 'type' parameter allows the user to select one of the optional
+querying  engines Treasure Data support if the user account is enable with
+capability to use such engine.
+
+The current engines are:
+
+* hive (default)
+* pig
+* impala
+* presto
+
+E.g.
+
+    jdbc:td://api.treasuredata.com/mydb;type=impala
+
+If the 'type' parameter is not specified, the default 'type=hive' is assumed.
+
+### HTTPS / SSL
+
+Specifying 'useSSL=true' in JDBC URL parameters tells the driver to communicate
+with the API server using HTTPS / SSL encription. E.g.:
+
+    jdbc:td://api.treasuredata.com/mydb;useSSL=true
+
+SSL is off by default (useSSL=false is assumed when the parameter is not
+specified).
+
+### Proxy
+
+If you are trying to connect from behind a proxy, you can specify the proxy
+settings using the following properties:
+
+* host: e.g. 'httpproxyhost=10.20.30.40 or 'httpproxyhost=myproxy.com'
+* port: e.g. 'httpproxyport=80'
+
+If the proxy is private (public access disabled):
+
+* username: e.g. 'httpproxyuser=myusername'
+* password: e.g. 'httpproxypassword=mypassword'
+
+For example:
+
+    jdbc:td://api.treasuredata.com/mydb;httpproxyhost=myproxy.com;httpproxyport=myport;httpproxyuser=myusername;httpproxypassword=mypassword
+
 
 ## Quickstart
 
@@ -62,7 +133,7 @@ The following program is a small example of the JDBC Driver.
         }
 
         Connection conn = DriverManager.getConnection(
-          "jdbc:td://api.treasuredata.com/testdb",
+          "jdbc:td://api.treasuredata.com/mydb",
           "YOUR_MAIL_ADDRESS_HERE",
           "YOUR_PASSWORD_HERE");
         Statement stmt = conn.createStatement();
@@ -80,27 +151,9 @@ query to the cloud. The driver will regularly poll the job results while
 the jobs run on the cloud. The query may take several hours, we recommend
 that you use a background thread.
 
-You can specify `useSSL=true` in JDBC URL as parameter, you can use SSL for
-connecting our API server like following:
-
-    jdbc:td://api.treasuredata.com/testdb;useSSL=true
-
 When a INSERT statement is sent to the driver, the data is first buffered
 in local memory. The data is uploaded into the cloud every 5 minutes.
 Please note that the upload doesn't occur in realtime.
-
-If you are trying to connect from behind a proxy, you can specify the proxy
-settings using the following properties:
-
-* httpproxyhost
-* httpproxyport
-* httpproxyuser
-* httpproxypassword
-
-For example:
-
-    jdbc:td://api.treasuredata.com/testdb;httpproxyhost=myproxy.com;httpproxyport=myport;httpproxyuser=myusername;httpproxypassword=mypassword
-
 
 ## Implementation Status
 

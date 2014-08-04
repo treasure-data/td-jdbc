@@ -15,7 +15,7 @@
   <properties>
     <!--  version properties for dependencies -->
     <td-client.version>0.4.3-SNAPSHOT</td-client.version>
-    <td-logger.version>0.2.0-SNAPSHOT</td-logger.version>
+    <td-logger.version>0.2.0</td-logger.version>
     <junit.version>4.8.2</junit.version>
     <mockito.version>1.9.5</mockito.version>
 
@@ -35,24 +35,12 @@
   </properties>
 
   <repositories>
-    <repository>
-      <id>repository.cloudera.com</id>
-      <url>https://repository.cloudera.com/content/repositories/releases/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
     <!-- mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lib/msgpack.jar -DgroupId=org.msgpack -DartifactId=msgpack -Dversion=0.6.0-devel -Dpackaging=jar -DlocalRepositoryPath=`pwd`/mvn-local -->
     <!-- mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lib/mongo-2.7.2.jar -DgroupId=com.mongodb -DartifactId=mongodb -Dversion=2.7.2 -Dpackaging=jar -DlocalRepositoryPath=`pwd`/mvn-local -->
     <repository>
       <id>fluentd.org</id>
       <name>Fluent Maven2 Repository</name>
       <url>http://fluentd.org/maven2</url>
-    </repository>
-    <repository>
-      <id>treasure-data.com</id>
-      <name>Treasure Data Maven2 Repository</name>
-      <url>http://maven.treasure-data.com/</url>
     </repository>
     <repository>
       <id>local-repo</id>
@@ -79,7 +67,7 @@
       <version>${td-client.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.treasure_data</groupId>
+      <groupId>com.treasuredata</groupId>
       <artifactId>td-logger</artifactId>
       <version>${td-logger.version}</version>
     </dependency>

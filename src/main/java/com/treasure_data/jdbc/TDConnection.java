@@ -125,19 +125,27 @@ public class TDConnection implements Connection, Constants {
         // proxy settings
         if (desc.httpProxyHost != null) {
             props.setProperty("http.proxyHost", desc.httpProxyHost);
+            props.setProperty("https.proxyHost", desc.httpProxyHost);
             System.setProperty("http.proxyHost", desc.httpProxyHost);
+            System.setProperty("https.proxyHost", desc.httpProxyHost);
         }
         if (desc.httpProxyPort != null) {
             props.setProperty("http.proxyPort", desc.httpProxyPort);
+            props.setProperty("https.proxyPort", desc.httpProxyPort);
             System.setProperty("http.proxyPort", desc.httpProxyPort);
+            System.setProperty("https.proxyPort", desc.httpProxyPort);
         }
         if (desc.httpProxyUser != null) {
             props.setProperty("http.proxyUser", desc.httpProxyUser);
+            props.setProperty("https.proxyUser", desc.httpProxyUser);
             System.setProperty("http.proxyUser", desc.httpProxyPassword);
+            System.setProperty("https.proxyUser", desc.httpProxyPassword);
         }
         if (desc.httpProxyPassword != null) {
             props.setProperty("http.proxyPassword", desc.httpProxyPassword);
+            props.setProperty("https.proxyPassword", desc.httpProxyPassword);
             System.setProperty("http.proxyPassword", desc.httpProxyPassword);
+            System.setProperty("https.proxyPassword", desc.httpProxyPassword);
         }
     }
 

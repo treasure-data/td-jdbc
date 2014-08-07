@@ -32,7 +32,7 @@ public interface ClientAPI {
         }
     }
 
-    // show database statement
+    // show all databases statement
     List<DatabaseSummary> showDatabases() throws ClientException;
 
     // show table statement
@@ -45,7 +45,8 @@ public interface ClientAPI {
     boolean create(String table) throws ClientException;
 
     // insert statement
-    boolean insert(String tableName, Map<String, Object> record) throws ClientException;
+    boolean insert(String tableName, Map<String, Object> record)
+            throws ClientException;
 
     // select statement
     TDResultSetBase select(String sql) throws ClientException;

@@ -35,6 +35,8 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.JobResult;
 import com.treasure_data.model.JobResult2;
 import com.treasure_data.model.JobSummary;
+import com.treasure_data.model.ListDatabasesRequest;
+import com.treasure_data.model.ListDatabasesResult;
 import com.treasure_data.model.ShowJobRequest;
 import com.treasure_data.model.ShowJobResult;
 import com.treasure_data.model.ShowJobStatusRequest;
@@ -44,7 +46,8 @@ import com.treasure_data.model.SubmitJobResult;
 import com.treasure_data.model.TableSummary;
 
 public class TDClientAPI implements ClientAPI {
-    private static final Logger LOG = Logger.getLogger(TDClientAPI.class.getName());
+    private static final Logger LOG = Logger.getLogger(TDClientAPI.class
+            .getName());
 
     private TreasureDataClient client;
 
@@ -57,20 +60,22 @@ public class TDClientAPI implements ClientAPI {
     private int maxRows = 5000;
 
     public TDClientAPI(TDConnection conn) {
-        this(null, new TreasureDataClient(conn.getProperties()), conn.getProperties(),
-                conn.getDatabase(), conn.getMaxRows());
+        this(null, new TreasureDataClient(conn.getProperties()), conn
+                .getProperties(), conn.getDatabase(), conn.getMaxRows());
     }
 
     public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn) {
-        this(desc, new TreasureDataClient(conn.getProperties()), conn.getProperties(),
-                conn.getDatabase(), conn.getMaxRows());
+        this(desc, new TreasureDataClient(conn.getProperties()), conn
+                .getProperties(), conn.getDatabase(), conn.getMaxRows());
     }
 
-    public TDClientAPI(TreasureDataClient client, Properties props, Database database) {
+    public TDClientAPI(TreasureDataClient client, Properties props,
+            Database database) {
         this(null, client, props, database, 5000);
     }
 
-    public TDClientAPI(JDBCURLParser.Desc desc, TreasureDataClient client, Properties props, Database database, int maxRows) {
+    public TDClientAPI(JDBCURLParser.Desc desc, TreasureDataClient client,
+            Properties props, Database database, int maxRows) {
         this.client = client;
         this.props = props;
         this.database = database;
@@ -131,7 +136,8 @@ public class TDClientAPI implements ClientAPI {
 
     public boolean insert(String tableName, Map<String, Object> record)
             throws ClientException {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
+        TreasureDataLogger logger = TreasureDataLogger.getLogger(database
+                .getName());
         return logger.log(tableName, record);
     }
 
@@ -174,7 +180,8 @@ public class TDClientAPI implements ClientAPI {
                 break;
             } else if (stat == JobSummary.Status.ERROR) {
                 JobSummary js = client.showJob(job);
-                String msg = String.format("Job '%s' failed: got Job status 'error'", jobID);
+                String msg = String.format(
+                        "Job '%s' failed: got Job status 'error'", jobID);
                 LOG.severe(msg);
                 if (js.getDebug() != null) {
                     msg = msg + "\n" + js.getDebug().getStderr();
@@ -185,7 +192,8 @@ public class TDClientAPI implements ClientAPI {
                 }
                 throw new ClientException(msg);
             } else if (stat == JobSummary.Status.KILLED) {
-                String msg = String.format("Job '%s' failed: got Job status 'killed'", jobID);
+                String msg = String.format(
+                        "Job '%s' failed: got Job status 'killed'", jobID);
                 LOG.severe(msg);
                 throw new ClientException(msg);
             }
@@ -201,7 +209,8 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public Unpacker getJobResult(Job job) throws ClientException {
-        GetJobResultRequest request = new GetJobResultRequest(new JobResult(job));
+        GetJobResultRequest request = new GetJobResultRequest(
+                new JobResult(job));
         GetJobResultResult result = client.getJobResult(request);
         return result.getJobResult().getResult();
     }
@@ -230,7 +239,8 @@ public class TDClientAPI implements ClientAPI {
                 }
 
                 retryCount++;
-                LOG.info("re-try writing: imcremented retryCount = " + retryCount);
+                LOG.info("re-try writing: imcremented retryCount = "
+                        + retryCount);
                 long retryWaitTime = Long.parseLong(props.getProperty(
                         Config.TD_JDBC_RESULT_RETRY_WAITTIME,
                         Config.TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE));
@@ -253,8 +263,9 @@ public class TDClientAPI implements ClientAPI {
                     + file.getAbsolutePath());
             InputStream fin = new GZIPInputStream(new BufferedInputStream(
                     new FileInputStream(file)));
-            return new ExtUnpacker(file, new MessagePack()
-                    .createUnpacker(new BufferedInputStream(fin)));
+            return new ExtUnpacker(file,
+                    new MessagePack().createUnpacker(new BufferedInputStream(
+                            fin)));
         } catch (IOException e) {
             throw new ClientException(e);
         }
@@ -262,7 +273,8 @@ public class TDClientAPI implements ClientAPI {
 
     private File writeJobResultToTempFile(Job job) throws ClientException,
             IOException {
-        GetJobResultRequest request = new GetJobResultRequest(new JobResult2(job));
+        GetJobResultRequest request = new GetJobResultRequest(new JobResult2(
+                job));
         GetJobResultResult result = client.getJobResult(request);
 
         // download data of job result and write it to temp file
@@ -311,13 +323,15 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public boolean flush() {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
+        TreasureDataLogger logger = TreasureDataLogger.getLogger(database
+                .getName());
         logger.flush();
         return true;
     }
 
     public void close() throws ClientException {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database.getName());
+        TreasureDataLogger logger = TreasureDataLogger.getLogger(database
+                .getName());
         if (logger != null) {
             logger.flush();
             logger.close();

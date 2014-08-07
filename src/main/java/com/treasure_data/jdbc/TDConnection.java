@@ -230,7 +230,7 @@ public class TDConnection implements Connection, Constants {
 
     /**
      * Creates a Statement object for sending SQL statements to the database.
-     * 
+     *
      * @throws SQLException
      *             if a database access error occurs.
      * @see java.sql.Connection#createStatement()
@@ -282,7 +282,7 @@ public class TDConnection implements Connection, Constants {
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
-        return new TDDatabaseMetaData(getClientAPI());
+        return new TDDatabaseMetaData(database, getClientAPI());
     }
 
     public int getTransactionIsolation() throws SQLException {

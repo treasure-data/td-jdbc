@@ -20,15 +20,23 @@ import com.treasure_data.jdbc.model.TDDataType;
 import com.treasure_data.jdbc.model.TDDatabase;
 import com.treasure_data.jdbc.model.TDImportedKey;
 import com.treasure_data.jdbc.model.TDTable;
+import com.treasure_data.model.Database;
 import com.treasure_data.model.DatabaseSummary;
+import com.treasure_data.model.ListDatabasesRequest;
 import com.treasure_data.model.TableSummary;
 
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     private ClientAPI api;
+    private Database database;
 
     public TDDatabaseMetaData(ClientAPI api) {
         this.api = api;
+    }
+
+    public TDDatabaseMetaData(Database database, ClientAPI api) {
+        this.api = api;
+        this.database = database;
     }
 
     public boolean allProceduresAreCallable() throws SQLException {
@@ -65,18 +73,19 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 "TDDatabaseMetaData#doesMaxRowSizeIncludeBlobs()"));
     }
 
-    public ResultSet getAttributes(String catalog,
-            String schemaPattern, String typeNamePattern,
-            String attributeNamePattern) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDDatabaseMetaData#getAttributes(String, String, String, String)"));
+    public ResultSet getAttributes(String catalog, String schemaPattern,
+            String typeNamePattern, String attributeNamePattern)
+            throws SQLException {
+        throw new SQLException(
+                new UnsupportedOperationException(
+                        "TDDatabaseMetaData#getAttributes(String, String, String, String)"));
     }
 
-    public ResultSet getBestRowIdentifier(String catalog,
-            String schema, String table, int scope, boolean nullable)
-            throws SQLException {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDDatabaseMetaData#getBestRowIdentifier(String, String, String, int, boolean)"));
+    public ResultSet getBestRowIdentifier(String catalog, String schema,
+            String table, int scope, boolean nullable) throws SQLException {
+        throw new SQLException(
+                new UnsupportedOperationException(
+                        "TDDatabaseMetaData#getBestRowIdentifier(String, String, String, int, boolean)"));
     }
 
     public String getCatalogSeparator() throws SQLException {
@@ -100,15 +109,18 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
         List<TDDatabase> databases = new ArrayList<TDDatabase>();
         for (DatabaseSummary d : ds) {
-            TDDatabase database = new TDDatabase(d.getName());
-            databases.add(database);
+            if (d.getName().equals(database.getName())) {
+                TDDatabase database = new TDDatabase(d.getName());
+                databases.add(database);
+            }
         }
 
         List<String> names = Arrays.asList("TABLE_CAT");
         List<String> types = Arrays.asList("STRING");
 
         try {
-            ResultSet result = new TDMetaDataResultSet<TDDatabase>(names, types, databases) {
+            ResultSet result = new TDMetaDataResultSet<TDDatabase>(names,
+                    types, databases) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {
@@ -118,7 +130,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
                     TDDatabase d = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(1);
-                    a.add(d.getDatabaseName()); // TABLE_CAT String => table catalog (may be null)
+                    a.add(d.getDatabaseName()); // TABLE_CAT String => table
+                                                // catalog (may be null)
                     row = a;
                     cnt++;
                     return true;
@@ -135,11 +148,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 "TDDatabaseMetaData#getClientInfoProperties()"));
     }
 
-    public ResultSet getColumnPrivileges(String catalog,
-            String schema, String table, String columnNamePattern)
-            throws SQLException {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDDatabaseMetaData#getColumnPrivileges(String, String, String, String)"));
+    public ResultSet getColumnPrivileges(String catalog, String schema,
+            String table, String columnNamePattern) throws SQLException {
+        throw new SQLException(
+                new UnsupportedOperationException(
+                        "TDDatabaseMetaData#getColumnPrivileges(String, String, String, String)"));
     }
 
     /**
@@ -214,7 +227,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
             List<List<String>> schemaFields = null;
             try {
-                schemaFields = (List<List<String>>) JSONValue.parse(t.getSchema());
+                schemaFields = (List<List<String>>) JSONValue.parse(t
+                        .getSchema());
             } catch (Exception e) {
                 continue;
             }
@@ -228,7 +242,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     continue;
                 }
 
-                TDColumn c = new TDColumn(fname, t.getName(), catalog, ftype, "comment", ordinal);
+                TDColumn c = new TDColumn(fname, t.getName(), catalog, ftype,
+                        "comment", ordinal);
                 columns.add(c);
                 ordinal++;
             }
@@ -239,7 +254,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
              * First check by table name then by ordinal position
              */
             public int compare(TDColumn o1, TDColumn o2) {
-                int compareName = o1.getTableName().compareTo(o2.getTableName());
+                int compareName = o1.getTableName()
+                        .compareTo(o2.getTableName());
                 if (compareName == 0) {
                     if (o1.getOrdinal() > o2.getOrdinal()) {
                         return 1;
@@ -253,55 +269,37 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             }
         });
 
-        List<String> names = Arrays.asList(
-                "TABLE_CAT",
-                "TABLE_SCHEM",
-                "TABLE_NAME",
-                "COLUMN_NAME",
-                "DATA_TYPE",
-                "TYPE_NAME",
-                "COLUMN_SIZE",
-                "BUFFER_LENGTH",
-                "DECIMAL_DIGITS",
-                "NUM_PREC_RADIX",
-                "NULLABLE",
-                "REMARKS",
-                "COLUMN_DEF",
-                "SQL_DATA_TYPE",
-                "SQL_DATETIME_SUB",
-                "CHAR_OCTET_LENGTH",
-                "ORDINAL_POSITION",
-                "IS_NULLABLE",
-                "SCOPE_CATLOG",
-                "SCOPE_SCHEMA",
-                "SCOPE_TABLE",
-                "SOURCE_DATA_TYPE",
-                "IS_AUTOINCREMENT"
-        );
+        List<String> names = Arrays.asList("TABLE_CAT", "TABLE_SCHEM",
+                "TABLE_NAME", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME",
+                "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS",
+                "NUM_PREC_RADIX", "NULLABLE", "REMARKS", "COLUMN_DEF",
+                "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "CHAR_OCTET_LENGTH",
+                "ORDINAL_POSITION", "IS_NULLABLE", "SCOPE_CATLOG",
+                "SCOPE_SCHEMA", "SCOPE_TABLE", "SOURCE_DATA_TYPE",
+                "IS_AUTOINCREMENT");
 
-        List<String> types = Arrays.asList(
-                "STRING", // TABLE_CAT
+        List<String> types = Arrays.asList("STRING", // TABLE_CAT
                 "STRING", // TABLE_SCHEM
                 "STRING", // TABLE_NAME
                 "STRING", // COLUMN_NAME
-                "INT",    // DATA_TYPE
+                "INT", // DATA_TYPE
                 "STRING", // TYPE_NAME
-                "INT",    // COLUMN_SIZE
-                "INT",    // BUFFER_LENGTH
-                "INT",    // DECIMAL_DIGITS
-                "INT",    // NUM_PREC_RADIX
-                "INT",    // NULLABLE
+                "INT", // COLUMN_SIZE
+                "INT", // BUFFER_LENGTH
+                "INT", // DECIMAL_DIGITS
+                "INT", // NUM_PREC_RADIX
+                "INT", // NULLABLE
                 "STRING", // REMARKS
                 "STRING", // COLUMN_DEF
-                "INT",    // SQL_DATA_TYPE
-                "INT",    // SQL_DATEIME_SUB
-                "INT",    // CHAR_OCTET_LENGTH
-                "INT",    // ORDINAL_POSITION
+                "INT", // SQL_DATA_TYPE
+                "INT", // SQL_DATEIME_SUB
+                "INT", // CHAR_OCTET_LENGTH
+                "INT", // ORDINAL_POSITION
                 "STRING", // IS_NULLABLE
                 "STRING", // SCOPE_CATLOG
                 "STRING", // SCOPE_SCHEMA
                 "STRING", // SCOPE_TABLE
-                "INT",    // SOURCE_DATA_TYPE
+                "INT", // SOURCE_DATA_TYPE
                 "STRING" // IS_AUTOINCREMENT
         );
 
@@ -316,29 +314,44 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
                     TDColumn column = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(23);
-                    a.add(column.getTableCatalog());        // TABLE_CAT String => table catalog (may be null)
-                    a.add(null);                            // TABLE_SCHEM String => table schema (may be null)
-                    a.add(column.getTableName());           // TABLE_NAME String => table name
-                    a.add(column.getColumnName());          // COLUMN_NAME String => column name
-                    a.add(column.getSqlType());             // DATA_TYPE short => SQL type from java.sql.Types
-                    a.add(column.getType());                // TYPE_NAME String => Data source dependent type name.
-                    a.add(column.getColumnSize());          // COLUMN_SIZE int => column size.
-                    a.add(null);                            // BUFFER_LENGTH is not used.
-                    a.add(column.getDecimalDigits());       // DECIMAL_DIGITS int => number of fractional digits
-                    a.add(column.getNumPrecRadix());        // NUM_PREC_RADIX int => typically either 10 or 2
-                    a.add(DatabaseMetaData.columnNullable); // NULLABLE int => is NULL allowed?
-                    a.add(column.getComment());             // REMARKS String => comment describing column (may be null)
-                    a.add(null);                            // COLUMN_DEF String => default value (may be null)
-                    a.add(null);                            // SQL_DATA_TYPE int => unused
-                    a.add(null);                            // SQL_DATETIME_SUB int => unused
-                    a.add(null);                            // CHAR_OCTET_LENGTH int
-                    a.add(column.getOrdinal());          // ORDINAL_POSITION int
-                    a.add("YES");                           // IS_NULLABLE String
-                    a.add(null);                            // SCOPE_CATLOG String
-                    a.add(null);                            // SCOPE_SCHEMA String
-                    a.add(null);                            // SCOPE_TABLE String
-                    a.add(null);                            // SOURCE_DATA_TYPE short
-                    a.add("NO");                            // IS_AUTOINCREMENT String
+                    a.add(column.getTableCatalog()); // TABLE_CAT String =>
+                                                     // table catalog (may be
+                                                     // null)
+                    a.add(null); // TABLE_SCHEM String => table schema (may be
+                                 // null)
+                    a.add(column.getTableName()); // TABLE_NAME String => table
+                                                  // name
+                    a.add(column.getColumnName()); // COLUMN_NAME String =>
+                                                   // column name
+                    a.add(column.getSqlType()); // DATA_TYPE short => SQL type
+                                                // from java.sql.Types
+                    a.add(column.getType()); // TYPE_NAME String => Data source
+                                             // dependent type name.
+                    a.add(column.getColumnSize()); // COLUMN_SIZE int => column
+                                                   // size.
+                    a.add(null); // BUFFER_LENGTH is not used.
+                    a.add(column.getDecimalDigits()); // DECIMAL_DIGITS int =>
+                                                      // number of fractional
+                                                      // digits
+                    a.add(column.getNumPrecRadix()); // NUM_PREC_RADIX int =>
+                                                     // typically either 10 or 2
+                    a.add(DatabaseMetaData.columnNullable); // NULLABLE int =>
+                                                            // is NULL allowed?
+                    a.add(column.getComment()); // REMARKS String => comment
+                                                // describing column (may be
+                                                // null)
+                    a.add(null); // COLUMN_DEF String => default value (may be
+                                 // null)
+                    a.add(null); // SQL_DATA_TYPE int => unused
+                    a.add(null); // SQL_DATETIME_SUB int => unused
+                    a.add(null); // CHAR_OCTET_LENGTH int
+                    a.add(column.getOrdinal()); // ORDINAL_POSITION int
+                    a.add("YES"); // IS_NULLABLE String
+                    a.add(null); // SCOPE_CATLOG String
+                    a.add(null); // SCOPE_SCHEMA String
+                    a.add(null); // SCOPE_TABLE String
+                    a.add(null); // SOURCE_DATA_TYPE short
+                    a.add("NO"); // IS_AUTOINCREMENT String
 
                     row = a;
                     cnt++;
@@ -358,8 +371,9 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getCrossReference(String primaryCatalog,
             String primarySchema, String primaryTable, String foreignCatalog,
             String foreignSchema, String foreignTable) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDDatabaseMetaData#getCrossReference(String, String, String, String, String, String)"));
+        throw new SQLException(
+                new UnsupportedOperationException(
+                        "TDDatabaseMetaData#getCrossReference(String, String, String, String, String, String)"));
     }
 
     public int getJDBCMajorVersion() throws SQLException {
@@ -452,8 +466,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Retrieves the maximum number of characters that this database allows
-     * in a catalog name.
+     * Retrieves the maximum number of characters that this database allows in a
+     * catalog name.
      */
     public int getMaxCatalogNameLength() throws SQLException {
         return MAX_CATALOG_NAME_LENGTH;
@@ -464,8 +478,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Retrieves the maximum number of characters this database allows
-     * for a column name.
+     * Retrieves the maximum number of characters this database allows for a
+     * column name.
      */
     public int getMaxColumnNameLength() throws SQLException {
         return MAX_COLUMN_NAME_LENGTH;
@@ -515,8 +529,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Retrieves the maximum number of bytes this database allows in
-     * a single row.
+     * Retrieves the maximum number of bytes this database allows in a single
+     * row.
      */
     public int getMaxRowSize() throws SQLException {
         return MAX_ROW_SIZE;
@@ -527,8 +541,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Retrieves the maximum number of characters this database allows in
-     * an SQL statement.
+     * Retrieves the maximum number of characters this database allows in an SQL
+     * statement.
      */
     public int getMaxStatementLength() throws SQLException {
         return MAX_STATEMENT_LENGTH;
@@ -539,8 +553,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Retrieves the maximum number of characters this database allows in
-     * a table name.
+     * Retrieves the maximum number of characters this database allows in a
+     * table name.
      */
     public int getMaxTableNameLength() throws SQLException {
         return MAX_TABLE_NAME_LENGTH;
@@ -555,8 +569,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     /**
-     * Retrieves the maximum number of characters this database allows in
-     * a user name.
+     * Retrieves the maximum number of characters this database allows in a user
+     * name.
      */
     public int getMaxUserNameLength() throws SQLException {
         return MAX_USER_NAME_LENGTH;
@@ -595,18 +609,18 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public String getSQLKeywords() throws SQLException {
-        return "TRUE,FALSE,ALL,AND,OR,NOT,LIKE,ASC,DESC,ORDER,BY,GROUP,WHERE," +
-                "FROM,AS,SELECT,DISTINCT,INSERT,OVERWRITE,OUTER,JOIN,LEFT,RIGHT," +
-                "FULL,ON,PARTITION,PARTITIONS,TABLE,TABLES,TBLPROPERTIES,SHOW,MSCK," +
-                "DIRECTORY,LOCAL,TRANSFORM,USING,CLUSTER,DISTRIBUTE,SORT,UNION,LOAD," +
-                "DATA,INPATH,IS,NULL,CREATE,EXTERNAL,ALTER,DESCRIBE,DROP,REANME,TO," +
-                "COMMENT,BOOLEAN,TINYINT,SMALLINT,INT,BIGINT,FLOAT,DOUBLE,DATE," +
-                "DATETIME,TIMESTAMP,STRING,BINARY,ARRAY,MAP,REDUCE,PARTITIONED," +
-                "CLUSTERED,SORTED,INTO,BUCKETS,ROW,FORMAT,DELIMITED,FIELDS,TERMINATED," +
-                "COLLECTION,ITEMS,KEYS,LINES,STORED,SEQUENCEFILE,TEXTFILE,INPUTFORMAT," +
-                "OUTPUTFORMAT,LOCATION,TABLESAMPLE,BUCKET,OUT,OF,CAST,ADD,REPLACE," +
-                "COLUMNS,RLIKE,REGEXP,TEMPORARY,FUNCTION,EXPLAIN,EXTENDED,SERDE,WITH," +
-                "SERDEPROPERTIES,LIMIT,SET,TBLPROPERTIES";
+        return "TRUE,FALSE,ALL,AND,OR,NOT,LIKE,ASC,DESC,ORDER,BY,GROUP,WHERE,"
+                + "FROM,AS,SELECT,DISTINCT,INSERT,OVERWRITE,OUTER,JOIN,LEFT,RIGHT,"
+                + "FULL,ON,PARTITION,PARTITIONS,TABLE,TABLES,TBLPROPERTIES,SHOW,MSCK,"
+                + "DIRECTORY,LOCAL,TRANSFORM,USING,CLUSTER,DISTRIBUTE,SORT,UNION,LOAD,"
+                + "DATA,INPATH,IS,NULL,CREATE,EXTERNAL,ALTER,DESCRIBE,DROP,REANME,TO,"
+                + "COMMENT,BOOLEAN,TINYINT,SMALLINT,INT,BIGINT,FLOAT,DOUBLE,DATE,"
+                + "DATETIME,TIMESTAMP,STRING,BINARY,ARRAY,MAP,REDUCE,PARTITIONED,"
+                + "CLUSTERED,SORTED,INTO,BUCKETS,ROW,FORMAT,DELIMITED,FIELDS,TERMINATED,"
+                + "COLLECTION,ITEMS,KEYS,LINES,STORED,SEQUENCEFILE,TEXTFILE,INPUTFORMAT,"
+                + "OUTPUTFORMAT,LOCATION,TABLESAMPLE,BUCKET,OUT,OF,CAST,ADD,REPLACE,"
+                + "COLUMNS,RLIKE,REGEXP,TEMPORARY,FUNCTION,EXPLAIN,EXTENDED,SERDE,WITH,"
+                + "SERDEPROPERTIES,LIMIT,SET,TBLPROPERTIES";
     }
 
     public int getSQLStateType() throws SQLException {
@@ -665,7 +679,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         List<String> names = Arrays.asList("TABLE_TYPE");
         List<String> types = Arrays.asList("STRING");
         List<TDTable.Type> data0 = Arrays.asList(TDTable.Type.values());
-        ResultSet result = new TDMetaDataResultSet<TDTable.Type>(names, types, data0) {
+        ResultSet result = new TDMetaDataResultSet<TDTable.Type>(names, types,
+                data0) {
             private int cnt = 0;
 
             public boolean next() throws SQLException {
@@ -707,13 +722,14 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 continue;
             }
 
-            TDTable table = new TDTable(catalog, t.getName(), "TABLE", "comment");
+            TDTable table = new TDTable(catalog, t.getName(), "TABLE",
+                    "comment");
             tables.add(table);
         }
         Collections.sort(tables, new Comparator<TDTable>() {
             /**
-             * We sort the output of getTables to guarantee jdbc compliance. First check
-             * by table type then by table name
+             * We sort the output of getTables to guarantee jdbc compliance.
+             * First check by table type then by table name
              */
             public int compare(TDTable o1, TDTable o2) {
                 int compareType = o1.getType().compareTo(o2.getType());
@@ -725,21 +741,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             }
         });
 
-        List<String> nameList = Arrays.asList(
-                "TABLE_CAT",
-                "TABLE_SCHEM",
-                "TABLE_NAME",
-                "TABLE_TYPE",
-                "REMARKS",
-                "TYPE_CAT",
-                "TYPE_SCHEM",
-                "TYPE_NAME",
-                "SELF_REFERENCING_COL_NAME",
-                "REF_GENERATION"
-        );
+        List<String> nameList = Arrays.asList("TABLE_CAT", "TABLE_SCHEM",
+                "TABLE_NAME", "TABLE_TYPE", "REMARKS", "TYPE_CAT",
+                "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME",
+                "REF_GENERATION");
 
-        List<String> typeList = Arrays.asList(
-                "STRING", // "TABLE_CAT"
+        List<String> typeList = Arrays.asList("STRING", // "TABLE_CAT"
                 "STRING", // "TABLE_SCHEM"
                 "STRING", // "TABLE_NAME"
                 "STRING", // "TABLE_TYPE"
@@ -748,11 +755,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 "STRING", // "TYPE_SCHEM"
                 "STRING", // "TYPE_NAME"
                 "STRING", // "SELF_REFERENCING_COL_NAME"
-                "STRING"  // "REF_GENERATION"
+                "STRING" // "REF_GENERATION"
         );
 
         try {
-            ResultSet result = new TDMetaDataResultSet<TDTable>(nameList, typeList, tables) {
+            ResultSet result = new TDMetaDataResultSet<TDTable>(nameList,
+                    typeList, tables) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {
@@ -762,20 +770,27 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
                     TDTable t = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(10);
-                    a.add(t.getTableCatalog());     // TABLE_CAT String => table catalog (may be null)
-                    a.add(null);                    // TABLE_SCHEM String => table schema (may be null)
-                    a.add(t.getTableName());        // TABLE_NAME String => table name
+                    a.add(t.getTableCatalog()); // TABLE_CAT String => table
+                                                // catalog (may be null)
+                    a.add(null); // TABLE_SCHEM String => table schema (may be
+                                 // null)
+                    a.add(t.getTableName()); // TABLE_NAME String => table name
                     try {
-                        a.add(t.getSqlTableType()); // TABLE_TYPE String => "TABLE","VIEW"
+                        a.add(t.getSqlTableType()); // TABLE_TYPE String =>
+                                                    // "TABLE","VIEW"
                     } catch (Exception e) {
                         throw new SQLException(e);
                     }
-                    a.add(t.getComment());          // REMARKS String => explanatory comment on the table
-                    a.add(null);                    // TYPE_CAT String => the types catalog (may be null)
-                    a.add(null);                    // TYPE_SCHEM String => the types schema (may be null)
-                    a.add(null);                    // TYPE_NAME String => type name (may be null)
-                    a.add(null);                    // SELF_REFERENCING_COL_NAME String => ... (may be null)
-                    a.add(null);                    // REF_GENERATION String => ... (may be null)
+                    a.add(t.getComment()); // REMARKS String => explanatory
+                                           // comment on the table
+                    a.add(null); // TYPE_CAT String => the types catalog (may be
+                                 // null)
+                    a.add(null); // TYPE_SCHEM String => the types schema (may
+                                 // be null)
+                    a.add(null); // TYPE_NAME String => type name (may be null)
+                    a.add(null); // SELF_REFERENCING_COL_NAME String => ... (may
+                                 // be null)
+                    a.add(null); // REF_GENERATION String => ... (may be null)
                     row = a;
                     cnt++;
                     return true;
@@ -814,7 +829,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getTypeInfo() throws SQLException {
         List<TDDataType> types = new ArrayList<TDDataType>();
         try {
-            ResultSet result = new TDMetaDataResultSet<TDDataType>(null, null, types) {
+            ResultSet result = new TDMetaDataResultSet<TDDataType>(null, null,
+                    types) {
                 private int cnt = 0;
 
                 public boolean next() throws SQLException {
@@ -857,10 +873,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getUDTs(String catalog, String schemaPattern,
             String typeNamePattern, int[] types) throws SQLException {
 
-        return new TDMetaDataResultSet(Arrays.asList("TYPE_CAT",
-                "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE",
-                "REMARKS", "BASE_TYPE"), Arrays.asList("STRING", "STRING",
-                "STRING", "STRING", "INT", "STRING", "INT"), null) {
+        return new TDMetaDataResultSet(
+                Arrays.asList("TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME",
+                        "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE"),
+                Arrays.asList("STRING", "STRING", "STRING", "STRING", "INT",
+                        "STRING", "INT"), null) {
 
             public boolean next() throws SQLException {
                 return false;

@@ -719,10 +719,10 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
          * search.
          * 
          * In our specific case: we don't have any schema name, so specifying
-         * one will return nothing. specifying null or "" string will return
+         * one will return nothing. Specifying null or "" string will return
          * everything else not filtered out by the other criteria.
          */
-        if (!schemaPattern.isEmpty()) {
+        if (schemaPattern != null && !schemaPattern.isEmpty()) {
             return null;
         }
 

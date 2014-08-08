@@ -35,6 +35,9 @@ public interface ClientAPI {
     // show all databases statement
     List<DatabaseSummary> showDatabases() throws ClientException;
 
+    // show current database statement
+    DatabaseSummary showDatabase() throws ClientException;
+
     // show table statement
     List<TableSummary> showTables() throws ClientException;
 

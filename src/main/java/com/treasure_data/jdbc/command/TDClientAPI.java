@@ -35,12 +35,6 @@ import com.treasure_data.model.Job;
 import com.treasure_data.model.JobResult;
 import com.treasure_data.model.JobResult2;
 import com.treasure_data.model.JobSummary;
-import com.treasure_data.model.ListDatabasesRequest;
-import com.treasure_data.model.ListDatabasesResult;
-import com.treasure_data.model.ShowJobRequest;
-import com.treasure_data.model.ShowJobResult;
-import com.treasure_data.model.ShowJobStatusRequest;
-import com.treasure_data.model.ShowJobStatusResult;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 import com.treasure_data.model.TableSummary;
@@ -118,6 +112,16 @@ public class TDClientAPI implements ClientAPI {
 
     public List<DatabaseSummary> showDatabases() throws ClientException {
         return client.listDatabases();
+    }
+
+    public DatabaseSummary showDatabase() throws ClientException {
+        List<DatabaseSummary> databases = client.listDatabases();
+        for (DatabaseSummary db : databases) {
+            if (db.getName().equals(database.getName())) {
+                return db;
+            }
+        }
+        return null;
     }
 
     public List<TableSummary> showTables() throws ClientException {

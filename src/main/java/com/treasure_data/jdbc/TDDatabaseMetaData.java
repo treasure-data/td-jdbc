@@ -23,6 +23,7 @@ import com.treasure_data.jdbc.model.TDTable;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.ListDatabasesRequest;
+import com.treasure_data.model.Table;
 import com.treasure_data.model.TableSummary;
 
 public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
@@ -97,22 +98,17 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getCatalogs() throws SQLException {
-        List<DatabaseSummary> ds = null;
+        DatabaseSummary ds = null;
         try {
-            ds = api.showDatabases();
-            if (ds == null) {
-                ds = new ArrayList<DatabaseSummary>();
-            }
+            ds = api.showDatabase();
         } catch (ClientException e) {
             throw new SQLException(e);
         }
 
-        List<TDDatabase> databases = new ArrayList<TDDatabase>();
-        for (DatabaseSummary d : ds) {
-            if (d.getName().equals(database.getName())) {
-                TDDatabase database = new TDDatabase(d.getName());
-                databases.add(database);
-            }
+        ArrayList<TDDatabase> databases = new ArrayList<TDDatabase>();
+        if (ds != null) {
+            TDDatabase database = new TDDatabase(ds.getName());
+            databases.add(database);
         }
 
         List<String> names = Arrays.asList("TABLE_CAT");
@@ -700,11 +696,35 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getTables(String catalog, String schemaPattern,
             String tableNamePattern, String[] types) throws SQLException {
+        /*
+         * catalog - a catalog name; must match the catalog name as it is stored
+         * in the database; "" retrieves those without a catalog; null means
+         * that the catalog name should not be used to narrow the search.
+         * 
+         * In our specific case: if the catalog is null it select the only
+         * available catalog "default". If the catalog is empty we return
+         * nothing since all tables are in the 'default' catalog, and if the
+         * catalog is anything but 'default' return nothing as well.
+         */
         if (catalog == null) {
             catalog = "default";
+        } else if (catalog.isEmpty() || !catalog.equals("default")) {
+            return null;
         }
 
-        String tableNamePattern1 = convertPattern(tableNamePattern);
+        /*
+         * schemaPattern - a schema name pattern; must match the schema name as
+         * it is stored in the database; "" retrieves those without a schema;
+         * null means that the schema name should not be used to narrow the
+         * search.
+         * 
+         * In our specific case: we don't have any schema name, so specifying
+         * one will return nothing. specifying null or "" string will return
+         * everything else not filtered out by the other criteria.
+         */
+        if (!schemaPattern.isEmpty()) {
+            return null;
+        }
 
         List<TableSummary> ts = null;
         try {
@@ -716,20 +736,58 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             throw new SQLException(e);
         }
 
+        /*
+         * types - a list of table types, which must be from the list of table
+         * types returned from getTableTypes(),to include; null returns all
+         * types.
+         * 
+         * In our specific case: if the types are null, there is no filtering
+         * based on this criteria. If the types array is not empty and does not
+         * contain 'TABLE' we return nothing since all Treasure Data tables are
+         * of type 'TABLE'.
+         */
+        if (types != null) {
+            boolean typeTableWanted = false;
+            for (String type : types) {
+                if (type.equals("TABLE")) {
+                    typeTableWanted = true;
+                    break;
+                }
+            }
+            if (!typeTableWanted) {
+                return null;
+            }
+        }
+
+        String tableNamePattern1 = convertPattern(tableNamePattern);
         List<TDTable> tables = new ArrayList<TDTable>();
         for (TableSummary t : ts) {
+            /*
+             * tableNamePattern - a table name pattern; must match the table
+             * name as it is stored in the database.
+             * 
+             * The table name must match the tableNamePattern regexp to be
+             * accepted.
+             */
             if (!t.getName().matches(tableNamePattern1)) {
                 continue;
             }
-
             TDTable table = new TDTable(catalog, t.getName(), "TABLE",
                     "comment");
             tables.add(table);
         }
+        if (tables.isEmpty()) {
+            return null;
+        }
+
         Collections.sort(tables, new Comparator<TDTable>() {
             /**
-             * We sort the output of getTables to guarantee jdbc compliance.
-             * First check by table type then by table name
+             * We sort the output of getTables to guarantee JDBC compliance to
+             * sort by TABLE_TYPE, TABLE_CAT, TABLE_SCHEM, and TABLE_NAME.
+             * 
+             * In our specific case: Sorting by catalog (only one available) and
+             * schema (empty) is not necessary so we sort by type, then table
+             * name.
              */
             public int compare(TDTable o1, TDTable o2) {
                 int compareType = o1.getType().compareTo(o2.getType());

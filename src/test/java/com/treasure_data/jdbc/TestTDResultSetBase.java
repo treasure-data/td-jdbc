@@ -34,6 +34,10 @@ public class TestTDResultSetBase {
             return null;
         }
 
+        public DatabaseSummary showDatabase() throws ClientException {
+            return null;
+        }
+
         public List<TableSummary> showTables() throws ClientException {
             return null;
         }
@@ -55,7 +59,8 @@ public class TestTDResultSetBase {
             return null;
         }
 
-        public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+        public TDResultSetBase select(String sql, int queryTimeout)
+                throws ClientException {
             return null;
         }
 
@@ -88,8 +93,9 @@ public class TestTDResultSetBase {
 
         public JobSummary waitJobResult(Job job) throws ClientException {
             String resultSchema = "[[\"name\",\"string\"]]";
-            return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                    "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            return new JobSummary("12345", JobSummary.Type.HIVE, new Database(
+                    "mugadb"), "url", "rtbl", Status.SUCCESS, "startAt",
+                    "endAt", "query", resultSchema);
         }
 
         public Unpacker getJobResult(Job job) throws ClientException {
@@ -116,8 +122,9 @@ public class TestTDResultSetBase {
 
         public JobSummary waitJobResult(Job job) throws ClientException {
             String resultSchema = "[[\"id\",\"int\"]]";
-            return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                    "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            return new JobSummary("12345", JobSummary.Type.HIVE, new Database(
+                    "mugadb"), "url", "rtbl", Status.SUCCESS, "startAt",
+                    "endAt", "query", resultSchema);
         }
 
         public Unpacker getJobResult(Job job) throws ClientException {
@@ -144,8 +151,9 @@ public class TestTDResultSetBase {
 
         public JobSummary waitJobResult(Job job) throws ClientException {
             String resultSchema = "[[\"id\",\"long\"]]";
-            return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                    "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            return new JobSummary("12345", JobSummary.Type.HIVE, new Database(
+                    "mugadb"), "url", "rtbl", Status.SUCCESS, "startAt",
+                    "endAt", "query", resultSchema);
         }
 
         public Unpacker getJobResult(Job job) throws ClientException {
@@ -172,8 +180,9 @@ public class TestTDResultSetBase {
 
         public JobSummary waitJobResult(Job job) throws ClientException {
             String resultSchema = "[[\"value\",\"double\"]]";
-            return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                    "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+            return new JobSummary("12345", JobSummary.Type.HIVE, new Database(
+                    "mugadb"), "url", "rtbl", Status.SUCCESS, "startAt",
+                    "endAt", "query", resultSchema);
         }
 
         public Unpacker getJobResult(Job job) throws ClientException {
@@ -196,9 +205,8 @@ public class TestTDResultSetBase {
      */
     @Test
     public void testImplicitIntTypeConversion01() throws Exception {
-        int[] values = new int[] {
-                0, 1, -1, Integer.MAX_VALUE, Integer.MIN_VALUE,
-        };
+        int[] values = new int[] { 0, 1, -1, Integer.MAX_VALUE,
+                Integer.MIN_VALUE, };
 
         for (int i = 0; i < values.length; i++) {
             int src = values[i];
@@ -224,9 +232,7 @@ public class TestTDResultSetBase {
      */
     @Test
     public void testImplicitLongTypeConversion01() throws Exception {
-        long[] values = new long[] {
-                0, 1, -1, Long.MAX_VALUE, Long.MIN_VALUE,
-        };
+        long[] values = new long[] { 0, 1, -1, Long.MAX_VALUE, Long.MIN_VALUE, };
 
         for (int i = 0; i < values.length; i++) {
             long src = values[i];
@@ -248,13 +254,13 @@ public class TestTDResultSetBase {
     }
 
     /**
-     * result: 0, 0.0, -0.0, 1, 1.0, -1, -1.0, Double.MAX_VALUE, Double.MIN_VALUE
+     * result: 0, 0.0, -0.0, 1, 1.0, -1, -1.0, Double.MAX_VALUE,
+     * Double.MIN_VALUE
      */
     @Test
     public void testImplicitDoubleTypeConversion01() throws Exception {
-        double[] values = new double[] {
-                0, 0.0, -0.0, 1, 1.0, -1, -1.0, Double.MAX_VALUE, Double.MIN_VALUE
-        };
+        double[] values = new double[] { 0, 0.0, -0.0, 1, 1.0, -1, -1.0,
+                Double.MAX_VALUE, Double.MIN_VALUE };
 
         for (int i = 0; i < values.length; i++) {
             double src = values[i];
@@ -276,9 +282,9 @@ public class TestTDResultSetBase {
     }
 
     /**
-     * result: "0", "0.0", "-0.0", "1", "1.0", "-1", "-1.0"
-     * Byte.MAX_VALUE, Byte.MIN_VALUE, Short.MAX_VALUE, Short.MIN_VALUE
-     * Integer.MAX_VALUE, Integer.MIN_VALUE, Long.MAX_VALUE, Long.MIN_VALUE
+     * result: "0", "0.0", "-0.0", "1", "1.0", "-1", "-1.0" Byte.MAX_VALUE,
+     * Byte.MIN_VALUE, Short.MAX_VALUE, Short.MIN_VALUE Integer.MAX_VALUE,
+     * Integer.MIN_VALUE, Long.MAX_VALUE, Long.MIN_VALUE
      */
     @Test
     public void testImplicitStringTypeConversion01() throws Exception {
@@ -289,12 +295,18 @@ public class TestTDResultSetBase {
             ResultSet rs = new TDResultSet(clientApi, 50, job);
             assertTrue(rs.next());
 
-            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte type
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte
+                                                                     // type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -330,8 +342,11 @@ public class TestTDResultSetBase {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -367,8 +382,11 @@ public class TestTDResultSetBase {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -380,12 +398,18 @@ public class TestTDResultSetBase {
             ResultSet rs = new TDResultSet(clientApi, 50, job);
             assertTrue(rs.next());
 
-            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte type
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte
+                                                                     // type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -421,8 +445,11 @@ public class TestTDResultSetBase {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -434,12 +461,18 @@ public class TestTDResultSetBase {
             ResultSet rs = new TDResultSet(clientApi, 50, job);
             assertTrue(rs.next());
 
-            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte type
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte
+                                                                     // type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -475,8 +508,11 @@ public class TestTDResultSetBase {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -488,12 +524,18 @@ public class TestTDResultSetBase {
             ResultSet rs = new TDResultSet(clientApi, 50, job);
             assertTrue(rs.next());
 
-            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte type
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte
+                                                                     // type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -505,12 +547,18 @@ public class TestTDResultSetBase {
             ResultSet rs = new TDResultSet(clientApi, 50, job);
             assertTrue(rs.next());
 
-            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte type
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((byte) Byte.parseByte(src), rs.getByte(1)); // to byte
+                                                                     // type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -528,11 +576,16 @@ public class TestTDResultSetBase {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -550,11 +603,16 @@ public class TestTDResultSetBase {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to short type
+            assertEquals((short) Short.parseShort(src), rs.getShort(1)); // to
+                                                                         // short
+                                                                         // type
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -580,8 +638,11 @@ public class TestTDResultSetBase {
             }
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -607,8 +668,11 @@ public class TestTDResultSetBase {
             }
             assertEquals(Integer.parseInt(src), rs.getInt(1)); // to int type
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -638,8 +702,11 @@ public class TestTDResultSetBase {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());
@@ -669,8 +736,11 @@ public class TestTDResultSetBase {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Long.parseLong(src), rs.getLong(1)); // to long type
-            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float type
-            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to double type
+            assertEquals(Float.parseFloat(src), rs.getFloat(1), 0); // to float
+                                                                    // type
+            assertEquals(Double.parseDouble(src), rs.getDouble(1), 0); // to
+                                                                       // double
+                                                                       // type
             assertEquals(src, rs.getString(1)); // to String type
 
             assertFalse(rs.next());

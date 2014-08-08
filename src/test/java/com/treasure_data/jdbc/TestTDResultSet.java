@@ -35,6 +35,10 @@ public class TestTDResultSet {
             return null;
         }
 
+        public DatabaseSummary showDatabase() throws ClientException {
+            return null;
+        }
+
         public List<TableSummary> showTables() throws ClientException {
             return null;
         }
@@ -56,7 +60,8 @@ public class TestTDResultSet {
             return null;
         }
 
-        public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+        public TDResultSetBase select(String sql, int queryTimeout)
+                throws ClientException {
             return null;
         }
 
@@ -87,8 +92,10 @@ public class TestTDResultSet {
             ClientAPI clientApi = new MockClientAPI() {
                 public JobSummary waitJobResult(Job job) throws ClientException {
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                    return new JobSummary("12345", JobSummary.Type.HIVE,
+                            new Database("mugadb"), "url", "rtbl",
+                            Status.SUCCESS, "startAt", "endAt", "query",
+                            resultSchema);
                 }
 
                 public Unpacker getJobResult(Job job) throws ClientException {
@@ -125,8 +132,10 @@ public class TestTDResultSet {
             ClientAPI clientApi = new MockClientAPI() {
                 public JobSummary waitJobResult(Job job) throws ClientException {
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                    return new JobSummary("12345", JobSummary.Type.HIVE,
+                            new Database("mugadb"), "url", "rtbl",
+                            Status.SUCCESS, "startAt", "endAt", "query",
+                            resultSchema);
                 }
 
                 public Unpacker getJobResult(Job job) throws ClientException {
@@ -163,8 +172,10 @@ public class TestTDResultSet {
             ClientAPI clientApi = new MockClientAPI() {
                 public JobSummary waitJobResult(Job job) throws ClientException {
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                    return new JobSummary("12345", JobSummary.Type.HIVE,
+                            new Database("mugadb"), "url", "rtbl",
+                            Status.SUCCESS, "startAt", "endAt", "query",
+                            resultSchema);
                 }
 
                 public Unpacker getJobResult(Job job) throws ClientException {
@@ -210,8 +221,10 @@ public class TestTDResultSet {
                     }
 
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                    return new JobSummary("12345", JobSummary.Type.HIVE,
+                            new Database("mugadb"), "url", "rtbl",
+                            Status.SUCCESS, "startAt", "endAt", "query",
+                            resultSchema);
                 }
 
                 public Unpacker getJobResult(Job job) throws ClientException {
@@ -239,7 +252,8 @@ public class TestTDResultSet {
                 rs.next();
                 fail();
             } catch (Throwable t) {
-                assertTrue(t instanceof SQLException); // it is thrown by fetchRows
+                assertTrue(t instanceof SQLException); // it is thrown by
+                                                       // fetchRows
                 assertTrue(t.getCause() instanceof TimeoutException);
             }
         }
@@ -253,8 +267,10 @@ public class TestTDResultSet {
                     }
 
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                    return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                            "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                    return new JobSummary("12345", JobSummary.Type.HIVE,
+                            new Database("mugadb"), "url", "rtbl",
+                            Status.SUCCESS, "startAt", "endAt", "query",
+                            resultSchema);
                 }
 
                 public Unpacker getJobResult(Job job) throws ClientException {
@@ -293,8 +309,9 @@ public class TestTDResultSet {
         ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
                 String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                return new JobSummary("12345", JobSummary.Type.HIVE,
+                        new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
+                        "startAt", "endAt", "query", resultSchema);
             }
 
             public Unpacker getJobResult(Job job) throws ClientException {
@@ -332,8 +349,9 @@ public class TestTDResultSet {
         ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
                 String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
-                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                return new JobSummary("12345", JobSummary.Type.HIVE,
+                        new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
+                        "startAt", "endAt", "query", resultSchema);
             }
 
             public Unpacker getJobResult(Job job) throws ClientException {
@@ -374,8 +392,9 @@ public class TestTDResultSet {
         ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
                 String resultSchema = "[[\"p1\",\"string\"],[\"p2\",\"string\"]]";
-                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                return new JobSummary("12345", JobSummary.Type.HIVE,
+                        new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
+                        "startAt", "endAt", "query", resultSchema);
             }
 
             public Unpacker getJobResult(Job job) throws ClientException {
@@ -411,8 +430,9 @@ public class TestTDResultSet {
         ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
                 String resultSchema = "[[\"p1\",\"string\"],[\"p2\",\"float\"],[\"p3\",\"double\"],[\"p4\",\"boolean\"]]";
-                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                return new JobSummary("12345", JobSummary.Type.HIVE,
+                        new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
+                        "startAt", "endAt", "query", resultSchema);
             }
         };
         Job job = new Job("12345");
@@ -425,10 +445,14 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
-            assertEquals(Utils.TDTypeToSqlType(Constants.FLOAT_TYPE_NAME), rsMetaData.getColumnType(2));
-            assertEquals(Utils.TDTypeToSqlType(Constants.DOUBLE_TYPE_NAME), rsMetaData.getColumnType(3));
-            assertEquals(Utils.TDTypeToSqlType(Constants.BOOLEAN_TYPE_NAME), rsMetaData.getColumnType(4));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME),
+                    rsMetaData.getColumnType(1));
+            assertEquals(Utils.TDTypeToSqlType(Constants.FLOAT_TYPE_NAME),
+                    rsMetaData.getColumnType(2));
+            assertEquals(Utils.TDTypeToSqlType(Constants.DOUBLE_TYPE_NAME),
+                    rsMetaData.getColumnType(3));
+            assertEquals(Utils.TDTypeToSqlType(Constants.BOOLEAN_TYPE_NAME),
+                    rsMetaData.getColumnType(4));
             try {
                 rsMetaData.getColumnType(5);
                 fail();
@@ -443,10 +467,14 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(1));
-            assertEquals(Constants.FLOAT_TYPE_NAME, rsMetaData.getColumnTypeName(2));
-            assertEquals(Constants.DOUBLE_TYPE_NAME, rsMetaData.getColumnTypeName(3));
-            assertEquals(Constants.BOOLEAN_TYPE_NAME, rsMetaData.getColumnTypeName(4));
+            assertEquals(Constants.STRING_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(1));
+            assertEquals(Constants.FLOAT_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(2));
+            assertEquals(Constants.DOUBLE_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(3));
+            assertEquals(Constants.BOOLEAN_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(4));
             try {
                 rsMetaData.getColumnTypeName(5);
                 fail();
@@ -478,8 +506,9 @@ public class TestTDResultSet {
         ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
                 String resultSchema = "[[\"p1\",\"tinyint\"],[\"p2\",\"smallint\"],[\"p3\",\"int\"],[\"p4\",\"bigint\"]]";
-                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                return new JobSummary("12345", JobSummary.Type.HIVE,
+                        new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
+                        "startAt", "endAt", "query", resultSchema);
             }
         };
         Job job = new Job("12345");
@@ -492,10 +521,14 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Utils.TDTypeToSqlType(Constants.TINYINT_TYPE_NAME), rsMetaData.getColumnType(1));
-            assertEquals(Utils.TDTypeToSqlType(Constants.SMALLINT_TYPE_NAME), rsMetaData.getColumnType(2));
-            assertEquals(Utils.TDTypeToSqlType(Constants.INT_TYPE_NAME), rsMetaData.getColumnType(3));
-            assertEquals(Utils.TDTypeToSqlType(Constants.BIGINT_TYPE_NAME), rsMetaData.getColumnType(4));
+            assertEquals(Utils.TDTypeToSqlType(Constants.TINYINT_TYPE_NAME),
+                    rsMetaData.getColumnType(1));
+            assertEquals(Utils.TDTypeToSqlType(Constants.SMALLINT_TYPE_NAME),
+                    rsMetaData.getColumnType(2));
+            assertEquals(Utils.TDTypeToSqlType(Constants.INT_TYPE_NAME),
+                    rsMetaData.getColumnType(3));
+            assertEquals(Utils.TDTypeToSqlType(Constants.BIGINT_TYPE_NAME),
+                    rsMetaData.getColumnType(4));
             try {
                 rsMetaData.getColumnType(5);
                 fail();
@@ -510,10 +543,14 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Constants.TINYINT_TYPE_NAME, rsMetaData.getColumnTypeName(1));
-            assertEquals(Constants.SMALLINT_TYPE_NAME, rsMetaData.getColumnTypeName(2));
-            assertEquals(Constants.INT_TYPE_NAME, rsMetaData.getColumnTypeName(3));
-            assertEquals(Constants.BIGINT_TYPE_NAME, rsMetaData.getColumnTypeName(4));
+            assertEquals(Constants.TINYINT_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(1));
+            assertEquals(Constants.SMALLINT_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(2));
+            assertEquals(Constants.INT_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(3));
+            assertEquals(Constants.BIGINT_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(4));
             try {
                 rsMetaData.getColumnTypeName(5);
                 fail();
@@ -545,8 +582,9 @@ public class TestTDResultSet {
         ClientAPI clientApi = new MockClientAPI() {
             public JobSummary waitJobResult(Job job) throws ClientException {
                 String resultSchema = "[[\"p1\",\"map<string,int>\"],[\"p2\",\"array<int>\"],[\"p3\",\"struct<int>\"]]";
-                return new JobSummary("12345", JobSummary.Type.HIVE, new Database("mugadb"),
-                        "url", "rtbl", Status.SUCCESS, "startAt", "endAt", "query", resultSchema);
+                return new JobSummary("12345", JobSummary.Type.HIVE,
+                        new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
+                        "startAt", "endAt", "query", resultSchema);
             }
         };
         Job job = new Job("12345");
@@ -559,9 +597,12 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(1));
-            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(2));
-            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME), rsMetaData.getColumnType(3));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME),
+                    rsMetaData.getColumnType(1));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME),
+                    rsMetaData.getColumnType(2));
+            assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME),
+                    rsMetaData.getColumnType(3));
             try {
                 rsMetaData.getColumnType(4);
                 fail();
@@ -576,9 +617,12 @@ public class TestTDResultSet {
             } catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
-            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(1));
-            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(2));
-            assertEquals(Constants.STRING_TYPE_NAME, rsMetaData.getColumnTypeName(3));
+            assertEquals(Constants.STRING_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(1));
+            assertEquals(Constants.STRING_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(2));
+            assertEquals(Constants.STRING_TYPE_NAME,
+                    rsMetaData.getColumnTypeName(3));
             try {
                 rsMetaData.getColumnTypeName(4);
                 fail();

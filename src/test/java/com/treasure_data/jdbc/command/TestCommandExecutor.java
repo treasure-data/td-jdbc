@@ -29,8 +29,8 @@ import com.treasure_data.model.TableSummary;
 public class TestCommandExecutor {
 
     /*
-     * throw an exception by invalid context.mode
-     * invalid mode means number without EXECDIRECT and PREPARE
+     * throw an exception by invalid context.mode invalid mode means number
+     * without EXECDIRECT and PREPARE
      */
     @Test
     public void testExecute01() throws Exception {
@@ -67,8 +67,8 @@ public class TestCommandExecutor {
     }
 
     /*
-     * throw an exception by invalid context.sql
-     * invalid sql means sql statement without insert/create/drop/select
+     * throw an exception by invalid context.sql invalid sql means sql statement
+     * without insert/create/drop/select
      */
     @Test
     public void testExecute03() throws Exception {
@@ -87,8 +87,8 @@ public class TestCommandExecutor {
     }
 
     /*
-     * throw an exception by invalid context.sql
-     * here invalid sql means a sql statement that includes jdbc parameters like '?'.
+     * throw an exception by invalid context.sql here invalid sql means a sql
+     * statement that includes jdbc parameters like '?'.
      */
     @Test
     public void testExecute04() throws Exception {
@@ -113,6 +113,10 @@ public class TestCommandExecutor {
                 return null;
             }
 
+            public DatabaseSummary showDatabase() throws ClientException {
+                return null;
+            }
+
             public List<TableSummary> showTables() throws ClientException {
                 return null;
             }
@@ -125,8 +129,8 @@ public class TestCommandExecutor {
                 throw new ClientException("mock exception");
             }
 
-            public boolean insert(String tableName,
-                    Map<String, Object> record) throws ClientException {
+            public boolean insert(String tableName, Map<String, Object> record)
+                    throws ClientException {
                 throw new ClientException("mock exception");
             }
 
@@ -134,7 +138,8 @@ public class TestCommandExecutor {
                 throw new ClientException("mock exception");
             }
 
-            public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+            public TDResultSetBase select(String sql, int queryTimeout)
+                    throws ClientException {
                 throw new ClientException("mock exception");
             }
 
@@ -225,8 +230,8 @@ public class TestCommandExecutor {
     }
 
     /*
-     * throw an exception by invalid context.sql
-     * invalid sql means sql statement without insert/create/drop/select
+     * throw an exception by invalid context.sql invalid sql means sql statement
+     * without insert/create/drop/select
      */
     @Test
     public void testExecute07() throws Exception {
@@ -245,13 +250,18 @@ public class TestCommandExecutor {
     }
 
     /*
-     * throw an exception by invalid context.sql
-     * here sql means a sql statement that includes jdbc parameters like '?'.
+     * throw an exception by invalid context.sql here sql means a sql statement
+     * that includes jdbc parameters like '?'.
      */
-    @Test @Ignore
+    @Test
+    @Ignore
     public void testExecute08() throws Exception { // FIXME #MN
         ClientAPI api = new ClientAPI() {
             public List<DatabaseSummary> showDatabases() throws ClientException {
+                return null;
+            }
+
+            public DatabaseSummary showDatabase() throws ClientException {
                 return null;
             }
 
@@ -267,8 +277,8 @@ public class TestCommandExecutor {
                 throw new ClientException("mock exception");
             }
 
-            public boolean insert(String tableName,
-                    Map<String, Object> record) throws ClientException {
+            public boolean insert(String tableName, Map<String, Object> record)
+                    throws ClientException {
                 throw new ClientException("mock exception");
             }
 
@@ -276,7 +286,8 @@ public class TestCommandExecutor {
                 throw new ClientException("mock exception");
             }
 
-            public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+            public TDResultSetBase select(String sql, int queryTimeout)
+                    throws ClientException {
                 throw new ClientException("mock exception");
             }
 
@@ -322,7 +333,8 @@ public class TestCommandExecutor {
         }
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void select01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
@@ -331,13 +343,15 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void select02() throws Exception {
         Properties props = new Properties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
+        props.load(this.getClass().getClassLoader()
+                .getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TDClientAPI clientApi =
-            new TDClientAPI(client, props, new Database("mugadb"));
+        TDClientAPI clientApi = new TDClientAPI(client, props, new Database(
+                "mugadb"));
         CommandExecutor exec = new CommandExecutor(clientApi);
 
         CommandContext w = new CommandContext();
@@ -346,7 +360,8 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void createTable01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
@@ -355,13 +370,15 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void createTable02() throws Exception {
         Properties props = new Properties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
+        props.load(this.getClass().getClassLoader()
+                .getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TDClientAPI clientAdaptor =
-            new TDClientAPI(client, props, new Database("mugadb"));
+        TDClientAPI clientAdaptor = new TDClientAPI(client, props,
+                new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
@@ -370,7 +387,8 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void dropTable01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
@@ -379,13 +397,15 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void dropTable02() throws Exception {
         Properties props = new Properties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
+        props.load(this.getClass().getClassLoader()
+                .getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TDClientAPI clientAdaptor =
-            new TDClientAPI(client, props, new Database("mugadb"));
+        TDClientAPI clientAdaptor = new TDClientAPI(client, props,
+                new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         CommandContext w = new CommandContext();
@@ -394,7 +414,8 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void insert01() throws Exception {
         CommandExecutor exec = new CommandExecutor(new NullClientAPI());
         CommandContext w = new CommandContext();
@@ -403,13 +424,15 @@ public class TestCommandExecutor {
         exec.execute(w);
     }
 
-    @Test @Ignore
+    @Test
+    @Ignore
     public void insert02() throws Exception {
         Properties props = new Properties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("treasure-data.properties"));
+        props.load(this.getClass().getClassLoader()
+                .getResourceAsStream("treasure-data.properties"));
         TreasureDataClient client = new TreasureDataClient(props);
-        TDClientAPI clientAdaptor =
-            new TDClientAPI(client, props, new Database("mugadb"));
+        TDClientAPI clientAdaptor = new TDClientAPI(client, props,
+                new Database("mugadb"));
         CommandExecutor exec = new CommandExecutor(clientAdaptor);
 
         String sql = "insert into table01 (%s, %s) values (%s, '%s')";

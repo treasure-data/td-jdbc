@@ -24,6 +24,10 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
+    public DatabaseSummary showDatabase() throws ClientException {
+        return null;
+    }
+
     public List<TableSummary> showTables() throws ClientException {
         return null;
     }
@@ -36,7 +40,8 @@ public class NullClientAPI implements ClientAPI {
         return true;
     }
 
-    public boolean insert(String tableName, Map<String, Object> record) throws ClientException {
+    public boolean insert(String tableName, Map<String, Object> record)
+            throws ClientException {
         return true;
     }
 
@@ -48,7 +53,8 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
-    public TDResultSetBase select(String sql, int queryTimeout) throws ClientException {
+    public TDResultSetBase select(String sql, int queryTimeout)
+            throws ClientException {
         return null;
     }
 

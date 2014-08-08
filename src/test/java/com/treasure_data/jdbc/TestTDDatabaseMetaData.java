@@ -18,30 +18,29 @@ import com.treasure_data.model.Database;
 import com.treasure_data.model.DatabaseSummary;
 import com.treasure_data.model.TableSummary;
 
-
 public class TestTDDatabaseMetaData {
 
     @Test
     public void getCatalogSeparator() throws Exception {
-        TDDatabaseMetaData metadata = new TDDatabaseMetaData(new NullClientAPI());
+        TDDatabaseMetaData metadata = new TDDatabaseMetaData(
+                new NullClientAPI());
         assertEquals(".", metadata.getCatalogSeparator());
     }
 
     @Test
     public void getCatalogTerm() throws Exception {
-        TDDatabaseMetaData metadata = new TDDatabaseMetaData(new NullClientAPI());
+        TDDatabaseMetaData metadata = new TDDatabaseMetaData(
+                new NullClientAPI());
         assertEquals("database", metadata.getCatalogTerm());
     }
 
     @Test
     public void getCatalogs() throws Exception {
         NullClientAPI api = new NullClientAPI() {
-            @Override public List<DatabaseSummary> showDatabases() throws ClientException {
-                List<DatabaseSummary> list = new ArrayList<DatabaseSummary>();
-                list.add(new DatabaseSummary("db01", 10, "created_at01", "updated_at01"));
-                list.add(new DatabaseSummary("db02", 10, "created_at02", "updated_at02"));
-                list.add(new DatabaseSummary("db03", 10, "created_at03", "updated_at03"));
-                return list;
+            @Override
+            public DatabaseSummary showDatabase() throws ClientException {
+                return new DatabaseSummary("db01", 10, "created_at01",
+                        "updated_at01");
             }
         };
 
@@ -68,14 +67,6 @@ public class TestTDDatabaseMetaData {
                     assertTrue(t instanceof SQLException);
                 }
 
-                assertTrue(rs.next());
-                assertEquals("db02", rs.getString(1));
-                assertEquals("db02", rs.getString("TABLE_CAT"));
-
-                assertTrue(rs.next());
-                assertEquals("db03", rs.getString(1));
-                assertEquals("db03", rs.getString("TABLE_CAT"));
-
                 assertFalse(rs.next());
             } finally {
                 if (rs != null) {
@@ -88,15 +79,17 @@ public class TestTDDatabaseMetaData {
     @Test
     public void getColumns() throws Exception {
         NullClientAPI api = new NullClientAPI() {
-            @Override public List<TableSummary> showTables() throws ClientException {
+            @Override
+            public List<TableSummary> showTables() throws ClientException {
                 List<TableSummary> list = new ArrayList<TableSummary>();
-                list.add(new TableSummary(new Database("mugadb"), "tbl01", 12344,
+                list.add(new TableSummary(
+                        new Database("mugadb"),
+                        "tbl01",
+                        12344,
                         "[[\"f01\",\"string\"],[\"f02\",\"int\"],[\"f03\",\"long\"]]",
-                        "2012-02-20T18:31:48Z",
-                        "2012-02-20T18:31:48Z"));
-                list.add(new TableSummary(new Database("mugadb"), "tbl02", 12344,
-                        "[]",
-                        "2012-02-20T18:31:48Z",
+                        "2012-02-20T18:31:48Z", "2012-02-20T18:31:48Z"));
+                list.add(new TableSummary(new Database("mugadb"), "tbl02",
+                        12344, "[]", "2012-02-20T18:31:48Z",
                         "2012-02-20T18:31:48Z"));
                 return list;
             }
@@ -148,15 +141,17 @@ public class TestTDDatabaseMetaData {
     @Test
     public void getTables() throws Exception {
         NullClientAPI api = new NullClientAPI() {
-            @Override public List<TableSummary> showTables() throws ClientException {
+            @Override
+            public List<TableSummary> showTables() throws ClientException {
                 List<TableSummary> list = new ArrayList<TableSummary>();
-                list.add(new TableSummary(new Database("mugadb"), "tbl01", 12344,
+                list.add(new TableSummary(
+                        new Database("mugadb"),
+                        "tbl01",
+                        12344,
                         "[[\"f01\",\"string\"],[\"f02\",\"int\"],[\"f03\",\"long\"]]",
-                        "2012-02-20T18:31:48Z",
-                        "2012-02-20T18:31:48Z"));
-                list.add(new TableSummary(new Database("mugadb"), "tbl02", 12344,
-                        "[]",
-                        "2012-02-20T18:31:48Z",
+                        "2012-02-20T18:31:48Z", "2012-02-20T18:31:48Z"));
+                list.add(new TableSummary(new Database("mugadb"), "tbl02",
+                        12344, "[]", "2012-02-20T18:31:48Z",
                         "2012-02-20T18:31:48Z"));
                 return list;
             }

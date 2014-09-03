@@ -1,8 +1,12 @@
-Release 0.2.12 - 20XX/XX/XX
+Release 0.2.12 - 2014/09/03
   IMPROVEMENTS
     Upgrades td-logger-java 0.2.0
     Upgrades td-client-java 0.5.1
     Improves Proxy settings as URL parameters.
+
+  BUG FIXES
+    Makes Connection#getMetaData#getCatalogs return just the selected database.
+    Implementes filtering by catalog, schema name, and list of types in Connection#getMetadata#getTables function.
 
 Release 0.2.11 - 2014/06/26
   NEW FEATURES

@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -53,30 +54,34 @@ public class TDClientAPI implements ClientAPI {
 
     private int maxRows = 5000;
 
-    public TDClientAPI(TDConnection conn) {
+    public TDClientAPI(TDConnection conn) throws SQLException {
         this(null, new TreasureDataClient(conn.getProperties()), conn
                 .getProperties(), conn.getDatabase(), conn.getMaxRows());
     }
 
-    public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn) {
+    public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn) throws SQLException {
         this(desc, new TreasureDataClient(conn.getProperties()), conn
                 .getProperties(), conn.getDatabase(), conn.getMaxRows());
     }
 
     public TDClientAPI(TreasureDataClient client, Properties props,
-            Database database) {
+            Database database) throws SQLException {
         this(null, client, props, database, 5000);
     }
 
     public TDClientAPI(JDBCURLParser.Desc desc, TreasureDataClient client,
-            Properties props, Database database, int maxRows) {
+            Properties props, Database database, int maxRows) throws SQLException {
         this.client = client;
         this.props = props;
         this.database = database;
         this.maxRows = maxRows;
         this.desc = desc;
 
-        checkCredentials();
+        try {
+            checkCredentials();
+        } catch (ClientException e) {
+            throw new SQLException(e);
+        }
 
         {
             Properties sysprops = System.getProperties();
@@ -90,7 +95,7 @@ public class TDClientAPI implements ClientAPI {
         }
     }
 
-    private void checkCredentials() {
+    private void checkCredentials() throws ClientException {
         String apiKey = client.getTreasureDataCredentials().getAPIKey();
         if (apiKey != null) {
             return;
@@ -102,12 +107,7 @@ public class TDClientAPI implements ClientAPI {
 
         String user = props.getProperty("user");
         String password = props.getProperty("password");
-        try {
-            client.authenticate(new AuthenticateRequest(user, password));
-        } catch (ClientException e) {
-            LOG.throwing(this.getClass().getName(), "checkCredentials", e);
-            return;
-        }
+        client.authenticate(new AuthenticateRequest(user, password));
     }
 
     public List<DatabaseSummary> showDatabases() throws ClientException {

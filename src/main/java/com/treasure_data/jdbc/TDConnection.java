@@ -18,6 +18,7 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 
+import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
@@ -47,7 +48,15 @@ public class TDConnection implements Connection, Constants {
         database = new Database(desc.database);
 
         // create a ClientAPI object
-        this.api = new TDClientAPI(desc, this);
+        api = new TDClientAPI(desc, this);
+        try {
+            // check whether the specified database exists or not
+            if (api.showDatabase() == null) {
+                throw new SQLException("Database doesn't exist: " + desc.database);
+            }
+        } catch (ClientException e) {
+            throw new SQLException(e.getMessage(), e);
+        }
     }
 
     /**

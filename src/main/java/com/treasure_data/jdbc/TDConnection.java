@@ -109,15 +109,14 @@ public class TDConnection implements Connection, Constants {
 
         // database
         if (desc.database == null) {
-            throw new NullPointerException(
-                    "Database is not specified within URL: " + desc.url);
+            throw new SQLException("Database is not specified within URL: " + desc.url);
         }
 
         // user
         String user = props.getProperty(Config.TD_JDBC_USER);
         if (user == null || user.isEmpty()) {
             if (desc.user == null || desc.user.isEmpty()) {
-                throw new NullPointerException("User is not specified");
+                throw new SQLException("User is not specified");
             }
             props.setProperty(Config.TD_JDBC_USER, desc.user);
         }
@@ -126,7 +125,7 @@ public class TDConnection implements Connection, Constants {
         String password = props.getProperty(Config.TD_JDBC_PASSWORD);
         if (password == null || password.isEmpty()) {
             if (desc.password == null || desc.password.isEmpty()) {
-                throw new NullPointerException("Password is not specified");
+                throw new SQLException("Password is not specified");
             }
             props.setProperty(Config.TD_JDBC_PASSWORD, desc.password);
         }

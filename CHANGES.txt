@@ -1,4 +1,10 @@
-Release 0.2.13 - 20XX/XX/XX
+Release 0.2.13 - 2014/09/10
+  IMPROVEMENTS
+    Upgrades td-client-java 0.5.2
+    Improves some validations
+      Connection: it throws SQLException if the specified user or password is null.
+      Connection: it throws SQLException if the specified database doesn't exist.
+      TDClientAPI: it throws SQLException if email or password is incorrect.
 
 Release 0.2.12 - 2014/09/03
   IMPROVEMENTS

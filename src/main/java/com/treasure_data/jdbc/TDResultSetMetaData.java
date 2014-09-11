@@ -166,6 +166,7 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         // TODO: this would be better handled in an enum
         String type = columnTypes.get(column - 1);
         if ("string".equalsIgnoreCase(type) ||
+                "varchar".equalsIgnoreCase(type) ||
                 "boolean".equalsIgnoreCase(type) ||
                 type.startsWith("map<") ||
                 type.startsWith("array<") ||

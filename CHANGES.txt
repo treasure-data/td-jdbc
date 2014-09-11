@@ -1,4 +1,6 @@
-Release 0.2.14 - 20XX/XX/XX
+Release 0.2.14 - 2014/09/11
+  IMPROVEMENTS
+    ResultSetMetaData#isSigned supports 'varchar' type for presto engine.
 
 Release 0.2.13 - 2014/09/10
   IMPROVEMENTS

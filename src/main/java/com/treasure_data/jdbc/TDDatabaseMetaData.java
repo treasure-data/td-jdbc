@@ -704,7 +704,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         if (catalog == null || catalog.isEmpty()) {
             catalog = database.getName();
         } else if (!catalog.equals(database.getName())) {
-            return null; // TODO return an empty result set
+            return getEmptyTables();
         }
 
         /*
@@ -735,7 +735,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             }
 
             if (!typeTableWanted) {
-                return null; // TODO return an empty result set
+                return getEmptyTables();
             }
         }
 
@@ -757,7 +757,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         }
 
         if (tables.isEmpty()) {
-            return null; // TODO return an empty result set
+            return getEmptyTables();
         }
 
         Collections.sort(tables, new Comparator<TDTable>() {
@@ -832,6 +832,30 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         } catch (Exception e) {
             throw new SQLException(e);
         }
+    }
+
+    private static ResultSet getEmptyTables() throws SQLException {
+        List<String> nameList = Arrays.asList("TABLE_CAT", "TABLE_SCHEM",
+                "TABLE_NAME", "TABLE_TYPE", "REMARKS", "TYPE_CAT",
+                "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME",
+                "REF_GENERATION");
+        List<String> typeList = Arrays.asList("STRING", // "TABLE_CAT"
+                "STRING", // "TABLE_SCHEM"
+                "STRING", // "TABLE_NAME"
+                "STRING", // "TABLE_TYPE"
+                "STRING", // "REMARKS"
+                "STRING", // "TYPE_CAT"
+                "STRING", // "TYPE_SCHEM"
+                "STRING", // "TYPE_NAME"
+                "STRING", // "SELF_REFERENCING_COL_NAME"
+                "STRING" // "REF_GENERATION"
+        );
+        List<TDTable> tables = new ArrayList<TDTable>();
+        return new TDMetaDataResultSet<TDTable>(nameList, typeList, tables) {
+            public boolean next() throws SQLException {
+                return false;
+            }
+        };
     }
 
     /**

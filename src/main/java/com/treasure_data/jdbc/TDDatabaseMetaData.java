@@ -697,34 +697,19 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     public ResultSet getTables(String catalog, String schemaPattern,
             String tableNamePattern, String[] types) throws SQLException {
         /*
-         * catalog - a catalog name; must match the catalog name as it is stored
-         * in the database; "" retrieves those without a catalog; null means
-         * that the catalog name should not be used to narrow the search.
-         * 
-         * In our specific case: if the catalog is null it select the only
-         * available catalog "default". If the catalog is empty we return
-         * nothing since all tables are in the 'default' catalog, and if the
-         * catalog is anything but 'default' return nothing as well.
+         * finds table descriptions in the specified database.
+         * if catalog is not same as the specified database, it returns null.
+         * if catalog is null or catalog is empty, catalog is set to the specified database.
          */
-        if (catalog == null) {
-            catalog = "default";
-        } else if (catalog.isEmpty() || !catalog.equals("default")) {
-            return null;
+        if (catalog == null || catalog.isEmpty()) {
+            catalog = database.getName();
+        } else if (!catalog.equals(database.getName())) {
+            return null; // TODO return an empty result set
         }
 
         /*
-         * schemaPattern - a schema name pattern; must match the schema name as
-         * it is stored in the database; "" retrieves those without a schema;
-         * null means that the schema name should not be used to narrow the
-         * search.
-         * 
-         * In our specific case: we don't have any schema name, so specifying
-         * one will return nothing. Specifying null or "" string will return
-         * everything else not filtered out by the other criteria.
+         * ignores schemaPattern for now. it is not used for searching table descriptions.
          */
-        if (schemaPattern != null && !schemaPattern.isEmpty()) {
-            return null;
-        }
 
         List<TableSummary> ts = null;
         try {
@@ -737,14 +722,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         }
 
         /*
-         * types - a list of table types, which must be from the list of table
-         * types returned from getTableTypes(),to include; null returns all
-         * types.
-         * 
-         * In our specific case: if the types are null, there is no filtering
-         * based on this criteria. If the types array is not empty and does not
-         * contain 'TABLE' we return nothing since all Treasure Data tables are
-         * of type 'TABLE'.
+         * if types is null or includes 'TABLE', it searches table descriptions in the specified database.
+         * otherwise it returns null.
          */
         if (types != null) {
             boolean typeTableWanted = false;
@@ -754,8 +733,9 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     break;
                 }
             }
+
             if (!typeTableWanted) {
-                return null;
+                return null; // TODO return an empty result set
             }
         }
 
@@ -776,8 +756,9 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     "comment");
             tables.add(table);
         }
+
         if (tables.isEmpty()) {
-            return null;
+            return null; // TODO return an empty result set
         }
 
         Collections.sort(tables, new Comparator<TDTable>() {

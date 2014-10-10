@@ -158,25 +158,18 @@ public class TestTDDatabaseMetaData {
         };
 
         {
-            TDDatabaseMetaData metadata = new TDDatabaseMetaData(api);
+            TDDatabaseMetaData metadata = new TDDatabaseMetaData(new Database("mugadb"), api);
             ResultSet rs = null;
             try {
                 rs = metadata.getTables(null, null, null, null);
-
-                try {
-                    rs.getString(1);
-                } catch (Throwable t) {
-                    assertTrue(t instanceof SQLException);
-                }
-
                 assertTrue(rs.next());
-                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals("mugadb", rs.getString("TABLE_CAT"));
                 assertEquals(null, rs.getString("TABLE_SCHEM"));
                 assertEquals("tbl01", rs.getString("TABLE_NAME"));
                 assertEquals("TABLE", rs.getString("TABLE_TYPE"));
 
                 assertTrue(rs.next());
-                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals("mugadb", rs.getString("TABLE_CAT"));
                 assertEquals(null, rs.getString("TABLE_SCHEM"));
                 assertEquals("tbl02", rs.getString("TABLE_NAME"));
                 assertEquals("TABLE", rs.getString("TABLE_TYPE"));

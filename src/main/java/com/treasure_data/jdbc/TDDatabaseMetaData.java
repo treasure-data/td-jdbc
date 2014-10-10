@@ -752,8 +752,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             if (!t.getName().matches(tableNamePattern1)) {
                 continue;
             }
-            TDTable table = new TDTable(catalog, t.getName(), "TABLE",
-                    "comment");
+            TDTable table = new TDTable(catalog, t.getName(), "TABLE", "comment");
             tables.add(table);
         }
 
@@ -785,7 +784,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME",
                 "REF_GENERATION");
 
-        List<String> typeList = Arrays.asList("STRING", // "TABLE_CAT"
+        List<String> typeList = Arrays.asList(
+                "STRING", // "TABLE_CAT"
                 "STRING", // "TABLE_SCHEM"
                 "STRING", // "TABLE_NAME"
                 "STRING", // "TABLE_TYPE"
@@ -794,7 +794,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 "STRING", // "TYPE_SCHEM"
                 "STRING", // "TYPE_NAME"
                 "STRING", // "SELF_REFERENCING_COL_NAME"
-                "STRING" // "REF_GENERATION"
+                "STRING"  // "REF_GENERATION"
         );
 
         try {
@@ -809,27 +809,20 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
                     TDTable t = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(10);
-                    a.add(t.getTableCatalog()); // TABLE_CAT String => table
-                                                // catalog (may be null)
-                    a.add(null); // TABLE_SCHEM String => table schema (may be
-                                 // null)
-                    a.add(t.getTableName()); // TABLE_NAME String => table name
+                    a.add(t.getTableCatalog());     // TABLE_CAT String => table catalog (may be null)
+                    a.add(null);                    // TABLE_SCHEM String => table schema (may be null)
+                    a.add(t.getTableName());        // TABLE_NAME String => table name
                     try {
-                        a.add(t.getSqlTableType()); // TABLE_TYPE String =>
-                                                    // "TABLE","VIEW"
+                        a.add(t.getSqlTableType()); // TABLE_TYPE String => "TABLE"
                     } catch (Exception e) {
                         throw new SQLException(e);
                     }
-                    a.add(t.getComment()); // REMARKS String => explanatory
-                                           // comment on the table
-                    a.add(null); // TYPE_CAT String => the types catalog (may be
-                                 // null)
-                    a.add(null); // TYPE_SCHEM String => the types schema (may
-                                 // be null)
-                    a.add(null); // TYPE_NAME String => type name (may be null)
-                    a.add(null); // SELF_REFERENCING_COL_NAME String => ... (may
-                                 // be null)
-                    a.add(null); // REF_GENERATION String => ... (may be null)
+                    a.add(t.getComment());          // REMARKS String => explanatory comment on the table
+                    a.add(null);                    // TYPE_CAT String => the types catalog (may be null)
+                    a.add(null);                    // TYPE_SCHEM String => the types schema (may be null)
+                    a.add(null);                    // TYPE_NAME String => type name (may be null)
+                    a.add(null);                    // SELF_REFERENCING_COL_NAME String => ... (may be null)
+                    a.add(null);                    // REF_GENERATION String => ... (may be null)
                     row = a;
                     cnt++;
                     return true;

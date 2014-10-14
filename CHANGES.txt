@@ -1,3 +1,5 @@
+Release 0.2.16 - 20XX/XX/XX
+
 Release 0.2.15 - 2014/10/14
   IMPROVEMENTS
     Improves some validations in DatabaseMetaData#getTables()

@@ -1,4 +1,9 @@
-Release 0.2.15 - 20XX/XX/XX
+Release 0.2.15 - 2014/10/14
+  IMPROVEMENTS
+    Improves some validations in DatabaseMetaData#getTables()
+      if catalog is null or empty string, it sets the catalog string to the specified database.
+      if catalog is not same as the specified database, it returns null.
+      skips the validation and doesn't filter table descriptions with schema pattern for now.
 
 Release 0.2.14 - 2014/09/11
   IMPROVEMENTS

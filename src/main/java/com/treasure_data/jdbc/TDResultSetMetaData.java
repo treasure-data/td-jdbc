@@ -90,6 +90,10 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
             return Constants.INT_TYPE_NAME;
         } else if ("bigint".equalsIgnoreCase(type)) {
             return Constants.BIGINT_TYPE_NAME;
+        } else if ("date".equalsIgnoreCase(type)) {
+            return Constants.DATE_TYPE_NAME;
+        } else if ("timestamp".equalsIgnoreCase(type)) {
+            return Constants.TIMESTAMP_TYPE_NAME;
         } else if (type.startsWith("map<")) {
             return Constants.STRING_TYPE_NAME;
         } else if (type.startsWith("array<")) {
@@ -168,6 +172,8 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         if ("string".equalsIgnoreCase(type) ||
                 "varchar".equalsIgnoreCase(type) ||
                 "boolean".equalsIgnoreCase(type) ||
+                "date".equalsIgnoreCase(type) ||
+                "timestamp".equalsIgnoreCase(type) ||
                 type.startsWith("map<") ||
                 type.startsWith("array<") ||
                 type.startsWith("struct<")) {

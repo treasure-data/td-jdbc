@@ -836,14 +836,31 @@ public abstract class TDResultSetBase implements ResultSet {
                 "TDResultSetBase#getTime(String, Calendar)"));
     }
 
-    public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTimestamp(int)"));
+    public Timestamp getTimestamp(int index) throws SQLException {
+        Object obj = getObject(index);
+        if (obj == null) {
+            return null;
+        }
+
+        try {
+            String type = columnTypes.get(index - 1);
+            if (type.equalsIgnoreCase("timestamp")) {
+                Value v = (Value) obj;
+                return Timestamp.valueOf(v.asRawValue().getString());
+            } else {
+                throw new IllegalArgumentException(
+                        "Expected column to be a timestamp type but is " + type);
+            }
+        } catch (Exception e) {
+            String msg = String.format(
+                    "Cannot convert column %d to date: %s",
+                    index, e.toString());
+            throw new SQLException(msg);
+        }
     }
 
-    public Timestamp getTimestamp(String columnName) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTimestamp(String)"));
+    public Timestamp getTimestamp(String name) throws SQLException {
+        return getTimestamp(findColumn(name));
     }
 
     public Timestamp getTimestamp(int columnIndex, Calendar cal)

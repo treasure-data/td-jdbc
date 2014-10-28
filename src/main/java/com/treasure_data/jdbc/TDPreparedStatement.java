@@ -246,7 +246,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNString(int i, String value) throws SQLException {
-        setString(i, value); // TODO required by WingArc
+        params.put(i, value); // TODO required by WingArc
     }
 
     public void setNull(int i, int sqlType) throws SQLException {

@@ -32,19 +32,6 @@ public class NullClientAPI implements ClientAPI {
         return null;
     }
 
-    public boolean drop(String tableName) throws ClientException {
-        return true;
-    }
-
-    public boolean create(String table) throws ClientException {
-        return true;
-    }
-
-    public boolean insert(String tableName, Map<String, Object> record)
-            throws ClientException {
-        return true;
-    }
-
     public boolean flush() {
         return true;
     }

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
-import com.treasure_data.jdbc.compiler.stat.Statement;
 
 public class CommandContext {
 
@@ -15,8 +14,6 @@ public class CommandContext {
     public int queryTimeout = 0; // seconds
 
     public String sql;
-
-    public Statement compiledSql;
 
     public List<String> paramList;
 

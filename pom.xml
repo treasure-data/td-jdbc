@@ -7,7 +7,7 @@
   <groupId>com.treasure_data</groupId>
   <name>JDBC Driver for Treasure Data Cloud</name>
   <description>JDBC Driver for Treasure Data Cloud.</description>
-  <version>0.2.16-SNAPSHOT</version>
+  <version>0.3.0-SNAPSHOT</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
   <url>https://github.com/treasure-data/td-jdbc</url>
@@ -15,7 +15,6 @@
   <properties>
     <!--  version properties for dependencies -->
     <td-client.version>0.5.2</td-client.version>
-    <td-logger.version>0.2.0</td-logger.version>
     <junit.version>4.8.2</junit.version>
     <mockito.version>1.9.5</mockito.version>
 
@@ -37,11 +36,6 @@
   <repositories>
     <!-- mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lib/msgpack.jar -DgroupId=org.msgpack -DartifactId=msgpack -Dversion=0.6.0-devel -Dpackaging=jar -DlocalRepositoryPath=`pwd`/mvn-local -->
     <!-- mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lib/mongo-2.7.2.jar -DgroupId=com.mongodb -DartifactId=mongodb -Dversion=2.7.2 -Dpackaging=jar -DlocalRepositoryPath=`pwd`/mvn-local -->
-    <repository>
-      <id>fluentd.org</id>
-      <name>Fluent Maven2 Repository</name>
-      <url>http://fluentd.org/maven2</url>
-    </repository>
     <repository>
       <id>local-repo</id>
       <url>file://${basedir}/mvn-local</url>
@@ -65,11 +59,6 @@
       <groupId>com.treasuredata</groupId>
       <artifactId>td-client</artifactId>
       <version>${td-client.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.treasuredata</groupId>
-      <artifactId>td-logger</artifactId>
-      <version>${td-logger.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -181,18 +170,6 @@
             <version>${maven-surefire-plugin.version}</version>
           </dependency>
         </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>javacc-maven-plugin</artifactId>
-        <version>${javacc-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>javacc</id>
-            <phase>generate-sources</phase>
-            <goals><goal>javacc</goal></goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
 

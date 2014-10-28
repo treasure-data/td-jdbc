@@ -31,8 +31,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
             TDPreparedStatement.class.getName());
 
     private CommandContext w;
-
-    private final HashMap<Integer, Object> params = new HashMap<Integer, Object>();
+    private final HashMap<Integer, String> params = new HashMap<Integer, String>();
 
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
@@ -41,7 +40,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void clearParameters() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearParameters()"));
+        params.clear();
     }
 
     public void addBatch() throws SQLException {
@@ -53,11 +52,54 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public boolean execute() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#execute()"));
+        return executeQuery() != null;
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeQuery()"));
+        String sql = w.sql;
+        if (sql.contains("?")) {
+            sql = updateSql(sql, params);
+        }
+        return executeQuery(sql);
+    }
+
+    private String updateSql(final String sql, HashMap<Integer, String> parameters) {
+        StringBuffer newSql = new StringBuffer(sql);
+
+        int paramLoc = 1;
+        while (getCharIndexFromSqlByParamLocation(sql, '?', paramLoc) > 0) {
+            // check the user has set the needs parameters
+            if (parameters.containsKey(paramLoc)) {
+                int tt = getCharIndexFromSqlByParamLocation(newSql.toString(), '?', 1);
+                newSql.deleteCharAt(tt);
+                newSql.insert(tt, parameters.get(paramLoc));
+            }
+            paramLoc++;
+        }
+
+        return newSql.toString();
+    }
+
+    private int getCharIndexFromSqlByParamLocation(final String sql,
+            final char cchar, final int paramLoc) {
+        int signalCount = 0;
+        int charIndex = -1;
+        int num = 0;
+        for (int i = 0; i < sql.length(); i++) {
+            char c = sql.charAt(i);
+            if (c == '\'' || c == '\\') {
+                // record the count of char "'" and char "\"
+                signalCount++;
+            } else if (c == cchar && signalCount % 2 == 0) {
+                // check if the ? is really the parameter
+                num++;
+                if (num == paramLoc) {
+                    charIndex = i;
+                    break;
+                }
+            }
+        }
+        return charIndex;
     }
 
     @Override
@@ -70,6 +112,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
+        // TODO needed by WingArc
         throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#getMetaData()"));
     }
 
@@ -159,7 +202,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDate(int i, Date x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setDate(int, Date)"));
+        params.put(i, x.toString()); // required by WingArc
     }
 
     public void setDate(int i, Date x, Calendar cal) throws SQLException {
@@ -167,19 +210,19 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDouble(int i, double x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setDouble(int, double)"));
+        params.put(i, Double.toString(x));
     }
 
     public void setFloat(int i, float x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setFloat(int, float)"));
+        params.put(i, Float.toString(x));
     }
 
     public void setInt(int i, int x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setInt(int, int)"));
+        params.put(i, Integer.toString(x));
     }
 
     public void setLong(int i, long x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setLong(int, long)"));
+        params.put(i, Long.toString(x));
     }
 
     public void setNCharacterStream(int i, Reader value) throws SQLException {
@@ -203,7 +246,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNString(int i, String value) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNString(int, String)"));
+        setString(i, value); // TODO required by WingArc
     }
 
     public void setNull(int i, int sqlType) throws SQLException {
@@ -243,7 +286,8 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setString(int i, String x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setString(int, String)"));
+        x = x.replace("'", "\\'");
+        params.put(i, "'" + x + "'");
     }
 
     public void setTime(int i, Time x) throws SQLException {
@@ -255,7 +299,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setTimestamp(int i, Timestamp x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setTimestamp(int, Timestamp)"));
+        params.put(i, x.toString()); // required by WingArc
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {

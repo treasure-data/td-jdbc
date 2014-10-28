@@ -355,6 +355,7 @@ public class TDConnection implements Connection, Constants {
 
     public PreparedStatement prepareStatement(String sql, int resultSetType,
             int resultSetConcurrency) throws SQLException {
+        // TODO required by WingArc
         return prepareStatement(sql);
     }
 

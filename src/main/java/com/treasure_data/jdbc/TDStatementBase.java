@@ -120,12 +120,9 @@ public abstract class TDStatementBase implements Statement {
         maxRows = max;
     }
 
-    protected CommandContext fetchResult(String sql, int mode)
+    protected CommandContext fetchResult(String sql)
             throws SQLException {
-        CommandContext context = new CommandContext();
-        context.mode = mode;
-        context.sql = sql;
-        context.queryTimeout = queryTimeout;
+        CommandContext context = createCommandContext(sql);
         fetchResult(context);
         return context;
     }
@@ -142,5 +139,12 @@ public abstract class TDStatementBase implements Statement {
                 throw new SQLException(t);
             }
         }
+    }
+
+    protected CommandContext createCommandContext(String sql) {
+        CommandContext context = new CommandContext();
+        context.sql = sql;
+        context.queryTimeout = queryTimeout;
+        return context;
     }
 }

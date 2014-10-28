@@ -45,7 +45,7 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
     }
 
     public synchronized ResultSet executeQuery(String sql) throws SQLException {
-        fetchResult(sql, Constants.EXECDIRECT);
+        fetchResult(sql);
         TDResultSetBase rs = getResultSet();
         return rs;
     }
@@ -120,13 +120,6 @@ public class TDStatement extends TDStatementBase implements Statement, Constants
 
     public void setMaxFieldSize(int max) throws SQLException {
         throw new SQLException(new UnsupportedOperationException("TDStatement#setMaxFieldSize(int)"));
-    }
-
-    public void setMaxRows(int max) throws SQLException {
-        if (max < 0) {
-            throw new SQLException("max must be >= 0");
-        }
-        maxRows = max;
     }
 
     public void setPoolable(boolean poolable) throws SQLException {

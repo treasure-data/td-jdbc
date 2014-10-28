@@ -37,70 +37,40 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
         super(conn);
-        w = fetchResult(sql, Constants.PREPARE);
+        w = createCommandContext(sql);
     }
 
     public void clearParameters() throws SQLException {
-        for (Map<Integer, Object> params : w.params0) {
-            params.clear();
-        }
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearParameters()"));
     }
 
     public void addBatch() throws SQLException {
-        w.params0.add(deepCopy(params));
-        params.clear();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearBatch()"));
     }
 
     public void clearBatch() throws SQLException {
-        params.clear();
-        w.params0.clear();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearBatch()"));
     }
 
     public boolean execute() throws SQLException {
-        return executeQuery() != null;
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#execute()"));
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        if (!params.isEmpty()) {
-            w.params0.add(deepCopy(params));
-        }
-        fetchResult(w);
-        clearBatch();
-        return getResultSet();
-    }
-
-    private static Map<Integer, Object> deepCopy(Map<Integer, Object> map) {
-        Map<Integer, Object> ret = new HashMap<Integer, Object>(map.size());
-        if (map.isEmpty()) {
-            return ret;
-        }
-
-        for (Map.Entry<Integer, Object> entry : map.entrySet()) {
-            Integer key = entry.getKey();
-            Object val = entry.getValue();
-            ret.put(key, val);
-        }
-        return ret;
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeQuery()"));
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        executeQuery();
-        //fetchResult(w);
-        int[] ret = new int[w.params0.size()];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = -2;
-        }
-        return ret;
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeBatch()"));
     }
 
     public int executeUpdate() throws SQLException {
-        executeQuery();
-        return getUpdateCount();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeUpdate()"));
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
-        return executeQuery().getMetaData();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#getMetaData()"));
     }
 
     public ParameterMetaData getParameterMetaData() throws SQLException {
@@ -153,11 +123,11 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setBoolean(int parameterIndex, boolean x) throws SQLException {
-        this.params.put(parameterIndex, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBoolean(int, boolean)"));
     }
 
     public void setByte(int i, byte x) throws SQLException {
-        this.params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setByte(int, byte)"));
     }
 
     public void setBytes(int i, byte[] x) throws SQLException {
@@ -197,19 +167,19 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDouble(int i, double x) throws SQLException {
-        params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setDouble(int, double)"));
     }
 
     public void setFloat(int i, float x) throws SQLException {
-        params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setFloat(int, float)"));
     }
 
     public void setInt(int i, int x) throws SQLException {
-        params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setInt(int, int)"));
     }
 
     public void setLong(int i, long x) throws SQLException {
-        params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setLong(int, long)"));
     }
 
     public void setNCharacterStream(int i, Reader value) throws SQLException {
@@ -237,17 +207,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNull(int i, int sqlType) throws SQLException {
-        switch (sqlType) {
-        case java.sql.Types.TINYINT:
-        case java.sql.Types.INTEGER:
-        case java.sql.Types.BIGINT:
-        case java.sql.Types.FLOAT:
-        case java.sql.Types.DOUBLE:
-        case java.sql.Types.VARCHAR:
-            params.put(i, "null");
-        default:
-            throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
-        }
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
     }
 
     public void setNull(int i, int sqlType, String typeName) throws SQLException {
@@ -279,12 +239,11 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setShort(int i, short x) throws SQLException {
-        params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setShort(int, short)"));
     }
 
     public void setString(int i, String x) throws SQLException {
-        x = x.replace("'", "\\'");
-        params.put(i, "'" + x + "'");
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setString(int, String)"));
     }
 
     public void setTime(int i, Time x) throws SQLException {

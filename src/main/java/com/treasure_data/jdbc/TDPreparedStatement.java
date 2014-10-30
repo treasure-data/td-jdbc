@@ -112,8 +112,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
-        // TODO needed by WingArc
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#getMetaData()"));
+        return null;
     }
 
     public ParameterMetaData getParameterMetaData() throws SQLException {
@@ -202,7 +201,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDate(int i, Date x) throws SQLException {
-        params.put(i, x.toString()); // required by WingArc
+        params.put(i, x.toString());
     }
 
     public void setDate(int i, Date x, Calendar cal) throws SQLException {
@@ -246,7 +245,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNString(int i, String value) throws SQLException {
-        params.put(i, value); // TODO required by WingArc
+        params.put(i, value);
     }
 
     public void setNull(int i, int sqlType) throws SQLException {
@@ -299,7 +298,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setTimestamp(int i, Timestamp x) throws SQLException {
-        params.put(i, x.toString()); // required by WingArc
+        params.put(i, x.toString());
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {

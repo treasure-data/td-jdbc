@@ -30,17 +30,25 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     private static Logger LOG = Logger.getLogger(
             TDPreparedStatement.class.getName());
 
-    private CommandContext w;
-    private final HashMap<Integer, String> params = new HashMap<Integer, String>();
+    private CommandContext context;
+    private Map<Integer, String> preparedParameters = new HashMap<Integer, String>();
 
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
         super(conn);
-        w = createCommandContext(sql);
+        context = createCommandContext(sql);
+    }
+
+    CommandContext getContext() {
+        return context;
+    }
+
+    Map<Integer, String> getParams() {
+        return preparedParameters;
     }
 
     public void clearParameters() throws SQLException {
-        params.clear();
+        preparedParameters.clear();
     }
 
     public void addBatch() throws SQLException {
@@ -56,14 +64,14 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        String sql = w.sql;
+        String sql = context.sql;
         if (sql.contains("?")) {
-            sql = updateSql(sql, params);
+            sql = updateSql(sql, preparedParameters);
         }
         return executeQuery(sql);
     }
 
-    private String updateSql(final String sql, HashMap<Integer, String> parameters) {
+    String updateSql(final String sql, Map<Integer, String> parameters) {
         StringBuffer newSql = new StringBuffer(sql);
 
         int paramLoc = 1;
@@ -201,7 +209,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDate(int i, Date x) throws SQLException {
-        params.put(i, x.toString());
+        preparedParameters.put(i, x.toString());
     }
 
     public void setDate(int i, Date x, Calendar cal) throws SQLException {
@@ -209,19 +217,19 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDouble(int i, double x) throws SQLException {
-        params.put(i, Double.toString(x));
+        preparedParameters.put(i, Double.toString(x));
     }
 
     public void setFloat(int i, float x) throws SQLException {
-        params.put(i, Float.toString(x));
+        preparedParameters.put(i, Float.toString(x));
     }
 
     public void setInt(int i, int x) throws SQLException {
-        params.put(i, Integer.toString(x));
+        preparedParameters.put(i, Integer.toString(x));
     }
 
     public void setLong(int i, long x) throws SQLException {
-        params.put(i, Long.toString(x));
+        preparedParameters.put(i, Long.toString(x));
     }
 
     public void setNCharacterStream(int i, Reader value) throws SQLException {
@@ -245,7 +253,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNString(int i, String value) throws SQLException {
-        params.put(i, value);
+        preparedParameters.put(i, value);
     }
 
     public void setNull(int i, int sqlType) throws SQLException {
@@ -286,7 +294,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
 
     public void setString(int i, String x) throws SQLException {
         x = x.replace("'", "\\'");
-        params.put(i, "'" + x + "'");
+        preparedParameters.put(i, "'" + x + "'");
     }
 
     public void setTime(int i, Time x) throws SQLException {
@@ -298,7 +306,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setTimestamp(int i, Timestamp x) throws SQLException {
-        params.put(i, x.toString());
+        preparedParameters.put(i, x.toString());
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {

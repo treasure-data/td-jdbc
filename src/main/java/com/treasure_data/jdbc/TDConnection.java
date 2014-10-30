@@ -39,6 +39,9 @@ public class TDConnection implements Connection, Constants {
 
     private SQLWarning warnings = null;
 
+    public TDConnection() {
+    }
+
     public TDConnection(JDBCURLParser.Desc desc, Properties props)
             throws SQLException {
         this.props = props;

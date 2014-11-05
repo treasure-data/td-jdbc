@@ -101,6 +101,11 @@ public class TDConnection implements Connection, Constants {
             throw new SQLException("port number is invalid: " + port);
         }
 
+        // query type
+        if (desc.type != null) {
+            props.setProperty(Config.TD_JDBC_TYPE, desc.type.type());
+        }
+
         // scheme
         if (!props.containsKey(Config.TD_CK_API_SERVER_SCHEME)) {
             if (!desc.ssl) {

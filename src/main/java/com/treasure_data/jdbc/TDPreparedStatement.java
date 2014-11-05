@@ -209,7 +209,13 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDate(int i, Date x) throws SQLException {
-        preparedParameters.put(i, x.toString());
+        String type = conn.getProperties().getProperty(Config.TD_JDBC_TYPE);
+        if (type != null && type.equals("presto")) {
+            preparedParameters.put(i, "DATE '"+x.toString()+"'");
+        } else {
+            throw new SQLException(new UnsupportedOperationException(
+                    "TDPreparedStatement#setDate(int, Date) is supported for Presto query only"));
+        }
     }
 
     public void setDate(int i, Date x, Calendar cal) throws SQLException {
@@ -306,7 +312,13 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setTimestamp(int i, Timestamp x) throws SQLException {
-        preparedParameters.put(i, x.toString());
+        String type = conn.getProperties().getProperty(Config.TD_JDBC_TYPE);
+        if (type != null && type.equals("presto")) {
+            preparedParameters.put(i, "TIMESTAMP '"+x.toString()+"'");
+        } else {
+            throw new SQLException(new UnsupportedOperationException(
+                    "TDPreparedStatement#setTimestamp(int, Timestamp) is supported for Presto query only"));
+        }
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {

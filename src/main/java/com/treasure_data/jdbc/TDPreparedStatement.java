@@ -259,7 +259,7 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNString(int i, String value) throws SQLException {
-        preparedParameters.put(i, value);
+        setString(i, value);
     }
 
     public void setNull(int i, int sqlType) throws SQLException {

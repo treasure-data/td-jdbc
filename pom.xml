@@ -26,7 +26,6 @@
     <maven-eclipse-plugin.version>2.5.1</maven-eclipse-plugin.version>
     <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
     <maven-javadoc-plugin.version>2.8.1</maven-javadoc-plugin.version>
-    <javacc-maven-plugin.version>2.6</javacc-maven-plugin.version>
     <wagon-webdav-jackrabbit.version>1.0-beta-7</wagon-webdav-jackrabbit.version>
     <maven-scm-plugin.version>1.6</maven-scm-plugin.version>
     <maven-jxr-plugin.version>2.2</maven-jxr-plugin.version>
@@ -180,25 +179,6 @@
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
           <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>javacc-maven-plugin</artifactId>
-                    <versionRange>[2.6,)</versionRange>
-                    <goals>
-                      <goal>javacc</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -189,7 +189,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns false.
+            if (obj == null || obj instanceof NilValue) {
                 return false;
             }
 
@@ -243,7 +244,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -337,16 +339,13 @@ public abstract class TDResultSetBase implements ResultSet {
         // TODO should implement more carefully
         // TODO
         Object obj = getObject(index);
-        if (obj == null) {
+
+        // if obj is NULL (NilValue), it returns null.
+        if (obj == null || obj instanceof NilValue) {
             return null;
         }
 
         try {
-            // if v is NilValue, it returns null as a Date object.
-            if (obj instanceof NilValue) {
-                return null;
-            }
-
             return Date.valueOf(((Value)obj).asRawValue().getString());
         } catch (Exception e) {
             String msg = String.format(
@@ -385,7 +384,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0.0;
             }
 
@@ -448,7 +448,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.0f.
+            if (obj == null || obj instanceof NilValue) {
                 return 0.0f;
             }
 
@@ -507,7 +508,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -562,7 +564,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -694,7 +697,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -762,7 +766,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns null.
+            if (obj == null || obj instanceof NilValue) {
                 return null;
             }
 
@@ -800,8 +805,6 @@ public abstract class TDResultSetBase implements ResultSet {
                 }
             } else if (obj instanceof RawValue) { // msgpack's raw type
                 return ((Value) obj).asRawValue().getString();
-            } else if (obj instanceof NilValue) { // msgpack's nil type
-                return null;
             } else { // java's raw type
                 return (String) obj;
             }
@@ -842,12 +845,9 @@ public abstract class TDResultSetBase implements ResultSet {
 
     public Timestamp getTimestamp(int index) throws SQLException {
         Object obj = getObject(index);
-        if (obj == null) {
-            return null;
-        }
 
         // if obj is NULL (NilValue), it returns null.
-        if (obj instanceof NilValue) {
+        if (obj == null || obj instanceof NilValue) {
             return null;
         }
 

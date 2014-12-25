@@ -846,11 +846,15 @@ public abstract class TDResultSetBase implements ResultSet {
             return null;
         }
 
+        // if obj is NULL (NilValue), it returns null.
+        if (obj instanceof NilValue) {
+            return null;
+        }
+
         try {
             String type = columnTypes.get(index - 1);
             if (type.equalsIgnoreCase("timestamp")) {
-                Value v = (Value) obj;
-                return Timestamp.valueOf(v.asRawValue().getString());
+                return Timestamp.valueOf(((Value) obj).asRawValue().getString());
             } else {
                 throw new IllegalArgumentException(
                         "Expected column to be a timestamp type but is " + type);

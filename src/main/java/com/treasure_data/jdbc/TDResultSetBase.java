@@ -342,8 +342,12 @@ public abstract class TDResultSetBase implements ResultSet {
         }
 
         try {
-            Value v = (Value) obj;
-            return Date.valueOf(v.asRawValue().getString());
+            // if v is NilValue, it returns null as a Date object.
+            if (obj instanceof NilValue) {
+                return null;
+            }
+
+            return Date.valueOf(((Value)obj).asRawValue().getString());
         } catch (Exception e) {
             String msg = String.format(
                     "Cannot convert column %d to date: %s",

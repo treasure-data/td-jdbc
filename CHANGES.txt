@@ -1,3 +1,5 @@
+Release 0.3.2 - 20XX/XX/XX
+
 Release 0.3.1 - 2014/12/25
   BUG FIXES
     Fixes ResultSet#getTimestamp method. It returns null when a query result is NULL value. should not throw MessageTypeException.

@@ -1,3 +1,8 @@
+Release 0.3.1 - 2014/12/25
+  BUG FIXES
+    Fixes ResultSet#getTimestamp method. It returns null when a query result is NULL value. should not throw MessageTypeException.
+    Supports PreparedStatement for SELECT statements
+
 Release 0.3.0 - 2014/11/25
   IMPROVEMENTS
     Supports PreparedStatement for SELECT statements

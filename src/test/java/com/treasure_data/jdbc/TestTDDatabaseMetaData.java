@@ -129,6 +129,20 @@ public class TestTDDatabaseMetaData {
                 assertEquals("f03", rs.getString("COLUMN_NAME"));
                 assertEquals("long", rs.getString("TYPE_NAME"));
 
+                assertTrue(rs.next());
+                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals(null, rs.getString("TABLE_SCHEM"));
+                assertEquals("tbl01", rs.getString("TABLE_NAME"));
+                assertEquals("time", rs.getString("COLUMN_NAME"));
+                assertEquals("int", rs.getString("TYPE_NAME"));
+
+                assertTrue(rs.next());
+                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals(null, rs.getString("TABLE_SCHEM"));
+                assertEquals("tbl02", rs.getString("TABLE_NAME"));
+                assertEquals("time", rs.getString("COLUMN_NAME"));
+                assertEquals("int", rs.getString("TYPE_NAME"));
+
                 assertFalse(rs.next());
             } finally {
                 if (rs != null) {

@@ -229,10 +229,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 continue;
             }
 
+            boolean hasTimeColumn = false;
             int ordinal = 1;
             for (List<String> schemaField : schemaFields) {
                 String fname = schemaField.get(0);
                 String ftype = schemaField.get(1);
+
+                if (fname.equals("time")) {
+                    hasTimeColumn = true;
+                }
 
                 if (!fname.matches(columnNamePattern1)) {
                     continue;
@@ -243,6 +248,13 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 columns.add(c);
                 ordinal++;
             }
+
+            if (!hasTimeColumn && "time".matches(columnNamePattern1)) {
+                TDColumn c = new TDColumn("time", t.getName(), catalog, "int", "comment", ordinal);
+                columns.add(c);
+                ordinal++;
+            }
+
         }
         Collections.sort(columns, new Comparator<TDColumn>() {
             /**

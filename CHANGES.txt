@@ -1,6 +1,6 @@
 Release 0.3.3 - 20XX/XX/XX
 
-Release 0.3.2 - 2014/01/29
+Release 0.3.2 - 2015/01/29
   BUG FIXES
     Fixes DatabaseMetaData#getColumns method. It should add 'time' column to a table schema returned by td-api
 

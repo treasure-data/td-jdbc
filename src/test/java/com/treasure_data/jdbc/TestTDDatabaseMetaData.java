@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.treasure_data.model.Table;
 import org.junit.Test;
 
 import com.treasure_data.client.ClientException;
@@ -89,6 +90,9 @@ public class TestTDDatabaseMetaData {
                         "[[\"f01\",\"string\"],[\"f02\",\"int\"],[\"f03\",\"long\"]]",
                         "2012-02-20T18:31:48Z", "2012-02-20T18:31:48Z"));
                 list.add(new TableSummary(new Database("mugadb"), "tbl02",
+                        12344, "[]", "2012-02-20T18:31:48Z",
+                        "2012-02-20T18:31:48Z"));
+                list.add(new TableSummary(new Database("mugadb"), "tbl03", Table.Type.ITEM,
                         12344, "[]", "2012-02-20T18:31:48Z",
                         "2012-02-20T18:31:48Z"));
                 return list;

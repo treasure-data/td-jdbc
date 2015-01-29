@@ -249,7 +249,7 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 ordinal++;
             }
 
-            if (!hasTimeColumn && "time".matches(columnNamePattern1)) {
+            if (t.getType() == Table.Type.LOG && !hasTimeColumn && "time".matches(columnNamePattern1)) {
                 TDColumn c = new TDColumn("time", t.getName(), catalog, "int", "comment", ordinal);
                 columns.add(c);
                 ordinal++;

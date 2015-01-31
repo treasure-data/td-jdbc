@@ -1,4 +1,6 @@
 Release 0.3.3 - 20XX/XX/XX
+  IMPROVEDS
+    changes the behaviors of DatabaseMetaData#getIndexInfo and getPrimaryKeys methods. They don't throw SQLException and returns empty ResultSet objects.
 
 Release 0.3.2 - 2015/01/29
   BUG FIXES

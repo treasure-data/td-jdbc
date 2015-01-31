@@ -466,7 +466,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getIndexInfo(String catalog, String schema, String table,
             boolean unique, boolean approximate) throws SQLException {
-        throw new SQLException("Method not supported");
+        return new TDMetaDataResultSet(
+                Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "NON_UNIQUE", "INDEX_QUALIFIER", "INDEX_NAME", "TYPE", "ORDINAL_POSITION", "COLUMN_NAME", "ASC_OR_DESC", "CARDINALITY", "PAGES", "FILTER_CONDITION"),
+                Arrays.asList("STRING", "STRING", "STRING", "BOOLEAN", "STRING", "STRING", "SHORT", "SHORT", "STRING", "STRING", "INT", "INT", "STRING"),
+                null) {
+            public boolean next() { return false; }
+        };
     }
 
     public int getMaxBinaryLiteralLength() throws SQLException {
@@ -590,7 +595,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getPrimaryKeys(String catalog, String schema, String table)
             throws SQLException {
-        throw new SQLException("TD tables don't have primary keys");
+        return new TDMetaDataResultSet(
+                Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"),
+                Arrays.asList("STRING", "STRING", "STRING", "STRING", "SHORT", "STRING"),
+                null) {
+            public boolean next() { return false; }
+        };
     }
 
     public ResultSet getProcedureColumns(String catalog, String schemaPattern,

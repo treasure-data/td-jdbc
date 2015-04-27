@@ -130,7 +130,9 @@ public class TDConnection implements Connection, Constants {
             props.setProperty(Config.TD_JDBC_PASSWORD, desc.password);
         }
 
-        // proxy settings
+        // proxy settings: host and port are supported by Java runtime.
+        // http.proxyUser and http.proxyPassword are no longer supported but
+        // we set Authenticator by ourselves.
         if (desc.httpProxyHost != null) {
             props.setProperty("http.proxyHost", desc.httpProxyHost);
             props.setProperty("https.proxyHost", desc.httpProxyHost);
@@ -146,14 +148,12 @@ public class TDConnection implements Connection, Constants {
         if (desc.httpProxyUser != null) {
             props.setProperty("http.proxyUser", desc.httpProxyUser);
             props.setProperty("https.proxyUser", desc.httpProxyUser);
-            System.setProperty("http.proxyUser", desc.httpProxyPassword);
-            System.setProperty("https.proxyUser", desc.httpProxyPassword);
+            System.setProperty("http.proxyUser", desc.httpProxyUser);
         }
         if (desc.httpProxyPassword != null) {
             props.setProperty("http.proxyPassword", desc.httpProxyPassword);
             props.setProperty("https.proxyPassword", desc.httpProxyPassword);
             System.setProperty("http.proxyPassword", desc.httpProxyPassword);
-            System.setProperty("https.proxyPassword", desc.httpProxyPassword);
         }
     }
 

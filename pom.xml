@@ -21,7 +21,7 @@
 
     <!-- version properties for plugins -->
     <maven-surefire-plugin.version>2.13</maven-surefire-plugin.version>
-    <maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
+    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     <maven-bundle-plugin.version>2.3.6</maven-bundle-plugin.version>
     <maven-assembly-plugin.version>2.3</maven-assembly-plugin.version>
     <maven-eclipse-plugin.version>2.5.1</maven-eclipse-plugin.version>
@@ -60,6 +60,13 @@
       <artifactId>td-client</artifactId>
       <version>${td-client.version}</version>
     </dependency>
+    <!-- for compiling td-jdbc with java7 or higher -->
+    <dependency>
+      <groupId>com.treasure_data.third_party</groupId>
+      <artifactId>jdbc-api</artifactId>
+      <version>4.1</version>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -91,6 +98,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
+          <compilerArgs>
+            <arg>-Xbootclasspath/p:${basedir}/mvn-local/com/treasure_data/third_party/jdbc-api/4.1/jdbc-api-4.1.jar</arg>
+          </compilerArgs>
           <source>1.6</source>
           <target>1.6</target>
           <encoding>UTF-8</encoding>

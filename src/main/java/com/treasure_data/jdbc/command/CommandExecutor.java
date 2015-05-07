@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.msgpack.MessagePack;
@@ -19,6 +20,7 @@ import org.msgpack.unpacker.Unpacker;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.Constants;
 import com.treasure_data.jdbc.TDResultSetBase;
+import com.treasure_data.jdbc.TDResultSetMetaData;
 
 /**
  * @see org.hsqldb.Session
@@ -88,10 +90,13 @@ public class CommandExecutor implements Constants {
 
         @Override
         public ResultSetMetaData getMetaData() throws SQLException {
-                //JobSummary jobSummary = clientApi.waitJobResult(job);
-                //initColumnNamesAndTypes(jobSummary.getResultSchema());
-                //return super.getMetaData();
-            throw new SQLException("Not Implemented");
+            // TODO handle Presto/Hive differences
+            //  https://console.treasuredata.com/jobs/24745829 Presto
+            //  https://console.treasuredata.com/jobs/24746696 Hive
+            return new TDResultSetMetaData( // Presto
+                new ArrayList<String>(Arrays.asList("_col0")),  // column names
+                new ArrayList<String>(Arrays.asList("bigint"))  // column types
+            );
         }
 
         private Unpacker fetchRows() throws SQLException {

@@ -39,6 +39,9 @@ public class TDConnection implements Connection, Constants {
 
     private SQLWarning warnings = null;
 
+    public TDConnection() {
+    }
+
     public TDConnection(JDBCURLParser.Desc desc, Properties props)
             throws SQLException {
         this.props = props;
@@ -96,6 +99,11 @@ public class TDConnection implements Connection, Constants {
             Integer.parseInt(port);
         } catch (Throwable t) {
             throw new SQLException("port number is invalid: " + port);
+        }
+
+        // query type
+        if (desc.type != null) {
+            props.setProperty(Config.TD_JDBC_TYPE, desc.type.type());
         }
 
         // scheme
@@ -355,6 +363,7 @@ public class TDConnection implements Connection, Constants {
 
     public PreparedStatement prepareStatement(String sql, int resultSetType,
             int resultSetConcurrency) throws SQLException {
+        // TODO required by WingArc
         return prepareStatement(sql);
     }
 

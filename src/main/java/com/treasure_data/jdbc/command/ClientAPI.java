@@ -2,7 +2,6 @@ package com.treasure_data.jdbc.command;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import org.msgpack.unpacker.Unpacker;
 
@@ -40,16 +39,6 @@ public interface ClientAPI {
 
     // show table statement
     List<TableSummary> showTables() throws ClientException;
-
-    // drop table statement
-    boolean drop(String tableName) throws ClientException;
-
-    // create table statement
-    boolean create(String table) throws ClientException;
-
-    // insert statement
-    boolean insert(String tableName, Map<String, Object> record)
-            throws ClientException;
 
     // select statement
     TDResultSetBase select(String sql) throws ClientException;

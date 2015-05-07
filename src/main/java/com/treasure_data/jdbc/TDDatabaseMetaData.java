@@ -229,10 +229,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 continue;
             }
 
+            boolean hasTimeColumn = false;
             int ordinal = 1;
             for (List<String> schemaField : schemaFields) {
                 String fname = schemaField.get(0);
                 String ftype = schemaField.get(1);
+
+                if (fname.equals("time")) {
+                    hasTimeColumn = true;
+                }
 
                 if (!fname.matches(columnNamePattern1)) {
                     continue;
@@ -243,6 +248,13 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 columns.add(c);
                 ordinal++;
             }
+
+            if (t.getType() == Table.Type.LOG && !hasTimeColumn && "time".matches(columnNamePattern1)) {
+                TDColumn c = new TDColumn("time", t.getName(), catalog, "int", "comment", ordinal);
+                columns.add(c);
+                ordinal++;
+            }
+
         }
         Collections.sort(columns, new Comparator<TDColumn>() {
             /**
@@ -454,7 +466,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getIndexInfo(String catalog, String schema, String table,
             boolean unique, boolean approximate) throws SQLException {
-        throw new SQLException("Method not supported");
+        return new TDMetaDataResultSet(
+                Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "NON_UNIQUE", "INDEX_QUALIFIER", "INDEX_NAME", "TYPE", "ORDINAL_POSITION", "COLUMN_NAME", "ASC_OR_DESC", "CARDINALITY", "PAGES", "FILTER_CONDITION"),
+                Arrays.asList("STRING", "STRING", "STRING", "BOOLEAN", "STRING", "STRING", "SHORT", "SHORT", "STRING", "STRING", "INT", "INT", "STRING"),
+                null) {
+            public boolean next() { return false; }
+        };
     }
 
     public int getMaxBinaryLiteralLength() throws SQLException {
@@ -578,7 +595,12 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     public ResultSet getPrimaryKeys(String catalog, String schema, String table)
             throws SQLException {
-        throw new SQLException("TD tables don't have primary keys");
+        return new TDMetaDataResultSet(
+                Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"),
+                Arrays.asList("STRING", "STRING", "STRING", "STRING", "SHORT", "STRING"),
+                null) {
+            public boolean next() { return false; }
+        };
     }
 
     public ResultSet getProcedureColumns(String catalog, String schemaPattern,

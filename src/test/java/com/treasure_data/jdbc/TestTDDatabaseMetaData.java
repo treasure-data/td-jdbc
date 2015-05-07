@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.treasure_data.model.Table;
 import org.junit.Test;
 
 import com.treasure_data.client.ClientException;
@@ -91,6 +92,9 @@ public class TestTDDatabaseMetaData {
                 list.add(new TableSummary(new Database("mugadb"), "tbl02",
                         12344, "[]", "2012-02-20T18:31:48Z",
                         "2012-02-20T18:31:48Z"));
+                list.add(new TableSummary(new Database("mugadb"), "tbl03", Table.Type.ITEM,
+                        12344, "[]", "2012-02-20T18:31:48Z",
+                        "2012-02-20T18:31:48Z"));
                 return list;
             }
         };
@@ -128,6 +132,20 @@ public class TestTDDatabaseMetaData {
                 assertEquals("tbl01", rs.getString("TABLE_NAME"));
                 assertEquals("f03", rs.getString("COLUMN_NAME"));
                 assertEquals("long", rs.getString("TYPE_NAME"));
+
+                assertTrue(rs.next());
+                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals(null, rs.getString("TABLE_SCHEM"));
+                assertEquals("tbl01", rs.getString("TABLE_NAME"));
+                assertEquals("time", rs.getString("COLUMN_NAME"));
+                assertEquals("int", rs.getString("TYPE_NAME"));
+
+                assertTrue(rs.next());
+                assertEquals("default", rs.getString("TABLE_CAT"));
+                assertEquals(null, rs.getString("TABLE_SCHEM"));
+                assertEquals("tbl02", rs.getString("TABLE_NAME"));
+                assertEquals("time", rs.getString("COLUMN_NAME"));
+                assertEquals("int", rs.getString("TYPE_NAME"));
 
                 assertFalse(rs.next());
             } finally {

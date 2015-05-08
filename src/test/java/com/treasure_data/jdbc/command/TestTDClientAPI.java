@@ -4,8 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.sql.Types;
 import java.util.Properties;
 
+import com.treasure_data.jdbc.JDBCURLParser;
+import com.treasure_data.jdbc.TDMetaDataResultSet;
+import com.treasure_data.jdbc.TDResultSetMetaData;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -157,4 +161,48 @@ public class TestTDClientAPI {
         assertEquals("query", js.getQuery());
         assertEquals("rschema", js.getResultSchema());
     }
+
+    @Test
+    public void testMetaDataWithSelect1() throws Exception {
+        Properties props = System.getProperties();
+        mockProperties(props);
+
+        TreasureDataClient c = new TreasureDataClient() {
+            @Override public AuthenticateResult authenticate(AuthenticateRequest request) {
+                return null;
+            }
+
+            @Override public ShowJobStatusResult showJobStatus(ShowJobStatusRequest request) {
+                return new ShowJobStatusResult(JobSummary.Status.SUCCESS);
+            }
+
+            @Override public ShowJobResult showJob(ShowJobRequest request) {
+                JobSummary js = new JobSummary("12345", Job.Type.HIVE, null, null, null,
+                        JobSummary.Status.SUCCESS, null, null, "query", "rschema");
+                return new ShowJobResult(js);
+            }
+        };
+
+        { // hive
+            JDBCURLParser.Desc desc = new JDBCURLParser.Desc();
+            desc.type = Job.Type.HIVE;
+            TDClientAPI api = new TDClientAPI(desc, c, props, new Database("mugadb"), 1000);
+
+            TDResultSetMetaData md = api.getMetaDataWithSelect1();
+            assertEquals(1, md.getColumnCount());
+            assertEquals("_c0", md.getColumnName(1));
+            assertEquals(Types.INTEGER, md.getColumnType(1));
+        }
+        { // presto
+            JDBCURLParser.Desc desc = new JDBCURLParser.Desc();
+            desc.type = Job.Type.PRESTO;
+            TDClientAPI api = new TDClientAPI(desc, c, props, new Database("mugadb"), 1000);
+
+            TDResultSetMetaData md = api.getMetaDataWithSelect1();
+            assertEquals(1, md.getColumnCount());
+            assertEquals("_col0", md.getColumnName(1));
+            assertEquals(Types.BIGINT, md.getColumnType(1));
+        }
+    }
+
 }

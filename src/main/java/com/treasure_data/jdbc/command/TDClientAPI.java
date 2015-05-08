@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -16,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
+import com.treasure_data.jdbc.TDResultSetMetaData;
 import org.msgpack.MessagePack;
 import org.msgpack.unpacker.Unpacker;
 
@@ -148,6 +151,23 @@ public class TDClientAPI implements ClientAPI {
             rs = new TDResultSet(this, maxRows, job, queryTimeout);
         }
         return rs;
+    }
+
+    public TDResultSetMetaData getMetaDataWithSelect1() {
+        //  handle Presto/Hive differences
+        //  https://console.treasuredata.com/jobs/24746696 Hive
+        //  https://console.treasuredata.com/jobs/24745829 Presto
+        List<String> names, types;
+        if (desc == null || desc.type == null || desc.type.equals(Job.Type.HIVE)) { // hive
+            names = Arrays.asList("_c0");
+            types = Arrays.asList("int");
+        } else if (desc.type.equals(Job.Type.PRESTO)) {
+            names = Arrays.asList("_col0");
+            types = Arrays.asList("bigint");
+        } else { // pig, etc.
+            throw new UnsupportedOperationException();
+        }
+        return new TDResultSetMetaData(new ArrayList<String>(names), new ArrayList<String>(types));
     }
 
     public JobSummary waitJobResult(Job job) throws ClientException {

@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 import org.msgpack.MessagePack;
@@ -20,7 +19,6 @@ import org.msgpack.unpacker.Unpacker;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.Constants;
 import com.treasure_data.jdbc.TDResultSetBase;
-import com.treasure_data.jdbc.TDResultSetMetaData;
 
 /**
  * @see org.hsqldb.Session
@@ -44,7 +42,7 @@ public class CommandExecutor implements Constants {
         String sql = context.sql;
         try {
             if (sql.toUpperCase().equals("SELECT 1")) {
-                context.resultSet = new TDResultSetSelectOne();
+                context.resultSet = new TDResultSetSelectOne(api);
             } else {
                 context.resultSet = api.select(context.sql, context.queryTimeout);
             }
@@ -54,13 +52,16 @@ public class CommandExecutor implements Constants {
     }
 
     public static class TDResultSetSelectOne extends TDResultSetBase {
+        private ClientAPI api;
+
         private int rowsFetched = 0;
 
         private Unpacker fetchedRows;
 
         private Iterator<Value> fetchedRowsItr;
 
-        public TDResultSetSelectOne() {
+        public TDResultSetSelectOne(ClientAPI api) {
+            this.api = api;
         }
 
         @Override
@@ -90,13 +91,7 @@ public class CommandExecutor implements Constants {
 
         @Override
         public ResultSetMetaData getMetaData() throws SQLException {
-            // TODO handle Presto/Hive differences
-            //  https://console.treasuredata.com/jobs/24745829 Presto
-            //  https://console.treasuredata.com/jobs/24746696 Hive
-            return new TDResultSetMetaData( // Presto
-                new ArrayList<String>(Arrays.asList("_col0")),  // column names
-                new ArrayList<String>(Arrays.asList("bigint"))  // column types
-            );
+            return api.getMetaDataWithSelect1();
         }
 
         private Unpacker fetchRows() throws SQLException {

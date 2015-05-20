@@ -136,6 +136,8 @@ public class TestProductionEnv
 
         Connection conn = newPrestoConnection("cs_modeanalytics");
         Statement stat = conn.createStatement();
+
+        // nums = '[1, 2, 3]' (varchar) but its data type is changed to array<int> from TD console
         stat.execute("select nums from arraytest_str");
         ResultSet rs = stat.getResultSet();
         if(rs.next()) {

@@ -127,4 +127,30 @@ public class TestProductionEnv
         stat.close();
         conn.close();
     }
+
+    @Ignore
+    @Test
+    public void readJsonArray()
+            throws IOException, SQLException
+    {
+
+        Connection conn = newPrestoConnection("cs_modeanalytics");
+        Statement stat = conn.createStatement();
+        stat.execute("select nums from arraytest_str");
+        ResultSet rs = stat.getResultSet();
+        if(rs.next()) {
+            ArrayValue arr = (ArrayValue) rs.getObject(1);
+            logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
+            for (int i = 0; i < arr.size(); ++i) {
+                int v = arr.get(i).asIntegerValue().getInt();
+                assertEquals(i + 1, v);
+            }
+        }
+        assertFalse(rs.next());
+        rs.close();
+        stat.close();
+        conn.close();
+
+    }
+
 }

@@ -42,7 +42,7 @@ public class CommandExecutor implements Constants {
         String sql = context.sql;
         try {
             if (sql.toUpperCase().equals("SELECT 1")) {
-                context.resultSet = new TDResultSetSelectOne();
+                context.resultSet = new TDResultSetSelectOne(api);
             } else {
                 context.resultSet = api.select(context.sql, context.queryTimeout);
             }
@@ -52,13 +52,16 @@ public class CommandExecutor implements Constants {
     }
 
     public static class TDResultSetSelectOne extends TDResultSetBase {
+        private ClientAPI api;
+
         private int rowsFetched = 0;
 
         private Unpacker fetchedRows;
 
         private Iterator<Value> fetchedRowsItr;
 
-        public TDResultSetSelectOne() {
+        public TDResultSetSelectOne(ClientAPI api) {
+            this.api = api;
         }
 
         @Override
@@ -88,10 +91,7 @@ public class CommandExecutor implements Constants {
 
         @Override
         public ResultSetMetaData getMetaData() throws SQLException {
-                //JobSummary jobSummary = clientApi.waitJobResult(job);
-                //initColumnNamesAndTypes(jobSummary.getResultSchema());
-                //return super.getMetaData();
-            throw new SQLException("Not Implemented");
+            return api.getMetaDataWithSelect1();
         }
 
         private Unpacker fetchRows() throws SQLException {

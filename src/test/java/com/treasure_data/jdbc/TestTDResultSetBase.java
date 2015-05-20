@@ -64,6 +64,10 @@ public class TestTDResultSetBase {
             return null;
         }
 
+        public TDResultSetMetaData getMetaDataWithSelect1() {
+            return null;
+        }
+
         public boolean flush() {
             return false;
         }

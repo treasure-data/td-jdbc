@@ -34,7 +34,7 @@ public class TestProductionEnv
     private static Logger logger = LoggerFactory.getLogger(TestProductionEnv.class);
 
     /**
-     * Read user e-mail and password from $HOME/.td/td.conf
+     * Read user user (e-mail address and password properties from $HOME/.td/td.conf
      * @return
      * @throws IOException
      */

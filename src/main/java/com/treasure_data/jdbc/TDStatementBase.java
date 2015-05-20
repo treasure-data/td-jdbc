@@ -1,14 +1,16 @@
 package com.treasure_data.jdbc;
 
+import com.treasure_data.jdbc.command.CommandContext;
+import com.treasure_data.jdbc.command.CommandExecutor;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
-import com.treasure_data.jdbc.command.CommandExecutor;
-import com.treasure_data.jdbc.command.CommandContext;
-
-public abstract class TDStatementBase implements Statement {
+public abstract class TDStatementBase
+        implements Statement
+{
 
     protected TDConnection conn;
 
@@ -32,56 +34,76 @@ public abstract class TDStatementBase implements Statement {
 
     private boolean isEscapeProcessing;
 
-    protected TDStatementBase(TDConnection conn) {
+    protected TDStatementBase(TDConnection conn)
+    {
         this.conn = conn;
         exec = new CommandExecutor(this.conn.getClientAPI());
     }
 
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection()
+            throws SQLException
+    {
         return conn;
     }
 
-    public CommandExecutor getCommandExecutor() {
+    public CommandExecutor getCommandExecutor()
+    {
         return exec;
     }
 
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed()
+            throws SQLException
+    {
 //        if (currentResultSet != null) {
 //            return false && currentResultSet.isClosed();
 //        }
         return false;
     }
 
-    public void close() throws SQLException {
+    public void close()
+            throws SQLException
+    {
         if (currentResultSet != null) {
             currentResultSet.close();
         }
     }
 
-    public TDResultSetBase getResultSet() throws SQLException {
+    public TDResultSetBase getResultSet()
+            throws SQLException
+    {
         if (currentResultSet != null) {
             currentResultSet.setStatement(this);
         }
         return currentResultSet;
     }
 
-    public int getUpdateCount() throws SQLException {
+    public int getUpdateCount()
+            throws SQLException
+    {
         return updateCount;
     }
 
-    public void setEscapeProcessing(boolean enable) throws SQLException {
+    public void setEscapeProcessing(boolean enable)
+            throws SQLException
+    {
         isEscapeProcessing = enable;
     }
 
-    public SQLWarning getWarnings() throws SQLException {
+    public SQLWarning getWarnings()
+            throws SQLException
+    {
         return warningChain;
     }
 
-    public void clearWarnings() throws SQLException {
+    public void clearWarnings()
+            throws SQLException
+    {
         warningChain = null;
     }
 
-    public int getQueryTimeout() throws SQLException {
+    public int getQueryTimeout()
+            throws SQLException
+    {
         return this.queryTimeout;
     }
 
@@ -102,18 +124,24 @@ public abstract class TDStatementBase implements Statement {
      *
      * @see java.sql.Statement#setQueryTimeout(int)
      */
-    public void setQueryTimeout(int seconds) throws SQLException {
+    public void setQueryTimeout(int seconds)
+            throws SQLException
+    {
         if (seconds < 0) {
             throw new SQLException("seconds must be >= 0");
         }
         this.queryTimeout = seconds;
     }
 
-    public int getMaxRows() throws SQLException {
+    public int getMaxRows()
+            throws SQLException
+    {
         return maxRows;
     }
 
-    public void setMaxRows(int max) throws SQLException {
+    public void setMaxRows(int max)
+            throws SQLException
+    {
         if (max < 0) {
             throw new SQLException("max must be >= 0");
         }
@@ -121,27 +149,32 @@ public abstract class TDStatementBase implements Statement {
     }
 
     protected CommandContext fetchResult(String sql)
-            throws SQLException {
+            throws SQLException
+    {
         CommandContext context = createCommandContext(sql);
         fetchResult(context);
         return context;
     }
 
     protected void fetchResult(CommandContext context)
-            throws SQLException {
+            throws SQLException
+    {
         try {
             exec.execute(context);
             currentResultSet = context.resultSet;
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             if (t instanceof SQLException) {
                 throw (SQLException) t;
-            } else {
+            }
+            else {
                 throw new SQLException(t);
             }
         }
     }
 
-    protected CommandContext createCommandContext(String sql) {
+    protected CommandContext createCommandContext(String sql)
+    {
         CommandContext context = new CommandContext();
         context.sql = sql;
         context.queryTimeout = queryTimeout;

@@ -1,5 +1,10 @@
 package com.treasure_data.jdbc;
 
+import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.command.TDClientAPI;
+import com.treasure_data.model.Database;
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -18,12 +23,9 @@ import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.command.ClientAPI;
-import com.treasure_data.jdbc.command.TDClientAPI;
-import com.treasure_data.model.Database;
-
-public class TDConnection implements Connection, Constants {
+public class TDConnection
+        implements Connection, Constants
+{
 
     private boolean autoCommit = false;
 
@@ -39,11 +41,13 @@ public class TDConnection implements Connection, Constants {
 
     private SQLWarning warnings = null;
 
-    public TDConnection() {
+    public TDConnection()
+    {
     }
 
     public TDConnection(JDBCURLParser.Desc desc, Properties props)
-            throws SQLException {
+            throws SQLException
+    {
         this.props = props;
         overrideProperties(desc);
 
@@ -57,7 +61,8 @@ public class TDConnection implements Connection, Constants {
             if (api.showDatabase() == null) {
                 throw new SQLException("Database doesn't exist: " + desc.database);
             }
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e.getMessage(), e);
         }
     }
@@ -69,7 +74,8 @@ public class TDConnection implements Connection, Constants {
      * @throws SQLException
      */
     private void overrideProperties(JDBCURLParser.Desc desc)
-            throws SQLException {
+            throws SQLException
+    {
         // host
         String host = props.getProperty(Config.TD_API_SERVER_HOST);
         if (host == null || host.isEmpty()) {
@@ -86,10 +92,12 @@ public class TDConnection implements Connection, Constants {
             if (desc.port == null) {
                 if (desc.ssl) {
                     port = Config.TD_API_SERVER_PORT_HTTPS;
-                } else {
+                }
+                else {
                     port = Config.TD_API_SERVER_PORT_HTTP;
                 }
-            } else {
+            }
+            else {
                 port = desc.port;
             }
             props.setProperty(Config.TD_API_SERVER_PORT, port);
@@ -97,7 +105,8 @@ public class TDConnection implements Connection, Constants {
         try {
             // validate bad port number
             Integer.parseInt(port);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             throw new SQLException("port number is invalid: " + port);
         }
 
@@ -110,7 +119,8 @@ public class TDConnection implements Connection, Constants {
         if (!props.containsKey(Config.TD_CK_API_SERVER_SCHEME)) {
             if (!desc.ssl) {
                 props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTP);
-            } else {
+            }
+            else {
                 props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTPS);
             }
         }
@@ -165,81 +175,108 @@ public class TDConnection implements Connection, Constants {
         }
     }
 
-    public ClientAPI getClientAPI() {
+    public ClientAPI getClientAPI()
+    {
         return api;
     }
 
-    public Properties getProperties() {
+    public Properties getProperties()
+    {
         return props;
     }
 
-    public Database getDatabase() {
+    public Database getDatabase()
+    {
         return database;
     }
 
-    public int getMaxRows() {
+    public int getMaxRows()
+    {
         return maxRows;
     }
 
-    public void clearWarnings() throws SQLException {
+    public void clearWarnings()
+            throws SQLException
+    {
         warnings = null;
     }
 
-    public SQLWarning getWarnings() throws SQLException {
+    public SQLWarning getWarnings()
+            throws SQLException
+    {
         return warnings;
     }
 
-    public void setWarning(SQLWarning w) throws SQLException {
+    public void setWarning(SQLWarning w)
+            throws SQLException
+    {
         if (w == null) {
             throw new SQLException("a SQLWarning object is null");
         }
 
         if (warnings == null) {
             warnings = w;
-        } else {
+        }
+        else {
             warnings.setNextWarning(w);
         }
     }
 
-    public void close() throws SQLException {
+    public void close()
+            throws SQLException
+    {
         // basically ignore
         try {
             api.close();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new SQLException(e);
         }
     }
 
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed()
+            throws SQLException
+    {
         return false;
     }
 
-    public void commit() throws SQLException {
+    public void commit()
+            throws SQLException
+    {
         // ignore
     }
 
     public Array createArrayOf(String typeName, Object[] elements)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#createArrayOf(String, Object[])"));
     }
 
-    public Blob createBlob() throws SQLException {
+    public Blob createBlob()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#createBlob()"));
     }
 
-    public Clob createClob() throws SQLException {
+    public Clob createClob()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#createClob()"));
     }
 
-    public NClob createNClob() throws SQLException {
+    public NClob createNClob()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#createNClob()"));
     }
 
-    public SQLXML createSQLXML() throws SQLException {
+    public SQLXML createSQLXML()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#createSQLXML()"));
     }
@@ -247,203 +284,270 @@ public class TDConnection implements Connection, Constants {
     /**
      * Creates a Statement object for sending SQL statements to the database.
      *
-     * @throws SQLException
-     *             if a database access error occurs.
+     * @throws SQLException if a database access error occurs.
      * @see java.sql.Connection#createStatement()
      */
-    public Statement createStatement() throws SQLException {
+    public Statement createStatement()
+            throws SQLException
+    {
         // *skip* checking if database is null or not. It is because
         // it was processed when creating a connection.
         return new TDStatement(this);
     }
 
     public Statement createStatement(int resultSetType, int resultSetConcurrency)
-            throws SQLException {
+            throws SQLException
+    {
         return createStatement();
     }
 
     public Statement createStatement(int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
+            throws SQLException
+    {
         return createStatement();
     }
 
     public Struct createStruct(String typeName, Object[] attributes)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#createStruct(String, Object[])"));
     }
 
-    public boolean getAutoCommit() throws SQLException {
+    public boolean getAutoCommit()
+            throws SQLException
+    {
         return autoCommit;
     }
 
-    public String getCatalog() throws SQLException {
+    public String getCatalog()
+            throws SQLException
+    {
         return "";
     }
 
-    public Properties getClientInfo() throws SQLException {
+    public Properties getClientInfo()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#getClientInfo()"));
     }
 
-    public String getClientInfo(String name) throws SQLException {
+    public String getClientInfo(String name)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#getClientInfo(String)"));
     }
 
-    public int getHoldability() throws SQLException {
+    public int getHoldability()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#getHoldability()"));
     }
 
-    public DatabaseMetaData getMetaData() throws SQLException {
+    public DatabaseMetaData getMetaData()
+            throws SQLException
+    {
         return new TDDatabaseMetaData(database, getClientAPI());
     }
 
-    public int getTransactionIsolation() throws SQLException {
+    public int getTransactionIsolation()
+            throws SQLException
+    {
         return Connection.TRANSACTION_NONE;
     }
 
-    public Map<String, Class<?>> getTypeMap() throws SQLException {
+    public Map<String, Class<?>> getTypeMap()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#getTypeMap()"));
     }
 
-    public boolean isReadOnly() throws SQLException {
+    public boolean isReadOnly()
+            throws SQLException
+    {
         return readOnly;
     }
 
-    public boolean isValid(int timeout) throws SQLException {
+    public boolean isValid(int timeout)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#isValid(int)"));
     }
 
-    public String nativeSQL(String sql) throws SQLException {
+    public String nativeSQL(String sql)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#nativeSQL(String)"));
     }
 
-    public CallableStatement prepareCall(String sql) throws SQLException {
+    public CallableStatement prepareCall(String sql)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#prepareCall(String)"));
     }
 
     public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency) throws SQLException {
+            int resultSetConcurrency)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#prepareCall(String, int, int)"));
     }
 
     public CallableStatement prepareCall(String sql, int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#prepareCall(String, int, int, int)"));
     }
 
-    public PreparedStatement prepareStatement(String sql) throws SQLException {
+    public PreparedStatement prepareStatement(String sql)
+            throws SQLException
+    {
         return new TDPreparedStatement(this, sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
-            throws SQLException {
+            throws SQLException
+    {
         return prepareStatement(sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
-            throws SQLException {
+            throws SQLException
+    {
         return prepareStatement(sql);
     }
 
     public PreparedStatement prepareStatement(String sql, String[] columnNames)
-            throws SQLException {
+            throws SQLException
+    {
         return prepareStatement(sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int resultSetType,
-            int resultSetConcurrency) throws SQLException {
+            int resultSetConcurrency)
+            throws SQLException
+    {
         // TODO required by WingArc
         return prepareStatement(sql);
     }
 
     public PreparedStatement prepareStatement(String sql, int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
+            throws SQLException
+    {
         return prepareStatement(sql);
     }
 
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+    public void releaseSavepoint(Savepoint savepoint)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#releaseSavepoint(Savepoint)"));
     }
 
-    public void rollback() throws SQLException {
+    public void rollback()
+            throws SQLException
+    {
         // ignore
     }
 
-    public void rollback(Savepoint savepoint) throws SQLException {
+    public void rollback(Savepoint savepoint)
+            throws SQLException
+    {
         // ignore
     }
 
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
+    public void setAutoCommit(boolean autoCommit)
+            throws SQLException
+    {
         this.autoCommit = autoCommit;
     }
 
-    public void setCatalog(String catalog) throws SQLException {
+    public void setCatalog(String catalog)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#setCatalog(String)"));
     }
 
     public void setClientInfo(Properties properties)
-            throws SQLClientInfoException {
+            throws SQLClientInfoException
+    {
         throw new SQLClientInfoException(
                 "Method not supported: TDConnection#setClientInfo(Properties)",
                 null);
     }
 
     public void setClientInfo(String name, String value)
-            throws SQLClientInfoException {
+            throws SQLClientInfoException
+    {
         throw new SQLClientInfoException(
                 "Method not supported: TDConnection#setClientInfo(String, String)",
                 null);
     }
 
-    public void setHoldability(int holdability) throws SQLException {
+    public void setHoldability(int holdability)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#setHoldability()"));
     }
 
-    public void setReadOnly(boolean readOnly) throws SQLException {
+    public void setReadOnly(boolean readOnly)
+            throws SQLException
+    {
         this.readOnly = readOnly;
     }
 
-    public Savepoint setSavepoint() throws SQLException {
+    public Savepoint setSavepoint()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#setSavepoint()"));
     }
 
-    public Savepoint setSavepoint(String name) throws SQLException {
+    public Savepoint setSavepoint(String name)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#setSavepoint(String)"));
     }
 
-    public void setTransactionIsolation(int level) throws SQLException {
+    public void setTransactionIsolation(int level)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#setTransactionIsolation(int)"));
     }
 
-    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+    public void setTypeMap(Map<String, Class<?>> map)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#setTypeMap(Map)"));
     }
 
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(Class<?> iface)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#isWrapperFor(Class)"));
     }
 
-    public <T> T unwrap(Class<T> iface) throws SQLException {
+    public <T> T unwrap(Class<T> iface)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDConnection#unwrap(Class)"));
     }

@@ -1,5 +1,7 @@
 package com.treasure_data.jdbc;
 
+import org.junit.Ignore;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,23 +9,27 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.junit.Ignore;
-
 @Ignore
-public class TestTreasureDataDriver {
+public class TestTreasureDataDriver
+{
 
-    public static void loadSystemProperties() throws IOException {
+    public static void loadSystemProperties()
+            throws IOException
+    {
         Properties props = System.getProperties();
         props.load(TestTreasureDataDriver.class.getClassLoader().getResourceAsStream("treasure-data.properties"));
     }
 
-    public static void main0(String[] args) throws Exception {
+    public static void main0(String[] args)
+            throws Exception
+    {
         loadSystemProperties();
 
         final String driverName = "com.treasure_data.jdbc.TreasureDataDriver";
         try {
             Class.forName(driverName);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(1);
         }
@@ -42,13 +48,16 @@ public class TestTreasureDataDriver {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args)
+            throws Exception
+    {
         loadSystemProperties();
 
         final String driverName = "com.treasure_data.jdbc.TreasureDataDriver";
         try {
             Class.forName(driverName);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             e.printStackTrace();
             System.exit(1);
         }

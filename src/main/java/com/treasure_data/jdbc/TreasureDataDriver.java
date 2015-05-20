@@ -15,7 +15,9 @@ import java.util.logging.Logger;
  * @see org.apache.derby.jdbc.ClientDriver
  * @see org.hsqldb.jdbc.JDBCDriver
  */
-public class TreasureDataDriver implements Driver {
+public class TreasureDataDriver
+        implements Driver
+{
     private static Logger LOG = Logger.getLogger(
             TreasureDataDriver.class.getName());
 
@@ -25,22 +27,26 @@ public class TreasureDataDriver implements Driver {
         try {
             driverInstance = new TreasureDataDriver();
             DriverManager.registerDriver(driverInstance);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOG.severe(String.format("%s: %s",
                     e.getClass().getName(), e.getMessage()));
         }
     }
 
-    public TreasureDataDriver() {
+    public TreasureDataDriver()
+    {
     }
 
     public Connection connect(String url, Properties props)
-            throws SQLException {
+            throws SQLException
+    {
         return getConnection(url, props);
     }
 
     public static Connection getConnection(String url, Properties props)
-            throws SQLException {
+            throws SQLException
+    {
         if (props == null) {
             throw new SQLException("invalid arguments: properties is null");
         }
@@ -50,11 +56,14 @@ public class TreasureDataDriver implements Driver {
     }
 
     private static JDBCURLParser.Desc parseURL(String url)
-            throws SQLException {
+            throws SQLException
+    {
         return JDBCURLParser.parse(url);
     }
 
-    public boolean acceptsURL(String url) throws SQLException {
+    public boolean acceptsURL(String url)
+            throws SQLException
+    {
         if (url == null) {
             return false;
         }
@@ -68,12 +77,13 @@ public class TreasureDataDriver implements Driver {
     }
 
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties props)
-            throws SQLException {
+            throws SQLException
+    {
         if (!acceptsURL(url)) {
             return new DriverPropertyInfo[0];
         }
 
-        DriverPropertyInfo[] props0   = new DriverPropertyInfo[2];
+        DriverPropertyInfo[] props0 = new DriverPropertyInfo[2];
         DriverPropertyInfo p;
 
         if (props == null) {
@@ -95,16 +105,18 @@ public class TreasureDataDriver implements Driver {
         return props0;
     }
 
-    public int getMajorVersion() {
+    public int getMajorVersion()
+    {
         return Constants.DRIVER_MAJOR_VERSION;
     }
 
-    public int getMinorVersion() {
+    public int getMinorVersion()
+    {
         return Constants.DRIVER_MINOR_VERSION;
     }
 
-    public boolean jdbcCompliant() {
+    public boolean jdbcCompliant()
+    {
         return Constants.JDBC_COMPLIANT;
     }
-
 }

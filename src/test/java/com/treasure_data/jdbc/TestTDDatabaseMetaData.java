@@ -1,45 +1,54 @@
 package com.treasure_data.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.command.NullClientAPI;
+import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
+import com.treasure_data.model.Table;
+import com.treasure_data.model.TableSummary;
+import org.junit.Test;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.treasure_data.model.Table;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.command.NullClientAPI;
-import com.treasure_data.model.Database;
-import com.treasure_data.model.DatabaseSummary;
-import com.treasure_data.model.TableSummary;
-
-public class TestTDDatabaseMetaData {
+public class TestTDDatabaseMetaData
+{
 
     @Test
-    public void getCatalogSeparator() throws Exception {
+    public void getCatalogSeparator()
+            throws Exception
+    {
         TDDatabaseMetaData metadata = new TDDatabaseMetaData(
                 new NullClientAPI());
         assertEquals(".", metadata.getCatalogSeparator());
     }
 
     @Test
-    public void getCatalogTerm() throws Exception {
+    public void getCatalogTerm()
+            throws Exception
+    {
         TDDatabaseMetaData metadata = new TDDatabaseMetaData(
                 new NullClientAPI());
         assertEquals("database", metadata.getCatalogTerm());
     }
 
     @Test
-    public void getCatalogs() throws Exception {
-        NullClientAPI api = new NullClientAPI() {
+    public void getCatalogs()
+            throws Exception
+    {
+        NullClientAPI api = new NullClientAPI()
+        {
             @Override
-            public DatabaseSummary showDatabase() throws ClientException {
+            public DatabaseSummary showDatabase()
+                    throws ClientException
+            {
                 return new DatabaseSummary("db01", 10, "created_at01",
                         "updated_at01");
             }
@@ -54,7 +63,8 @@ public class TestTDDatabaseMetaData {
                 try {
                     rs.getString("TABLE_CAT");
                     fail();
-                } catch (Throwable t) {
+                }
+                catch (Throwable t) {
                     assertTrue(t instanceof SQLException);
                 }
 
@@ -64,12 +74,14 @@ public class TestTDDatabaseMetaData {
 
                 try {
                     rs.getString("notfound");
-                } catch (Throwable t) {
+                }
+                catch (Throwable t) {
                     assertTrue(t instanceof SQLException);
                 }
 
                 assertFalse(rs.next());
-            } finally {
+            }
+            finally {
                 if (rs != null) {
                     rs.close();
                 }
@@ -78,10 +90,15 @@ public class TestTDDatabaseMetaData {
     }
 
     @Test
-    public void getColumns() throws Exception {
-        NullClientAPI api = new NullClientAPI() {
+    public void getColumns()
+            throws Exception
+    {
+        NullClientAPI api = new NullClientAPI()
+        {
             @Override
-            public List<TableSummary> showTables() throws ClientException {
+            public List<TableSummary> showTables()
+                    throws ClientException
+            {
                 List<TableSummary> list = new ArrayList<TableSummary>();
                 list.add(new TableSummary(
                         new Database("mugadb"),
@@ -108,7 +125,8 @@ public class TestTDDatabaseMetaData {
                 try {
                     rs.getString(1);
                     fail();
-                } catch (Throwable t) {
+                }
+                catch (Throwable t) {
                     assertTrue(t instanceof SQLException);
                 }
 
@@ -148,7 +166,8 @@ public class TestTDDatabaseMetaData {
                 assertEquals("int", rs.getString("TYPE_NAME"));
 
                 assertFalse(rs.next());
-            } finally {
+            }
+            finally {
                 if (rs != null) {
                     rs.close();
                 }
@@ -157,10 +176,15 @@ public class TestTDDatabaseMetaData {
     }
 
     @Test
-    public void getTables() throws Exception {
-        NullClientAPI api = new NullClientAPI() {
+    public void getTables()
+            throws Exception
+    {
+        NullClientAPI api = new NullClientAPI()
+        {
             @Override
-            public List<TableSummary> showTables() throws ClientException {
+            public List<TableSummary> showTables()
+                    throws ClientException
+            {
                 List<TableSummary> list = new ArrayList<TableSummary>();
                 list.add(new TableSummary(
                         new Database("mugadb"),
@@ -193,7 +217,8 @@ public class TestTDDatabaseMetaData {
                 assertEquals("TABLE", rs.getString("TABLE_TYPE"));
 
                 assertFalse(rs.next());
-            } finally {
+            }
+            finally {
                 if (rs != null) {
                     rs.close();
                 }

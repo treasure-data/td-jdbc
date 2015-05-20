@@ -1,5 +1,14 @@
 package com.treasure_data.jdbc.command;
 
+import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.Constants;
+import com.treasure_data.jdbc.TDResultSetBase;
+import org.msgpack.MessagePack;
+import org.msgpack.packer.Packer;
+import org.msgpack.type.ArrayValue;
+import org.msgpack.type.Value;
+import org.msgpack.unpacker.Unpacker;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,48 +19,47 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.msgpack.MessagePack;
-import org.msgpack.packer.Packer;
-import org.msgpack.type.ArrayValue;
-import org.msgpack.type.Value;
-import org.msgpack.unpacker.Unpacker;
-
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.Constants;
-import com.treasure_data.jdbc.TDResultSetBase;
-
 /**
  * @see org.hsqldb.Session
  * @see org.hsqldb.SessionInterface
  */
-public class CommandExecutor implements Constants {
+public class CommandExecutor
+        implements Constants
+{
     private static final Logger LOG = Logger.getLogger(CommandExecutor.class.getName());
 
     private ClientAPI api;
 
-    public CommandExecutor(ClientAPI api) {
+    public CommandExecutor(ClientAPI api)
+    {
         this.api = api;
     }
 
-    public ClientAPI getAPI() {
+    public ClientAPI getAPI()
+    {
         return api;
     }
 
     public synchronized void execute(CommandContext context)
-            throws SQLException {
+            throws SQLException
+    {
         String sql = context.sql;
         try {
             if (sql.toUpperCase().equals("SELECT 1")) {
                 context.resultSet = new TDResultSetSelectOne(api);
-            } else {
+            }
+            else {
                 context.resultSet = api.select(context.sql, context.queryTimeout);
             }
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
     }
 
-    public static class TDResultSetSelectOne extends TDResultSetBase {
+    public static class TDResultSetSelectOne
+            extends TDResultSetBase
+    {
         private ClientAPI api;
 
         private int rowsFetched = 0;
@@ -60,12 +68,15 @@ public class CommandExecutor implements Constants {
 
         private Iterator<Value> fetchedRowsItr;
 
-        public TDResultSetSelectOne(ClientAPI api) {
+        public TDResultSetSelectOne(ClientAPI api)
+        {
             this.api = api;
         }
 
         @Override
-        public boolean next() throws SQLException {
+        public boolean next()
+                throws SQLException
+        {
             try {
                 if (fetchedRows == null) {
                     fetchedRows = fetchRows();
@@ -82,7 +93,8 @@ public class CommandExecutor implements Constants {
                     row.add(i, vs.get(i));
                 }
                 rowsFetched++;
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 throw new SQLException("Error retrieving next row", e);
             }
             // NOTE: fetchOne dosn't throw new SQLException("Method not supported").
@@ -90,11 +102,15 @@ public class CommandExecutor implements Constants {
         }
 
         @Override
-        public ResultSetMetaData getMetaData() throws SQLException {
+        public ResultSetMetaData getMetaData()
+                throws SQLException
+        {
             return api.getMetaDataWithSelect1();
         }
 
-        private Unpacker fetchRows() throws SQLException {
+        private Unpacker fetchRows()
+                throws SQLException
+        {
             try {
                 MessagePack msgpack = new MessagePack();
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -106,10 +122,10 @@ public class CommandExecutor implements Constants {
                 ByteArrayInputStream in = new ByteArrayInputStream(bytes);
                 Unpacker unpacker = msgpack.createUnpacker(in);
                 return unpacker;
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new SQLException(e);
             }
         }
     }
-
 }

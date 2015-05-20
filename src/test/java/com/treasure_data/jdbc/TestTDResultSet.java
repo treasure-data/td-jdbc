@@ -1,9 +1,18 @@
 package com.treasure_data.jdbc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
+import com.treasure_data.model.Job;
+import com.treasure_data.model.JobSummary;
+import com.treasure_data.model.JobSummary.Status;
+import com.treasure_data.model.TableSummary;
+import org.junit.Test;
+import org.msgpack.MessagePack;
+import org.msgpack.packer.BufferPacker;
+import org.msgpack.type.ValueFactory;
+import org.msgpack.unpacker.Unpacker;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,88 +22,110 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import org.junit.Test;
-import org.msgpack.MessagePack;
-import org.msgpack.packer.BufferPacker;
-import org.msgpack.type.ValueFactory;
-import org.msgpack.unpacker.Unpacker;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.command.ClientAPI;
-import com.treasure_data.model.Database;
-import com.treasure_data.model.DatabaseSummary;
-import com.treasure_data.model.Job;
-import com.treasure_data.model.JobSummary;
-import com.treasure_data.model.JobSummary.Status;
-import com.treasure_data.model.TableSummary;
+public class TestTDResultSet
+{
 
-public class TestTDResultSet {
-
-    public static class MockClientAPI implements ClientAPI {
-        public List<DatabaseSummary> showDatabases() throws ClientException {
+    public static class MockClientAPI
+            implements ClientAPI
+    {
+        public List<DatabaseSummary> showDatabases()
+                throws ClientException
+        {
             return null;
         }
 
-        public DatabaseSummary showDatabase() throws ClientException {
+        public DatabaseSummary showDatabase()
+                throws ClientException
+        {
             return null;
         }
 
-        public List<TableSummary> showTables() throws ClientException {
+        public List<TableSummary> showTables()
+                throws ClientException
+        {
             return null;
         }
 
-        public boolean drop(String tableName) throws ClientException {
+        public boolean drop(String tableName)
+                throws ClientException
+        {
             return false;
         }
 
-        public boolean create(String table) throws ClientException {
+        public boolean create(String table)
+                throws ClientException
+        {
             return false;
         }
 
         public boolean insert(String tableName, Map<String, Object> record)
-                throws ClientException {
+                throws ClientException
+        {
             return false;
         }
 
-        public TDResultSetBase select(String sql) throws ClientException {
+        public TDResultSetBase select(String sql)
+                throws ClientException
+        {
             return null;
         }
 
         public TDResultSetBase select(String sql, int queryTimeout)
-                throws ClientException {
+                throws ClientException
+        {
             return null;
         }
 
-        public TDResultSetMetaData getMetaDataWithSelect1() {
+        public TDResultSetMetaData getMetaDataWithSelect1()
+        {
             return null;
         }
 
-        public boolean flush() {
+        public boolean flush()
+        {
             return false;
         }
 
-        public JobSummary waitJobResult(Job job) throws ClientException {
+        public JobSummary waitJobResult(Job job)
+                throws ClientException
+        {
             return null;
         }
 
-        public Unpacker getJobResult(Job job) throws ClientException {
+        public Unpacker getJobResult(Job job)
+                throws ClientException
+        {
             return null;
         }
 
-        public ExtUnpacker getJobResult2(Job job) throws ClientException {
+        public ExtUnpacker getJobResult2(Job job)
+                throws ClientException
+        {
             return new ExtUnpacker(null, getJobResult(job));
         }
 
-        public void close() throws ClientException {
+        public void close()
+                throws ClientException
+        {
         }
     }
 
     @Test
-    public void testTimeout01() throws Exception {
+    public void testTimeout01()
+            throws Exception
+    {
         { // queryTimeout is not specified. it means queryTimeout = 0.
             int queryTimeout = 0;
-            ClientAPI clientApi = new MockClientAPI() {
-                public JobSummary waitJobResult(Job job) throws ClientException {
+            ClientAPI clientApi = new MockClientAPI()
+            {
+                public JobSummary waitJobResult(Job job)
+                        throws ClientException
+                {
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
                     return new JobSummary("12345", JobSummary.Type.HIVE,
                             new Database("mugadb"), "url", "rtbl",
@@ -102,7 +133,9 @@ public class TestTDResultSet {
                             resultSchema);
                 }
 
-                public Unpacker getJobResult(Job job) throws ClientException {
+                public Unpacker getJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         MessagePack msgpack = new MessagePack();
                         BufferPacker packer = msgpack.createBufferPacker();
@@ -116,7 +149,8 @@ public class TestTDResultSet {
                         packer.write(ret1);
                         byte[] bytes = packer.toByteArray();
                         return msgpack.createBufferUnpacker(bytes);
-                    } catch (java.io.IOException e) {
+                    }
+                    catch (java.io.IOException e) {
                         throw new ClientException("mock");
                     }
                 }
@@ -133,8 +167,11 @@ public class TestTDResultSet {
         }
         { // queryTimeout = 0
             int queryTimeout = 0;
-            ClientAPI clientApi = new MockClientAPI() {
-                public JobSummary waitJobResult(Job job) throws ClientException {
+            ClientAPI clientApi = new MockClientAPI()
+            {
+                public JobSummary waitJobResult(Job job)
+                        throws ClientException
+                {
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
                     return new JobSummary("12345", JobSummary.Type.HIVE,
                             new Database("mugadb"), "url", "rtbl",
@@ -142,7 +179,9 @@ public class TestTDResultSet {
                             resultSchema);
                 }
 
-                public Unpacker getJobResult(Job job) throws ClientException {
+                public Unpacker getJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         MessagePack msgpack = new MessagePack();
                         BufferPacker packer = msgpack.createBufferPacker();
@@ -156,7 +195,8 @@ public class TestTDResultSet {
                         packer.write(ret1);
                         byte[] bytes = packer.toByteArray();
                         return msgpack.createBufferUnpacker(bytes);
-                    } catch (java.io.IOException e) {
+                    }
+                    catch (java.io.IOException e) {
                         throw new ClientException("mock");
                     }
                 }
@@ -173,8 +213,11 @@ public class TestTDResultSet {
         }
         { // queryTimeout = 1
             int queryTimeout = 1;
-            ClientAPI clientApi = new MockClientAPI() {
-                public JobSummary waitJobResult(Job job) throws ClientException {
+            ClientAPI clientApi = new MockClientAPI()
+            {
+                public JobSummary waitJobResult(Job job)
+                        throws ClientException
+                {
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
                     return new JobSummary("12345", JobSummary.Type.HIVE,
                             new Database("mugadb"), "url", "rtbl",
@@ -182,7 +225,9 @@ public class TestTDResultSet {
                             resultSchema);
                 }
 
-                public Unpacker getJobResult(Job job) throws ClientException {
+                public Unpacker getJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         MessagePack msgpack = new MessagePack();
                         BufferPacker packer = msgpack.createBufferPacker();
@@ -196,7 +241,8 @@ public class TestTDResultSet {
                         packer.write(ret1);
                         byte[] bytes = packer.toByteArray();
                         return msgpack.createBufferUnpacker(bytes);
-                    } catch (java.io.IOException e) {
+                    }
+                    catch (java.io.IOException e) {
                         throw new ClientException("mock");
                     }
                 }
@@ -214,14 +260,20 @@ public class TestTDResultSet {
     }
 
     @Test
-    public void testTimeout02() throws Exception {
+    public void testTimeout02()
+            throws Exception
+    {
         { // queryTimeout = 1 and queryTimeout is less than sleep time.
             int queryTimeout = 1;
-            ClientAPI clientApi = new MockClientAPI() {
-                public JobSummary waitJobResult(Job job) throws ClientException {
+            ClientAPI clientApi = new MockClientAPI()
+            {
+                public JobSummary waitJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         Thread.sleep(3 * 1000);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                     }
 
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
@@ -231,7 +283,9 @@ public class TestTDResultSet {
                             resultSchema);
                 }
 
-                public Unpacker getJobResult(Job job) throws ClientException {
+                public Unpacker getJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         MessagePack msgpack = new MessagePack();
                         BufferPacker packer = msgpack.createBufferPacker();
@@ -245,7 +299,8 @@ public class TestTDResultSet {
                         packer.write(ret1);
                         byte[] bytes = packer.toByteArray();
                         return msgpack.createBufferUnpacker(bytes);
-                    } catch (java.io.IOException e) {
+                    }
+                    catch (java.io.IOException e) {
                         throw new ClientException("mock");
                     }
                 }
@@ -255,19 +310,24 @@ public class TestTDResultSet {
                 ResultSet rs = new TDResultSet(clientApi, 50, job, queryTimeout);
                 rs.next();
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException); // it is thrown by
-                                                       // fetchRows
+                // fetchRows
                 assertTrue(t.getCause() instanceof TimeoutException);
             }
         }
         { // queryTimeout = 3 and queryTimeout is not less than sleep time.
             int queryTimeout = 3;
-            ClientAPI clientApi = new MockClientAPI() {
-                public JobSummary waitJobResult(Job job) throws ClientException {
+            ClientAPI clientApi = new MockClientAPI()
+            {
+                public JobSummary waitJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         Thread.sleep(1 * 1000);
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                     }
 
                     String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
@@ -277,7 +337,9 @@ public class TestTDResultSet {
                             resultSchema);
                 }
 
-                public Unpacker getJobResult(Job job) throws ClientException {
+                public Unpacker getJobResult(Job job)
+                        throws ClientException
+                {
                     try {
                         MessagePack msgpack = new MessagePack();
                         BufferPacker packer = msgpack.createBufferPacker();
@@ -291,7 +353,8 @@ public class TestTDResultSet {
                         packer.write(ret1);
                         byte[] bytes = packer.toByteArray();
                         return msgpack.createBufferUnpacker(bytes);
-                    } catch (java.io.IOException e) {
+                    }
+                    catch (java.io.IOException e) {
                         throw new ClientException("mock");
                     }
                 }
@@ -309,16 +372,23 @@ public class TestTDResultSet {
     }
 
     @Test
-    public void testNext01() throws Exception {
-        ClientAPI clientApi = new MockClientAPI() {
-            public JobSummary waitJobResult(Job job) throws ClientException {
+    public void testNext01()
+            throws Exception
+    {
+        ClientAPI clientApi = new MockClientAPI()
+        {
+            public JobSummary waitJobResult(Job job)
+                    throws ClientException
+            {
                 String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE,
                         new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
                         "startAt", "endAt", "query", resultSchema);
             }
 
-            public Unpacker getJobResult(Job job) throws ClientException {
+            public Unpacker getJobResult(Job job)
+                    throws ClientException
+            {
                 try {
                     MessagePack msgpack = new MessagePack();
                     BufferPacker packer = msgpack.createBufferPacker();
@@ -332,7 +402,8 @@ public class TestTDResultSet {
                     packer.write(ret1);
                     byte[] bytes = packer.toByteArray();
                     return msgpack.createBufferUnpacker(bytes);
-                } catch (java.io.IOException e) {
+                }
+                catch (java.io.IOException e) {
                     throw new ClientException("mock");
                 }
             }
@@ -349,16 +420,23 @@ public class TestTDResultSet {
     }
 
     @Test
-    public void testNext02() throws Exception {
-        ClientAPI clientApi = new MockClientAPI() {
-            public JobSummary waitJobResult(Job job) throws ClientException {
+    public void testNext02()
+            throws Exception
+    {
+        ClientAPI clientApi = new MockClientAPI()
+        {
+            public JobSummary waitJobResult(Job job)
+                    throws ClientException
+            {
                 String resultSchema = "[[\"age\",\"int\"],[\"name\",\"string\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE,
                         new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
                         "startAt", "endAt", "query", resultSchema);
             }
 
-            public Unpacker getJobResult(Job job) throws ClientException {
+            public Unpacker getJobResult(Job job)
+                    throws ClientException
+            {
                 try {
                     MessagePack msgpack = new MessagePack();
                     BufferPacker packer = msgpack.createBufferPacker();
@@ -368,7 +446,8 @@ public class TestTDResultSet {
                     packer.write(ret0);
                     byte[] bytes = packer.toByteArray();
                     return msgpack.createBufferUnpacker(bytes);
-                } catch (java.io.IOException e) {
+                }
+                catch (java.io.IOException e) {
                     throw new ClientException("mock");
                 }
             }
@@ -391,17 +470,24 @@ public class TestTDResultSet {
     }
 
     @Test
-    public void testNext03() throws Exception {
+    public void testNext03()
+            throws Exception
+    {
         final int count = 100;
-        ClientAPI clientApi = new MockClientAPI() {
-            public JobSummary waitJobResult(Job job) throws ClientException {
+        ClientAPI clientApi = new MockClientAPI()
+        {
+            public JobSummary waitJobResult(Job job)
+                    throws ClientException
+            {
                 String resultSchema = "[[\"p1\",\"string\"],[\"p2\",\"string\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE,
                         new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
                         "startAt", "endAt", "query", resultSchema);
             }
 
-            public Unpacker getJobResult(Job job) throws ClientException {
+            public Unpacker getJobResult(Job job)
+                    throws ClientException
+            {
                 try {
                     MessagePack msgpack = new MessagePack();
                     BufferPacker packer = msgpack.createBufferPacker();
@@ -413,7 +499,8 @@ public class TestTDResultSet {
                     }
                     byte[] bytes = packer.toByteArray();
                     return msgpack.createBufferUnpacker(bytes);
-                } catch (java.io.IOException e) {
+                }
+                catch (java.io.IOException e) {
                     throw new ClientException("mock");
                 }
             }
@@ -430,9 +517,14 @@ public class TestTDResultSet {
     }
 
     @Test
-    public void testGetMetaData01() throws Exception {
-        ClientAPI clientApi = new MockClientAPI() {
-            public JobSummary waitJobResult(Job job) throws ClientException {
+    public void testGetMetaData01()
+            throws Exception
+    {
+        ClientAPI clientApi = new MockClientAPI()
+        {
+            public JobSummary waitJobResult(Job job)
+                    throws ClientException
+            {
                 String resultSchema = "[[\"p1\",\"string\"],[\"p2\",\"float\"],[\"p3\",\"double\"],[\"p4\",\"boolean\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE,
                         new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
@@ -446,7 +538,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnType(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME),
@@ -460,7 +553,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnType(5);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
         }
@@ -468,7 +562,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnTypeName(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Constants.STRING_TYPE_NAME,
@@ -482,7 +577,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnTypeName(5);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
         }
@@ -490,7 +586,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnName(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof ArrayIndexOutOfBoundsException);
             }
             assertEquals("p1", rsMetaData.getColumnName(1));
@@ -499,16 +596,22 @@ public class TestTDResultSet {
             assertEquals("p4", rsMetaData.getColumnName(4));
             try {
                 rsMetaData.getColumnName(5);
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof IndexOutOfBoundsException);
             }
         }
     }
 
     @Test
-    public void testGetMetaData02() throws Exception {
-        ClientAPI clientApi = new MockClientAPI() {
-            public JobSummary waitJobResult(Job job) throws ClientException {
+    public void testGetMetaData02()
+            throws Exception
+    {
+        ClientAPI clientApi = new MockClientAPI()
+        {
+            public JobSummary waitJobResult(Job job)
+                    throws ClientException
+            {
                 String resultSchema = "[[\"p1\",\"tinyint\"],[\"p2\",\"smallint\"],[\"p3\",\"int\"],[\"p4\",\"bigint\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE,
                         new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
@@ -522,7 +625,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnType(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Utils.TDTypeToSqlType(Constants.TINYINT_TYPE_NAME),
@@ -536,7 +640,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnType(5);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
         }
@@ -544,7 +649,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnTypeName(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Constants.TINYINT_TYPE_NAME,
@@ -558,7 +664,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnTypeName(5);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
         }
@@ -566,7 +673,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnName(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof ArrayIndexOutOfBoundsException);
             }
             assertEquals("p1", rsMetaData.getColumnName(1));
@@ -575,16 +683,22 @@ public class TestTDResultSet {
             assertEquals("p4", rsMetaData.getColumnName(4));
             try {
                 rsMetaData.getColumnName(5);
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof IndexOutOfBoundsException);
             }
         }
     }
 
     @Test
-    public void testGetMetaData03() throws Exception {
-        ClientAPI clientApi = new MockClientAPI() {
-            public JobSummary waitJobResult(Job job) throws ClientException {
+    public void testGetMetaData03()
+            throws Exception
+    {
+        ClientAPI clientApi = new MockClientAPI()
+        {
+            public JobSummary waitJobResult(Job job)
+                    throws ClientException
+            {
                 String resultSchema = "[[\"p1\",\"map<string,int>\"],[\"p2\",\"array<int>\"],[\"p3\",\"struct<int>\"]]";
                 return new JobSummary("12345", JobSummary.Type.HIVE,
                         new Database("mugadb"), "url", "rtbl", Status.SUCCESS,
@@ -598,7 +712,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnType(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Utils.TDTypeToSqlType(Constants.STRING_TYPE_NAME),
@@ -610,7 +725,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnType(4);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
         }
@@ -618,7 +734,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnTypeName(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
             assertEquals(Constants.STRING_TYPE_NAME,
@@ -630,7 +747,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnTypeName(4);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof SQLException);
             }
         }
@@ -638,7 +756,8 @@ public class TestTDResultSet {
             try {
                 rsMetaData.getColumnName(0);
                 fail();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof ArrayIndexOutOfBoundsException);
             }
             assertEquals("p1", rsMetaData.getColumnName(1));
@@ -646,7 +765,8 @@ public class TestTDResultSet {
             assertEquals("p3", rsMetaData.getColumnName(3));
             try {
                 rsMetaData.getColumnName(4);
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 assertTrue(t instanceof IndexOutOfBoundsException);
             }
         }

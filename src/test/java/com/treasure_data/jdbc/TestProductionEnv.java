@@ -93,18 +93,17 @@ public class TestProductionEnv
         stat.execute("select time, id, nums from arraytest");
         {
             ResultSet rs = stat.getResultSet();
-            if (rs.next()) {
-                long time = rs.getLong(1);
-                assertEquals(1432099776L, time);
-                int id = rs.getInt(2);
-                assertEquals(1, id);
+            assertTrue(rs.next());
+            long time = rs.getLong(1);
+            assertEquals(1432099776L, time);
+            int id = rs.getInt(2);
+            assertEquals(1, id);
 
-                ArrayValue arr = (ArrayValue) rs.getObject(3);
-                logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
-                for (int i = 0; i < arr.size(); ++i) {
-                    int v = arr.get(i).asIntegerValue().getInt();
-                    assertEquals(i + 1, v);
-                }
+            ArrayValue arr = (ArrayValue) rs.getObject(3);
+            logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
+            for (int i = 0; i < arr.size(); ++i) {
+                int v = arr.get(i).asIntegerValue().getInt();
+                assertEquals(i + 1, v);
             }
             assertFalse(rs.next());
             rs.close();
@@ -113,13 +112,12 @@ public class TestProductionEnv
         stat.execute("select nums from arraytest");
         {
             ResultSet rs = stat.getResultSet();
-            if(rs.next()) {
-                ArrayValue arr = (ArrayValue) rs.getObject(1);
-                logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
-                for (int i = 0; i < arr.size(); ++i) {
-                    int v = arr.get(i).asIntegerValue().getInt();
-                    assertEquals(i + 1, v);
-                }
+            assertTrue(rs.next());
+            ArrayValue arr = (ArrayValue) rs.getObject(1);
+            logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
+            for (int i = 0; i < arr.size(); ++i) {
+                int v = arr.get(i).asIntegerValue().getInt();
+                assertEquals(i + 1, v);
             }
             assertFalse(rs.next());
             rs.close();
@@ -141,13 +139,12 @@ public class TestProductionEnv
         // nums = '[1, 2, 3]' (varchar) but its data type is changed to array<int> from TD console
         stat.execute("select nums from arraytest_str");
         ResultSet rs = stat.getResultSet();
-        if(rs.next()) {
-            ArrayValue arr = (ArrayValue) rs.getObject(1);
-            logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
-            for (int i = 0; i < arr.size(); ++i) {
-                int v = arr.get(i).asIntegerValue().getInt();
-                assertEquals(i + 1, v);
-            }
+        assertTrue(rs.next());
+        ArrayValue arr = (ArrayValue) rs.getObject(1);
+        logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
+        for (int i = 0; i < arr.size(); ++i) {
+            int v = arr.get(i).asIntegerValue().getInt();
+            assertEquals(i + 1, v);
         }
         assertFalse(rs.next());
         rs.close();

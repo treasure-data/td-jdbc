@@ -1,48 +1,65 @@
 package com.treasure_data.jdbc;
 
+import com.treasure_data.jdbc.model.TDColumn;
+
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.treasure_data.jdbc.model.TDColumn;
-
-public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
+public class TDResultSetMetaData
+        implements java.sql.ResultSetMetaData
+{
     private final List<String> columnNames;
     private final List<String> columnTypes;
 
     public TDResultSetMetaData(List<String> columnNames,
-            List<String> columnTypes) {
+            List<String> columnTypes)
+    {
         this.columnNames = columnNames;
         this.columnTypes = columnTypes;
     }
 
-    public String getCatalogName(int column) throws SQLException {
+    public String getCatalogName(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getColumnClassName(int column) throws SQLException {
+    public String getColumnClassName(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int getColumnCount() throws SQLException {
+    public int getColumnCount()
+            throws SQLException
+    {
         return columnNames.size();
     }
 
-    public int getColumnDisplaySize(int column) throws SQLException {
+    public int getColumnDisplaySize(int column)
+            throws SQLException
+    {
         int columnType = getColumnType(column);
 
         return TDColumn.columnDisplaySize(columnType);
     }
 
-    public String getColumnLabel(int column) throws SQLException {
+    public String getColumnLabel(int column)
+            throws SQLException
+    {
         return columnNames.get(column - 1);
     }
 
-    public String getColumnName(int column) throws SQLException {
+    public String getColumnName(int column)
+            throws SQLException
+    {
         return columnNames.get(column - 1);
     }
 
-    public int getColumnType(int column) throws SQLException {
+    public int getColumnType(int column)
+            throws SQLException
+    {
         if (columnTypes == null) {
             throw new SQLException(
                     "Could not determine column type name for ResultSet");
@@ -59,7 +76,9 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         return Utils.TDTypeToSqlType(type);
     }
 
-    public String getColumnTypeName(int column) throws SQLException {
+    public String getColumnTypeName(int column)
+            throws SQLException
+    {
         if (columnTypes == null) {
             throw new SQLException(
                     "Could not determine column type name for ResultSet");
@@ -74,89 +93,126 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         String type = columnTypes.get(column - 1);
         if ("string".equalsIgnoreCase(type)) {
             return Constants.STRING_TYPE_NAME;
-        } else if ("varchar".equalsIgnoreCase(type)) {
+        }
+        else if ("varchar".equalsIgnoreCase(type)) {
             return Constants.VARCHAR_TYPE_NAME;
-        } else if ("float".equalsIgnoreCase(type)) {
+        }
+        else if ("float".equalsIgnoreCase(type)) {
             return Constants.FLOAT_TYPE_NAME;
-        } else if ("double".equalsIgnoreCase(type)) {
+        }
+        else if ("double".equalsIgnoreCase(type)) {
             return Constants.DOUBLE_TYPE_NAME;
-        } else if ("boolean".equalsIgnoreCase(type)) {
+        }
+        else if ("boolean".equalsIgnoreCase(type)) {
             return Constants.BOOLEAN_TYPE_NAME;
-        } else if ("tinyint".equalsIgnoreCase(type)) {
+        }
+        else if ("tinyint".equalsIgnoreCase(type)) {
             return Constants.TINYINT_TYPE_NAME;
-        } else if ("smallint".equalsIgnoreCase(type)) {
+        }
+        else if ("smallint".equalsIgnoreCase(type)) {
             return Constants.SMALLINT_TYPE_NAME;
-        } else if ("int".equalsIgnoreCase(type)) {
+        }
+        else if ("int".equalsIgnoreCase(type)) {
             return Constants.INT_TYPE_NAME;
-        } else if ("bigint".equalsIgnoreCase(type)) {
+        }
+        else if ("bigint".equalsIgnoreCase(type)) {
             return Constants.BIGINT_TYPE_NAME;
-        } else if ("date".equalsIgnoreCase(type)) {
+        }
+        else if ("date".equalsIgnoreCase(type)) {
             return Constants.DATE_TYPE_NAME;
-        } else if ("timestamp".equalsIgnoreCase(type)) {
+        }
+        else if ("timestamp".equalsIgnoreCase(type)) {
             return Constants.TIMESTAMP_TYPE_NAME;
-        } else if (type.startsWith("map<")) {
+        }
+        else if (type.startsWith("map<")) {
             return Constants.STRING_TYPE_NAME;
-        } else if (type.startsWith("array<")) {
+        }
+        else if (type.startsWith("array<")) {
             return Constants.STRING_TYPE_NAME;
-        } else if (type.startsWith("struct<")) {
+        }
+        else if (type.startsWith("struct<")) {
             return Constants.STRING_TYPE_NAME;
         }
 
         throw new SQLException("Unrecognized column type: " + type);
     }
 
-    public int getPrecision(int column) throws SQLException {
+    public int getPrecision(int column)
+            throws SQLException
+    {
         int columnType = getColumnType(column);
 
         return TDColumn.columnPrecision(columnType);
     }
 
-    public int getScale(int column) throws SQLException {
+    public int getScale(int column)
+            throws SQLException
+    {
         int columnType = getColumnType(column);
 
         return TDColumn.columnScale(columnType);
     }
 
-    public String getSchemaName(int column) throws SQLException {
+    public String getSchemaName(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getTableName(int column) throws SQLException {
+    public String getTableName(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isAutoIncrement(int column) throws SQLException {
+    public boolean isAutoIncrement(int column)
+            throws SQLException
+    {
         // Hive doesn't have an auto-increment concept
         return false;
     }
 
-    public boolean isCaseSensitive(int column) throws SQLException {
+    public boolean isCaseSensitive(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isCurrency(int column) throws SQLException {
+    public boolean isCurrency(int column)
+            throws SQLException
+    {
         // Hive doesn't support a currency type
         return false;
     }
 
-    public boolean isDefinitelyWritable(int column) throws SQLException {
+    public boolean isDefinitelyWritable(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int isNullable(int column) throws SQLException {
+    public int isNullable(int column)
+            throws SQLException
+    {
         // Hive doesn't have the concept of not-null
         return ResultSetMetaData.columnNullable;
     }
 
-    public boolean isReadOnly(int column) throws SQLException {
+    public boolean isReadOnly(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isSearchable(int column) throws SQLException {
+    public boolean isSearchable(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isSigned(int column) throws SQLException {
+    public boolean isSigned(int column)
+            throws SQLException
+    {
         if (columnTypes == null) {
             throw new SQLException(
                     "Could not determine column type name for ResultSet");
@@ -178,7 +234,8 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
                 type.startsWith("array<") ||
                 type.startsWith("struct<")) {
             return false;
-        } else if ("float".equalsIgnoreCase(type) ||
+        }
+        else if ("float".equalsIgnoreCase(type) ||
                 "double".equalsIgnoreCase(type) ||
                 "tinyint".equalsIgnoreCase(type) ||
                 "smallint".equalsIgnoreCase(type) ||
@@ -190,16 +247,21 @@ public class TDResultSetMetaData implements java.sql.ResultSetMetaData {
         throw new SQLException("Unrecognized column type: " + type);
     }
 
-    public boolean isWritable(int column) throws SQLException {
+    public boolean isWritable(int column)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(Class<?> iface)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public <T> T unwrap(Class<T> iface) throws SQLException {
+    public <T> T unwrap(Class<T> iface)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
-
 }

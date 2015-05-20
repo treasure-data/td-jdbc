@@ -1,11 +1,13 @@
 package com.treasure_data.jdbc.model;
 
-import java.sql.SQLException;
-
 import com.treasure_data.jdbc.TDDatabaseMetaData;
 
-public class TDTable {
-    public enum Type {
+import java.sql.SQLException;
+
+public class TDTable
+{
+    public enum Type
+    {
         TABLE, VIEW, EXTERNAL_TABLE
     }
 
@@ -15,30 +17,37 @@ public class TDTable {
     private String comment;
 
     public TDTable(String tableCatalog, String tableName, String type,
-            String comment) {
+            String comment)
+    {
         this.tableCatalog = tableCatalog;
         this.tableName = tableName;
         this.type = type;
         this.comment = comment;
     }
 
-    public String getTableCatalog() {
+    public String getTableCatalog()
+    {
         return tableCatalog;
     }
 
-    public String getTableName() {
+    public String getTableName()
+    {
         return tableName;
     }
 
-    public String getType() {
+    public String getType()
+    {
         return type;
     }
 
-    public String getSqlTableType() throws SQLException {
+    public String getSqlTableType()
+            throws SQLException
+    {
         return TDDatabaseMetaData.toTDTableType(type);
     }
 
-    public String getComment() {
+    public String getComment()
+    {
         return comment;
     }
 }

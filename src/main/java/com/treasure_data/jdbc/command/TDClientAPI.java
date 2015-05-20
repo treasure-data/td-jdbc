@@ -1,34 +1,13 @@
 package com.treasure_data.jdbc.command;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
-
-import com.treasure_data.jdbc.TDResultSetMetaData;
-import org.msgpack.MessagePack;
-import org.msgpack.unpacker.Unpacker;
-
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
+import com.treasure_data.jdbc.Config;
 import com.treasure_data.jdbc.JDBCURLParser;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
-import com.treasure_data.jdbc.Config;
+import com.treasure_data.jdbc.TDResultSetMetaData;
 import com.treasure_data.model.AuthenticateRequest;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.DatabaseSummary;
@@ -41,8 +20,29 @@ import com.treasure_data.model.JobSummary;
 import com.treasure_data.model.SubmitJobRequest;
 import com.treasure_data.model.SubmitJobResult;
 import com.treasure_data.model.TableSummary;
+import org.msgpack.MessagePack;
+import org.msgpack.unpacker.Unpacker;
 
-public class TDClientAPI implements ClientAPI {
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+
+public class TDClientAPI
+        implements ClientAPI
+{
     private static final Logger LOG = Logger.getLogger(TDClientAPI.class
             .getName());
 
@@ -56,23 +56,31 @@ public class TDClientAPI implements ClientAPI {
 
     private int maxRows = 5000;
 
-    public TDClientAPI(TDConnection conn) throws SQLException {
+    public TDClientAPI(TDConnection conn)
+            throws SQLException
+    {
         this(null, new TreasureDataClient(conn.getProperties()), conn
                 .getProperties(), conn.getDatabase(), conn.getMaxRows());
     }
 
-    public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn) throws SQLException {
+    public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn)
+            throws SQLException
+    {
         this(desc, new TreasureDataClient(conn.getProperties()), conn
                 .getProperties(), conn.getDatabase(), conn.getMaxRows());
     }
 
     public TDClientAPI(TreasureDataClient client, Properties props,
-            Database database) throws SQLException {
+            Database database)
+            throws SQLException
+    {
         this(null, client, props, database, 5000);
     }
 
     public TDClientAPI(JDBCURLParser.Desc desc, TreasureDataClient client,
-            Properties props, Database database, int maxRows) throws SQLException {
+            Properties props, Database database, int maxRows)
+            throws SQLException
+    {
         this.client = client;
         this.props = props;
         this.database = database;
@@ -81,12 +89,15 @@ public class TDClientAPI implements ClientAPI {
 
         try {
             checkCredentials();
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
     }
 
-    private void checkCredentials() throws ClientException {
+    private void checkCredentials()
+            throws ClientException
+    {
         String apiKey = client.getTreasureDataCredentials().getAPIKey();
         if (apiKey != null) {
             return;
@@ -101,11 +112,15 @@ public class TDClientAPI implements ClientAPI {
         client.authenticate(new AuthenticateRequest(user, password));
     }
 
-    public List<DatabaseSummary> showDatabases() throws ClientException {
+    public List<DatabaseSummary> showDatabases()
+            throws ClientException
+    {
         return client.listDatabases();
     }
 
-    public DatabaseSummary showDatabase() throws ClientException {
+    public DatabaseSummary showDatabase()
+            throws ClientException
+    {
         List<DatabaseSummary> databases = client.listDatabases();
         for (DatabaseSummary db : databases) {
             if (db.getName().equals(database.getName())) {
@@ -115,32 +130,42 @@ public class TDClientAPI implements ClientAPI {
         return null;
     }
 
-    public List<TableSummary> showTables() throws ClientException {
+    public List<TableSummary> showTables()
+            throws ClientException
+    {
         return client.listTables(database);
     }
 
-    public boolean drop(String table) throws ClientException {
+    public boolean drop(String table)
+            throws ClientException
+    {
         client.deleteTable(database.getName(), table);
         return true;
     }
 
-    public boolean create(String table) throws ClientException {
+    public boolean create(String table)
+            throws ClientException
+    {
         client.createTable(database, table);
         return true;
     }
 
-    public TDResultSetBase select(String sql) throws ClientException {
+    public TDResultSetBase select(String sql)
+            throws ClientException
+    {
         return select(sql, 0);
     }
 
     public TDResultSetBase select(String sql, int queryTimeout)
-            throws ClientException {
+            throws ClientException
+    {
         TDResultSetBase rs = null;
 
         Job job;
         if (desc == null || desc.type == null) {
             job = new Job(database, sql); // It's, by default, executed by hive.
-        } else {
+        }
+        else {
             job = new Job(database, desc.type, sql, null);
         }
         SubmitJobRequest request = new SubmitJobRequest(job);
@@ -153,7 +178,8 @@ public class TDClientAPI implements ClientAPI {
         return rs;
     }
 
-    public TDResultSetMetaData getMetaDataWithSelect1() {
+    public TDResultSetMetaData getMetaDataWithSelect1()
+    {
         //  handle Presto/Hive differences
         //  https://console.treasuredata.com/jobs/24746696 Hive
         //  https://console.treasuredata.com/jobs/24745829 Presto
@@ -161,16 +187,20 @@ public class TDClientAPI implements ClientAPI {
         if (desc == null || desc.type == null || desc.type.equals(Job.Type.HIVE)) { // hive
             names = Arrays.asList("_c0");
             types = Arrays.asList("int");
-        } else if (desc.type.equals(Job.Type.PRESTO)) {
+        }
+        else if (desc.type.equals(Job.Type.PRESTO)) {
             names = Arrays.asList("_col0");
             types = Arrays.asList("bigint");
-        } else { // pig, etc.
+        }
+        else { // pig, etc.
             throw new UnsupportedOperationException();
         }
         return new TDResultSetMetaData(new ArrayList<String>(names), new ArrayList<String>(types));
     }
 
-    public JobSummary waitJobResult(Job job) throws ClientException {
+    public JobSummary waitJobResult(Job job)
+            throws ClientException
+    {
         String jobID = job.getJobID();
 
         while (true) {
@@ -183,7 +213,8 @@ public class TDClientAPI implements ClientAPI {
             if (stat == JobSummary.Status.SUCCESS) {
                 LOG.fine("Job worked successfully.");
                 break;
-            } else if (stat == JobSummary.Status.ERROR) {
+            }
+            else if (stat == JobSummary.Status.ERROR) {
                 JobSummary js = client.showJob(job);
                 String msg = String.format(
                         "Job '%s' failed: got Job status 'error'", jobID);
@@ -196,7 +227,8 @@ public class TDClientAPI implements ClientAPI {
                     LOG.severe(js.getDebug().getStderr());
                 }
                 throw new ClientException(msg);
-            } else if (stat == JobSummary.Status.KILLED) {
+            }
+            else if (stat == JobSummary.Status.KILLED) {
                 String msg = String.format(
                         "Job '%s' failed: got Job status 'killed'", jobID);
                 LOG.severe(msg);
@@ -205,7 +237,8 @@ public class TDClientAPI implements ClientAPI {
 
             try {
                 Thread.sleep(2 * 1000);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 return null;
             }
         }
@@ -213,14 +246,18 @@ public class TDClientAPI implements ClientAPI {
         return client.showJob(job);
     }
 
-    public Unpacker getJobResult(Job job) throws ClientException {
+    public Unpacker getJobResult(Job job)
+            throws ClientException
+    {
         GetJobResultRequest request = new GetJobResultRequest(
                 new JobResult(job));
         GetJobResultResult result = client.getJobResult(request);
         return result.getJobResult().getResult();
     }
 
-    public ExtUnpacker getJobResult2(Job job) throws ClientException {
+    public ExtUnpacker getJobResult2(Job job)
+            throws ClientException
+    {
         File file = null;
 
         int retryCount = 0;
@@ -232,7 +269,8 @@ public class TDClientAPI implements ClientAPI {
                 LOG.info("write the result to file");
                 file = writeJobResultToTempFile(job);
                 break;
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 LOG.warning("cought exception: message = " + t.getMessage());
                 t.printStackTrace();
 
@@ -252,7 +290,8 @@ public class TDClientAPI implements ClientAPI {
                 try {
                     LOG.info("wait for re-try: timeout = " + retryWaitTime);
                     Thread.sleep(retryWaitTime);
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     // ignore
                 }
             }
@@ -271,13 +310,16 @@ public class TDClientAPI implements ClientAPI {
             return new ExtUnpacker(file,
                     new MessagePack().createUnpacker(new BufferedInputStream(
                             fin)));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new ClientException(e);
         }
     }
 
-    private File writeJobResultToTempFile(Job job) throws ClientException,
-            IOException {
+    private File writeJobResultToTempFile(Job job)
+            throws ClientException,
+            IOException
+    {
         GetJobResultRequest request = new GetJobResultRequest(new JobResult2(
                 job));
         GetJobResultResult result = client.getJobResult(request);
@@ -309,28 +351,34 @@ public class TDClientAPI implements ClientAPI {
 
             LOG.info("finished writing file");
             return file;
-        } finally {
+        }
+        finally {
             if (fout != null) {
                 try {
                     fout.close();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     // ignore
                 }
             }
             if (rin != null) {
                 try {
                     rin.close();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     // ignore
                 }
             }
         }
     }
 
-    public boolean flush() {
+    public boolean flush()
+    {
         return true;
     }
 
-    public void close() throws ClientException {
+    public void close()
+            throws ClientException
+    {
     }
 }

@@ -1,5 +1,14 @@
 package com.treasure_data.jdbc;
 
+import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.command.ClientAPI.ExtUnpacker;
+import com.treasure_data.model.Job;
+import com.treasure_data.model.JobSummary;
+import org.json.simple.JSONValue;
+import org.msgpack.type.ArrayValue;
+import org.msgpack.type.Value;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSetMetaData;
@@ -17,18 +26,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.simple.JSONValue;
-import org.msgpack.type.ArrayValue;
-import org.msgpack.type.Value;
-import org.msgpack.unpacker.Unpacker;
-
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.command.ClientAPI;
-import com.treasure_data.jdbc.command.ClientAPI.ExtUnpacker;
-import com.treasure_data.model.Job;
-import com.treasure_data.model.JobSummary;
-
-public class TDResultSet extends TDResultSetBase {
+public class TDResultSet
+        extends TDResultSetBase
+{
     private static Logger LOG = Logger.getLogger(TDResultSet.class.getName());
 
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -49,11 +49,13 @@ public class TDResultSet extends TDResultSetBase {
 
     private Job job;
 
-    public TDResultSet(ClientAPI clientApi, int maxRows, Job job) {
+    public TDResultSet(ClientAPI clientApi, int maxRows, Job job)
+    {
         this(clientApi, maxRows, job, 0);
     }
 
-    public TDResultSet(ClientAPI clientApi, int maxRows, Job job, int queryTimeout) {
+    public TDResultSet(ClientAPI clientApi, int maxRows, Job job, int queryTimeout)
+    {
         this.clientApi = clientApi;
         this.maxRows = maxRows;
         this.job = job;
@@ -61,30 +63,39 @@ public class TDResultSet extends TDResultSetBase {
     }
 
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchSize(int rows)
+            throws SQLException
+    {
         fetchSize = rows;
     }
 
     @Override
-    public int getFetchSize() throws SQLException {
+    public int getFetchSize()
+            throws SQLException
+    {
         return fetchSize;
     }
 
-    public void setMaxRows(int maxRows) {
+    public void setMaxRows(int maxRows)
+    {
         this.maxRows = maxRows;
     }
 
-    public int getMaxRows() {
+    public int getMaxRows()
+    {
         return maxRows;
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close()
+            throws SQLException
+    {
         if (fetchedRows != null) {
             try {
                 fetchedRows.getUnpacker().close();
                 LOG.info("closed file based unpacker");
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 throw new SQLException(e);
             }
 
@@ -101,9 +112,11 @@ public class TDResultSet extends TDResultSetBase {
         if (executor != null) {
             try {
                 executor.shutdownNow();
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 throw new SQLException(t);
-            } finally {
+            }
+            finally {
                 executor = null;
             }
         }
@@ -112,10 +125,12 @@ public class TDResultSet extends TDResultSetBase {
     /**
      * Moves the cursor down one row from its current position.
      *
+     * @throws SQLException if a database access error occurs.
      * @see java.sql.ResultSet#next()
-     * @throws SQLException     if a database access error occurs.
      */
-    public boolean next() throws SQLException {
+    public boolean next()
+            throws SQLException
+    {
         try {
             if (fetchedRows == null) {
                 fetchedRows = fetchRows();
@@ -136,10 +151,12 @@ public class TDResultSet extends TDResultSetBase {
             if (LOG.isLoggable(Level.FINE)) {
                 LOG.fine(String.format("fetched row(%d): %s", rowsFetched, row));
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             if (e instanceof SQLException) {
                 throw (SQLException) e;
-            } else {
+            }
+            else {
                 throw new SQLException("Error retrieving next row", e);
             }
         }
@@ -148,21 +165,30 @@ public class TDResultSet extends TDResultSetBase {
     }
 
     @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
+    public ResultSetMetaData getMetaData()
+            throws SQLException
+    {
         try {
             JobSummary jobSummary = clientApi.waitJobResult(job);
             initColumnNamesAndTypes(jobSummary.getResultSchema());
             return super.getMetaData();
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
     }
 
-    private ExtUnpacker fetchRows() throws SQLException {
+    private ExtUnpacker fetchRows()
+            throws SQLException
+    {
         JobSummary jobSummary = null;
 
-        Callable<JobSummary> callback = new Callable<JobSummary>() {
-            @Override public JobSummary call() throws Exception {
+        Callable<JobSummary> callback = new Callable<JobSummary>()
+        {
+            @Override
+            public JobSummary call()
+                    throws Exception
+            {
                 JobSummary jobSummary = clientApi.waitJobResult(job);
                 return jobSummary;
             }
@@ -172,14 +198,18 @@ public class TDResultSet extends TDResultSetBase {
         try {
             if (queryTimeout <= 0) {
                 jobSummary = future.get();
-            } else {
+            }
+            else {
                 jobSummary = future.get(queryTimeout, TimeUnit.SECONDS);
             }
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
             // ignore
-        } catch (TimeoutException e) {
+        }
+        catch (TimeoutException e) {
             throw new SQLException(e);
-        } catch (ExecutionException e) {
+        }
+        catch (ExecutionException e) {
             throw new SQLException(e.getCause());
         }
 
@@ -190,12 +220,14 @@ public class TDResultSet extends TDResultSetBase {
         try {
             initColumnNamesAndTypes(jobSummary.getResultSchema());
             return clientApi.getJobResult2(job);
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
     }
 
-    private void initColumnNamesAndTypes(String resultSchema) {
+    private void initColumnNamesAndTypes(String resultSchema)
+    {
         if (LOG.isLoggable(Level.FINE)) {
             LOG.fine("resultSchema: " + resultSchema);
         }
@@ -219,5 +251,4 @@ public class TDResultSet extends TDResultSetBase {
             columnTypes.add(col.get(1));
         }
     }
-
 }

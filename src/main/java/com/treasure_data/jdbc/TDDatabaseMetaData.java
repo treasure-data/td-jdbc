@@ -1,5 +1,18 @@
 package com.treasure_data.jdbc;
 
+import com.treasure_data.client.ClientException;
+import com.treasure_data.jdbc.command.ClientAPI;
+import com.treasure_data.jdbc.model.TDColumn;
+import com.treasure_data.jdbc.model.TDDataType;
+import com.treasure_data.jdbc.model.TDDatabase;
+import com.treasure_data.jdbc.model.TDImportedKey;
+import com.treasure_data.jdbc.model.TDTable;
+import com.treasure_data.model.Database;
+import com.treasure_data.model.DatabaseSummary;
+import com.treasure_data.model.Table;
+import com.treasure_data.model.TableSummary;
+import org.json.simple.JSONValue;
+
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -11,97 +24,110 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.json.simple.JSONValue;
-
-import com.treasure_data.client.ClientException;
-import com.treasure_data.jdbc.command.ClientAPI;
-import com.treasure_data.jdbc.model.TDColumn;
-import com.treasure_data.jdbc.model.TDDataType;
-import com.treasure_data.jdbc.model.TDDatabase;
-import com.treasure_data.jdbc.model.TDImportedKey;
-import com.treasure_data.jdbc.model.TDTable;
-import com.treasure_data.model.Database;
-import com.treasure_data.model.DatabaseSummary;
-import com.treasure_data.model.ListDatabasesRequest;
-import com.treasure_data.model.Table;
-import com.treasure_data.model.TableSummary;
-
-public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
+public class TDDatabaseMetaData
+        implements DatabaseMetaData, Constants
+{
 
     private ClientAPI api;
     private Database database;
 
-    public TDDatabaseMetaData(ClientAPI api) {
+    public TDDatabaseMetaData(ClientAPI api)
+    {
         this.api = api;
     }
 
-    public TDDatabaseMetaData(Database database, ClientAPI api) {
+    public TDDatabaseMetaData(Database database, ClientAPI api)
+    {
         this.api = api;
         this.database = database;
     }
 
-    public boolean allProceduresAreCallable() throws SQLException {
+    public boolean allProceduresAreCallable()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#allProceduresAreCallable()"));
     }
 
-    public boolean allTablesAreSelectable() throws SQLException {
+    public boolean allTablesAreSelectable()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
+    public boolean autoCommitFailureClosesAllResultSets()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#autoCommitFailureClosesAllResultSets()"));
     }
 
-    public boolean dataDefinitionCausesTransactionCommit() throws SQLException {
+    public boolean dataDefinitionCausesTransactionCommit()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#dataDefinitionCausesTransactionCommit()"));
     }
 
-    public boolean dataDefinitionIgnoredInTransactions() throws SQLException {
+    public boolean dataDefinitionIgnoredInTransactions()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#dataDefinitionIgnoredInTransactions()"));
     }
 
-    public boolean deletesAreDetected(int type) throws SQLException {
+    public boolean deletesAreDetected(int type)
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#deletesAreDetected(int)"));
     }
 
-    public boolean doesMaxRowSizeIncludeBlobs() throws SQLException {
+    public boolean doesMaxRowSizeIncludeBlobs()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#doesMaxRowSizeIncludeBlobs()"));
     }
 
     public ResultSet getAttributes(String catalog, String schemaPattern,
             String typeNamePattern, String attributeNamePattern)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException(
                 new UnsupportedOperationException(
                         "TDDatabaseMetaData#getAttributes(String, String, String, String)"));
     }
 
     public ResultSet getBestRowIdentifier(String catalog, String schema,
-            String table, int scope, boolean nullable) throws SQLException {
+            String table, int scope, boolean nullable)
+            throws SQLException
+    {
         throw new SQLException(
                 new UnsupportedOperationException(
                         "TDDatabaseMetaData#getBestRowIdentifier(String, String, String, int, boolean)"));
     }
 
-    public String getCatalogSeparator() throws SQLException {
+    public String getCatalogSeparator()
+            throws SQLException
+    {
         return ".";
     }
 
-    public String getCatalogTerm() throws SQLException {
+    public String getCatalogTerm()
+            throws SQLException
+    {
         return "database";
     }
 
-    public ResultSet getCatalogs() throws SQLException {
+    public ResultSet getCatalogs()
+            throws SQLException
+    {
         DatabaseSummary ds = null;
         try {
             ds = api.showDatabase();
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
 
@@ -116,10 +142,13 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
         try {
             ResultSet result = new TDMetaDataResultSet<TDDatabase>(names,
-                    types, databases) {
+                    types, databases)
+            {
                 private int cnt = 0;
 
-                public boolean next() throws SQLException {
+                public boolean next()
+                        throws SQLException
+                {
                     if (cnt >= data.size()) {
                         return false;
                     }
@@ -127,25 +156,30 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     TDDatabase d = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(1);
                     a.add(d.getDatabaseName()); // TABLE_CAT String => table
-                                                // catalog (may be null)
+                    // catalog (may be null)
                     row = a;
                     cnt++;
                     return true;
                 }
             };
             return result;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new SQLException(e);
         }
     }
 
-    public ResultSet getClientInfoProperties() throws SQLException {
+    public ResultSet getClientInfoProperties()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#getClientInfoProperties()"));
     }
 
     public ResultSet getColumnPrivileges(String catalog, String schema,
-            String table, String columnNamePattern) throws SQLException {
+            String table, String columnNamePattern)
+            throws SQLException
+    {
         throw new SQLException(
                 new UnsupportedOperationException(
                         "TDDatabaseMetaData#getColumnPrivileges(String, String, String, String)"));
@@ -154,18 +188,19 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     /**
      * Convert a pattern containing JDBC catalog search wildcards into Java
      * regex patterns.
-     * 
-     * @param pattern
-     *            input which may contain '%' or '_' wildcard characters, or
-     *            these characters escaped using
-     *            {@link #getSearchStringEscape()}.
+     *
+     * @param pattern input which may contain '%' or '_' wildcard characters, or
+     * these characters escaped using
+     * {@link #getSearchStringEscape()}.
      * @return replace %/_ with regex search characters, also handle escaped
-     *         characters.
+     * characters.
      */
-    private String convertPattern(final String pattern) {
+    private String convertPattern(final String pattern)
+    {
         if (pattern == null) {
             return ".*";
-        } else {
+        }
+        else {
             StringBuilder result = new StringBuilder(pattern.length());
 
             boolean escaped = false;
@@ -176,15 +211,19 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                         escaped = false;
                     }
                     result.append(c);
-                } else {
+                }
+                else {
                     if (c == '\\') {
                         escaped = true;
                         continue;
-                    } else if (c == '%') {
+                    }
+                    else if (c == '%') {
                         result.append(".*");
-                    } else if (c == '_') {
+                    }
+                    else if (c == '_') {
                         result.append('.');
-                    } else {
+                    }
+                    else {
                         result.append(c);
                     }
                 }
@@ -197,7 +236,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     @SuppressWarnings("unchecked")
     public ResultSet getColumns(String catalog, final String schemaPattern,
             final String tableNamePattern, final String columnNamePattern)
-            throws SQLException {
+            throws SQLException
+    {
         if (catalog == null) {
             catalog = "default";
         }
@@ -211,7 +251,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             if (ts == null) {
                 ts = new ArrayList<TableSummary>();
             }
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
 
@@ -225,7 +266,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             try {
                 schemaFields = (List<List<String>>) JSONValue.parse(t
                         .getSchema());
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 continue;
             }
 
@@ -254,24 +296,27 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 columns.add(c);
                 ordinal++;
             }
-
         }
-        Collections.sort(columns, new Comparator<TDColumn>() {
+        Collections.sort(columns, new Comparator<TDColumn>()
+        {
             /**
              * We sort the output of getColumns to guarantee jdbc compliance.
              * First check by table name then by ordinal position
              */
-            public int compare(TDColumn o1, TDColumn o2) {
+            public int compare(TDColumn o1, TDColumn o2)
+            {
                 int compareName = o1.getTableName()
                         .compareTo(o2.getTableName());
                 if (compareName == 0) {
                     if (o1.getOrdinal() > o2.getOrdinal()) {
                         return 1;
-                    } else if (o1.getOrdinal() < o2.getOrdinal()) {
+                    }
+                    else if (o1.getOrdinal() < o2.getOrdinal()) {
                         return -1;
                     }
                     return 0;
-                } else {
+                }
+                else {
                     return compareName;
                 }
             }
@@ -312,10 +357,13 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
         );
 
         try {
-            return new TDMetaDataResultSet<TDColumn>(names, types, columns) {
+            return new TDMetaDataResultSet<TDColumn>(names, types, columns)
+            {
                 private int cnt = 0;
 
-                public boolean next() throws SQLException {
+                public boolean next()
+                        throws SQLException
+                {
                     if (cnt >= data.size()) {
                         return false;
                     }
@@ -323,33 +371,33 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     TDColumn column = data.get(cnt);
                     List<Object> a = new ArrayList<Object>(23);
                     a.add(column.getTableCatalog()); // TABLE_CAT String =>
-                                                     // table catalog (may be
-                                                     // null)
+                    // table catalog (may be
+                    // null)
                     a.add(null); // TABLE_SCHEM String => table schema (may be
-                                 // null)
+                    // null)
                     a.add(column.getTableName()); // TABLE_NAME String => table
-                                                  // name
+                    // name
                     a.add(column.getColumnName()); // COLUMN_NAME String =>
-                                                   // column name
+                    // column name
                     a.add(column.getSqlType()); // DATA_TYPE short => SQL type
-                                                // from java.sql.Types
+                    // from java.sql.Types
                     a.add(column.getType()); // TYPE_NAME String => Data source
-                                             // dependent type name.
+                    // dependent type name.
                     a.add(column.getColumnSize()); // COLUMN_SIZE int => column
-                                                   // size.
+                    // size.
                     a.add(null); // BUFFER_LENGTH is not used.
                     a.add(column.getDecimalDigits()); // DECIMAL_DIGITS int =>
-                                                      // number of fractional
-                                                      // digits
+                    // number of fractional
+                    // digits
                     a.add(column.getNumPrecRadix()); // NUM_PREC_RADIX int =>
-                                                     // typically either 10 or 2
+                    // typically either 10 or 2
                     a.add(DatabaseMetaData.columnNullable); // NULLABLE int =>
-                                                            // is NULL allowed?
+                    // is NULL allowed?
                     a.add(column.getComment()); // REMARKS String => comment
-                                                // describing column (may be
-                                                // null)
+                    // describing column (may be
+                    // null)
                     a.add(null); // COLUMN_DEF String => default value (may be
-                                 // null)
+                    // null)
                     a.add(null); // SQL_DATA_TYPE int => unused
                     a.add(null); // SQL_DATETIME_SUB int => unused
                     a.add(null); // CHAR_OCTET_LENGTH int
@@ -366,115 +414,158 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     return true;
                 }
             };
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new SQLException(e);
         }
     }
 
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection()
+            throws SQLException
+    {
         throw new SQLException(new UnsupportedOperationException(
                 "TDDatabaseMetaData#getConnection()"));
     }
 
     public ResultSet getCrossReference(String primaryCatalog,
             String primarySchema, String primaryTable, String foreignCatalog,
-            String foreignSchema, String foreignTable) throws SQLException {
+            String foreignSchema, String foreignTable)
+            throws SQLException
+    {
         throw new SQLException(
                 new UnsupportedOperationException(
                         "TDDatabaseMetaData#getCrossReference(String, String, String, String, String, String)"));
     }
 
-    public int getJDBCMajorVersion() throws SQLException {
+    public int getJDBCMajorVersion()
+            throws SQLException
+    {
         return JDBC_MAJOR_VERSION;
     }
 
-    public int getJDBCMinorVersion() throws SQLException {
+    public int getJDBCMinorVersion()
+            throws SQLException
+    {
         return JDBC_MINOR_VERSION;
     }
 
-    public int getDatabaseMajorVersion() throws SQLException {
+    public int getDatabaseMajorVersion()
+            throws SQLException
+    {
         return Constants.DATABASE_MAJOR_VERSION;
     }
 
-    public int getDatabaseMinorVersion() throws SQLException {
+    public int getDatabaseMinorVersion()
+            throws SQLException
+    {
         return Constants.DATABASE_MINOR_VERSION;
     }
 
-    public String getDatabaseProductName() throws SQLException {
+    public String getDatabaseProductName()
+            throws SQLException
+    {
         return DATABASE_NAME;
     }
 
-    public String getDatabaseProductVersion() throws SQLException {
+    public String getDatabaseProductVersion()
+            throws SQLException
+    {
         return DATABASE_FULL_VERSION;
     }
 
-    public int getDriverMajorVersion() {
+    public int getDriverMajorVersion()
+    {
         return DRIVER_MAJOR_VERSION;
     }
 
-    public int getDriverMinorVersion() {
+    public int getDriverMinorVersion()
+    {
         return DRIVER_MINOR_VERSION;
     }
 
-    public String getDriverName() throws SQLException {
+    public String getDriverName()
+            throws SQLException
+    {
         return TreasureDataDriver.class.getName();
     }
 
-    public String getDriverVersion() throws SQLException {
+    public String getDriverVersion()
+            throws SQLException
+    {
         return DRIVER_FULL_VERSION;
     }
 
-    public int getDefaultTransactionIsolation() throws SQLException {
+    public int getDefaultTransactionIsolation()
+            throws SQLException
+    {
         return Connection.TRANSACTION_NONE;
     }
 
     public ResultSet getExportedKeys(String catalog, String schema, String table)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getExtraNameCharacters() throws SQLException {
+    public String getExtraNameCharacters()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public ResultSet getFunctionColumns(String arg0, String arg1, String arg2,
-            String arg3) throws SQLException {
+            String arg3)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public ResultSet getFunctions(String arg0, String arg1, String arg2)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getIdentifierQuoteString() throws SQLException {
+    public String getIdentifierQuoteString()
+            throws SQLException
+    {
         return "`";
     }
 
     public ResultSet getImportedKeys(String catalog, String schema, String table)
-            throws SQLException {
+            throws SQLException
+    {
         try {
-            return new TDMetaDataResultSet<TDImportedKey>(null, null, null) {
-                public boolean next() throws SQLException {
+            return new TDMetaDataResultSet<TDImportedKey>(null, null, null)
+            {
+                public boolean next()
+                        throws SQLException
+                {
                     return false;
                 }
             };
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new SQLException(e);
         }
     }
 
     public ResultSet getIndexInfo(String catalog, String schema, String table,
-            boolean unique, boolean approximate) throws SQLException {
+            boolean unique, boolean approximate)
+            throws SQLException
+    {
         return new TDMetaDataResultSet(
                 Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "NON_UNIQUE", "INDEX_QUALIFIER", "INDEX_NAME", "TYPE", "ORDINAL_POSITION", "COLUMN_NAME", "ASC_OR_DESC", "CARDINALITY", "PAGES", "FILTER_CONDITION"),
                 Arrays.asList("STRING", "STRING", "STRING", "BOOLEAN", "STRING", "STRING", "SHORT", "SHORT", "STRING", "STRING", "INT", "INT", "STRING"),
-                null) {
+                null)
+        {
             public boolean next() { return false; }
         };
     }
 
-    public int getMaxBinaryLiteralLength() throws SQLException {
+    public int getMaxBinaryLiteralLength()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
@@ -482,11 +573,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of characters that this database allows in a
      * catalog name.
      */
-    public int getMaxCatalogNameLength() throws SQLException {
+    public int getMaxCatalogNameLength()
+            throws SQLException
+    {
         return MAX_CATALOG_NAME_LENGTH;
     }
 
-    public int getMaxCharLiteralLength() throws SQLException {
+    public int getMaxCharLiteralLength()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
@@ -494,19 +589,27 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of characters this database allows for a
      * column name.
      */
-    public int getMaxColumnNameLength() throws SQLException {
+    public int getMaxColumnNameLength()
+            throws SQLException
+    {
         return MAX_COLUMN_NAME_LENGTH;
     }
 
-    public int getMaxColumnsInGroupBy() throws SQLException {
+    public int getMaxColumnsInGroupBy()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int getMaxColumnsInIndex() throws SQLException {
+    public int getMaxColumnsInIndex()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int getMaxColumnsInOrderBy() throws SQLException {
+    public int getMaxColumnsInOrderBy()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
@@ -514,30 +617,42 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of columns this database allows in a
      * <code>SELECT</code> list.
      */
-    public int getMaxColumnsInSelect() throws SQLException {
+    public int getMaxColumnsInSelect()
+            throws SQLException
+    {
         return MAX_COLUMNS_IN_SELECT;
     }
 
     /**
      * Retrieves the maximum number of columns this database allows in a table.
      */
-    public int getMaxColumnsInTable() throws SQLException {
+    public int getMaxColumnsInTable()
+            throws SQLException
+    {
         return MAX_COLUMNS_IN_TABLE;
     }
 
-    public int getMaxConnections() throws SQLException {
+    public int getMaxConnections()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int getMaxCursorNameLength() throws SQLException {
+    public int getMaxCursorNameLength()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int getMaxIndexLength() throws SQLException {
+    public int getMaxIndexLength()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public int getMaxProcedureNameLength() throws SQLException {
+    public int getMaxProcedureNameLength()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
@@ -545,11 +660,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of bytes this database allows in a single
      * row.
      */
-    public int getMaxRowSize() throws SQLException {
+    public int getMaxRowSize()
+            throws SQLException
+    {
         return MAX_ROW_SIZE;
     }
 
-    public int getMaxSchemaNameLength() throws SQLException {
+    public int getMaxSchemaNameLength()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
@@ -557,11 +676,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of characters this database allows in an SQL
      * statement.
      */
-    public int getMaxStatementLength() throws SQLException {
+    public int getMaxStatementLength()
+            throws SQLException
+    {
         return MAX_STATEMENT_LENGTH;
     }
 
-    public int getMaxStatements() throws SQLException {
+    public int getMaxStatements()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
@@ -569,7 +692,9 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of characters this database allows in a
      * table name.
      */
-    public int getMaxTableNameLength() throws SQLException {
+    public int getMaxTableNameLength()
+            throws SQLException
+    {
         return MAX_TABLE_NAME_LENGTH;
     }
 
@@ -577,7 +702,9 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of tables this database allows in a
      * <code>SELECT</code> statement.
      */
-    public int getMaxTablesInSelect() throws SQLException {
+    public int getMaxTablesInSelect()
+            throws SQLException
+    {
         return MAX_TABLES_IN_SELECT;
     }
 
@@ -585,48 +712,65 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
      * Retrieves the maximum number of characters this database allows in a user
      * name.
      */
-    public int getMaxUserNameLength() throws SQLException {
+    public int getMaxUserNameLength()
+            throws SQLException
+    {
         return MAX_USER_NAME_LENGTH;
     }
 
-    public String getNumericFunctions() throws SQLException {
+    public String getNumericFunctions()
+            throws SQLException
+    {
         return "";
     }
 
     public ResultSet getPrimaryKeys(String catalog, String schema, String table)
-            throws SQLException {
+            throws SQLException
+    {
         return new TDMetaDataResultSet(
                 Arrays.asList("TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"),
                 Arrays.asList("STRING", "STRING", "STRING", "STRING", "SHORT", "STRING"),
-                null) {
+                null)
+        {
             public boolean next() { return false; }
         };
     }
 
     public ResultSet getProcedureColumns(String catalog, String schemaPattern,
             String procedureNamePattern, String columnNamePattern)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getProcedureTerm() throws SQLException {
+    public String getProcedureTerm()
+            throws SQLException
+    {
         return "UDF";
     }
 
     public ResultSet getProcedures(String catalog, String schemaPattern,
-            String procedureNamePattern) throws SQLException {
+            String procedureNamePattern)
+            throws SQLException
+    {
         return null;
     }
 
-    public int getResultSetHoldability() throws SQLException {
+    public int getResultSetHoldability()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public RowIdLifetime getRowIdLifetime() throws SQLException {
+    public RowIdLifetime getRowIdLifetime()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getSQLKeywords() throws SQLException {
+    public String getSQLKeywords()
+            throws SQLException
+    {
         return "TRUE,FALSE,ALL,AND,OR,NOT,LIKE,ASC,DESC,ORDER,BY,GROUP,WHERE,"
                 + "FROM,AS,SELECT,DISTINCT,INSERT,OVERWRITE,OUTER,JOIN,LEFT,RIGHT,"
                 + "FULL,ON,PARTITION,PARTITIONS,TABLE,TABLES,TBLPROPERTIES,SHOW,MSCK,"
@@ -641,74 +785,101 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 + "SERDEPROPERTIES,LIMIT,SET,TBLPROPERTIES";
     }
 
-    public int getSQLStateType() throws SQLException {
+    public int getSQLStateType()
+            throws SQLException
+    {
         return DatabaseMetaData.sqlStateSQL99;
     }
 
-    public String getSchemaTerm() throws SQLException {
+    public String getSchemaTerm()
+            throws SQLException
+    {
         return "";
     }
 
-    public ResultSet getSchemas() throws SQLException {
+    public ResultSet getSchemas()
+            throws SQLException
+    {
         return getSchemas(null, null);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public ResultSet getSchemas(String catalog, String schemaPattern)
-            throws SQLException {
+            throws SQLException
+    {
         return new TDMetaDataResultSet(Arrays.asList("TABLE_SCHEM",
-                "TABLE_CATALOG"), Arrays.asList("STRING", "STRING"), null) {
+                "TABLE_CATALOG"), Arrays.asList("STRING", "STRING"), null)
+        {
 
-            public boolean next() throws SQLException {
+            public boolean next()
+                    throws SQLException
+            {
                 return false;
             }
         };
-
     }
 
-    public String getSearchStringEscape() throws SQLException {
+    public String getSearchStringEscape()
+            throws SQLException
+    {
         return String.valueOf('\\');
     }
 
-    public String getStringFunctions() throws SQLException {
+    public String getStringFunctions()
+            throws SQLException
+    {
         return "";
     }
 
     public ResultSet getSuperTables(String catalog, String schemaPattern,
-            String tableNamePattern) throws SQLException {
+            String tableNamePattern)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public ResultSet getSuperTypes(String catalog, String schemaPattern,
-            String typeNamePattern) throws SQLException {
+            String typeNamePattern)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getSystemFunctions() throws SQLException {
+    public String getSystemFunctions()
+            throws SQLException
+    {
         return "";
     }
 
     public ResultSet getTablePrivileges(String catalog, String schemaPattern,
-            String tableNamePattern) throws SQLException {
+            String tableNamePattern)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public ResultSet getTableTypes() throws SQLException {
+    public ResultSet getTableTypes()
+            throws SQLException
+    {
         List<String> names = Arrays.asList("TABLE_TYPE");
         List<String> types = Arrays.asList("STRING");
         List<TDTable.Type> data0 = Arrays.asList(TDTable.Type.values());
         ResultSet result = new TDMetaDataResultSet<TDTable.Type>(names, types,
-                data0) {
+                data0)
+        {
             private int cnt = 0;
 
-            public boolean next() throws SQLException {
+            public boolean next()
+                    throws SQLException
+            {
                 if (cnt < data.size()) {
                     List<Object> a = new ArrayList<Object>(1);
                     a.add(toTDTableType(data.get(cnt).name()));
                     row = a;
                     cnt++;
                     return true;
-                } else {
+                }
+                else {
                     return false;
                 }
             }
@@ -717,7 +888,9 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
     }
 
     public ResultSet getTables(String catalog, String schemaPattern,
-            String tableNamePattern, String[] types) throws SQLException {
+            String tableNamePattern, String[] types)
+            throws SQLException
+    {
         /*
          * finds table descriptions in the specified database.
          * if catalog is not same as the specified database, it returns null.
@@ -725,7 +898,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
          */
         if (catalog == null || catalog.isEmpty()) {
             catalog = database.getName();
-        } else if (!catalog.equals(database.getName())) {
+        }
+        else if (!catalog.equals(database.getName())) {
             return getEmptyTables();
         }
 
@@ -739,7 +913,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             if (ts == null) {
                 ts = new ArrayList<TableSummary>();
             }
-        } catch (ClientException e) {
+        }
+        catch (ClientException e) {
             throw new SQLException(e);
         }
 
@@ -782,20 +957,23 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
             return getEmptyTables();
         }
 
-        Collections.sort(tables, new Comparator<TDTable>() {
+        Collections.sort(tables, new Comparator<TDTable>()
+        {
             /**
              * We sort the output of getTables to guarantee JDBC compliance to
              * sort by TABLE_TYPE, TABLE_CAT, TABLE_SCHEM, and TABLE_NAME.
-             * 
+             *
              * In our specific case: Sorting by catalog (only one available) and
              * schema (empty) is not necessary so we sort by type, then table
              * name.
              */
-            public int compare(TDTable o1, TDTable o2) {
+            public int compare(TDTable o1, TDTable o2)
+            {
                 int compareType = o1.getType().compareTo(o2.getType());
                 if (compareType == 0) {
                     return o1.getTableName().compareTo(o2.getTableName());
-                } else {
+                }
+                else {
                     return compareType;
                 }
             }
@@ -821,10 +999,13 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
         try {
             ResultSet result = new TDMetaDataResultSet<TDTable>(nameList,
-                    typeList, tables) {
+                    typeList, tables)
+            {
                 private int cnt = 0;
 
-                public boolean next() throws SQLException {
+                public boolean next()
+                        throws SQLException
+                {
                     if (cnt >= data.size()) {
                         return false;
                     }
@@ -836,7 +1017,8 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                     a.add(t.getTableName());        // TABLE_NAME String => table name
                     try {
                         a.add(t.getSqlTableType()); // TABLE_TYPE String => "TABLE"
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         throw new SQLException(e);
                     }
                     a.add(t.getComment());          // REMARKS String => explanatory comment on the table
@@ -851,12 +1033,15 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 }
             };
             return result;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new SQLException(e);
         }
     }
 
-    private static ResultSet getEmptyTables() throws SQLException {
+    private static ResultSet getEmptyTables()
+            throws SQLException
+    {
         List<String> nameList = Arrays.asList("TABLE_CAT", "TABLE_SCHEM",
                 "TABLE_NAME", "TABLE_TYPE", "REMARKS", "TYPE_CAT",
                 "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME",
@@ -873,8 +1058,11 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 "STRING" // "REF_GENERATION"
         );
         List<TDTable> tables = new ArrayList<TDTable>();
-        return new TDMetaDataResultSet<TDTable>(nameList, typeList, tables) {
-            public boolean next() throws SQLException {
+        return new TDMetaDataResultSet<TDTable>(nameList, typeList, tables)
+        {
+            public boolean next()
+                    throws SQLException
+            {
                 return false;
             }
         };
@@ -882,36 +1070,48 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
 
     /**
      * Translate hive table types into jdbc table types.
-     * 
+     *
      * @param type
      * @return
      */
-    public static String toTDTableType(String type) {
+    public static String toTDTableType(String type)
+    {
         if (type == null) {
             return null;
-        } else if (type.equals(TDTable.Type.TABLE.toString())) {
+        }
+        else if (type.equals(TDTable.Type.TABLE.toString())) {
             return "TABLE";
-        } else if (type.equals(TDTable.Type.VIEW.toString())) {
+        }
+        else if (type.equals(TDTable.Type.VIEW.toString())) {
             return "VIEW";
-        } else if (type.equals(TDTable.Type.EXTERNAL_TABLE.toString())) {
+        }
+        else if (type.equals(TDTable.Type.EXTERNAL_TABLE.toString())) {
             return "EXTERNAL TABLE";
-        } else {
+        }
+        else {
             return type;
         }
     }
 
-    public String getTimeDateFunctions() throws SQLException {
+    public String getTimeDateFunctions()
+            throws SQLException
+    {
         return "";
     }
 
-    public ResultSet getTypeInfo() throws SQLException {
+    public ResultSet getTypeInfo()
+            throws SQLException
+    {
         List<TDDataType> types = new ArrayList<TDDataType>();
         try {
             ResultSet result = new TDMetaDataResultSet<TDDataType>(null, null,
-                    types) {
+                    types)
+            {
                 private int cnt = 0;
 
-                public boolean next() throws SQLException {
+                public boolean next()
+                        throws SQLException
+                {
                     if (cnt >= data.size()) {
                         return false;
                     }
@@ -942,415 +1142,607 @@ public class TDDatabaseMetaData implements DatabaseMetaData, Constants {
                 }
             };
             return result;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new SQLException(e);
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public ResultSet getUDTs(String catalog, String schemaPattern,
-            String typeNamePattern, int[] types) throws SQLException {
+            String typeNamePattern, int[] types)
+            throws SQLException
+    {
 
         return new TDMetaDataResultSet(
                 Arrays.asList("TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME",
                         "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE"),
                 Arrays.asList("STRING", "STRING", "STRING", "STRING", "INT",
-                        "STRING", "INT"), null) {
+                        "STRING", "INT"), null)
+        {
 
-            public boolean next() throws SQLException {
+            public boolean next()
+                    throws SQLException
+            {
                 return false;
             }
         };
     }
 
-    public String getURL() throws SQLException {
+    public String getURL()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public String getUserName() throws SQLException {
+    public String getUserName()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public ResultSet getVersionColumns(String catalog, String schema,
-            String table) throws SQLException {
+            String table)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean insertsAreDetected(int type) throws SQLException {
+    public boolean insertsAreDetected(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isCatalogAtStart() throws SQLException {
+    public boolean isCatalogAtStart()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isReadOnly() throws SQLException {
+    public boolean isReadOnly()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean locatorsUpdateCopy() throws SQLException {
+    public boolean locatorsUpdateCopy()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean nullPlusNonNullIsNull() throws SQLException {
+    public boolean nullPlusNonNullIsNull()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean nullsAreSortedAtEnd() throws SQLException {
+    public boolean nullsAreSortedAtEnd()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean nullsAreSortedAtStart() throws SQLException {
+    public boolean nullsAreSortedAtStart()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean nullsAreSortedHigh() throws SQLException {
+    public boolean nullsAreSortedHigh()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean nullsAreSortedLow() throws SQLException {
+    public boolean nullsAreSortedLow()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean othersDeletesAreVisible(int type) throws SQLException {
+    public boolean othersDeletesAreVisible(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean othersInsertsAreVisible(int type) throws SQLException {
+    public boolean othersInsertsAreVisible(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean othersUpdatesAreVisible(int type) throws SQLException {
+    public boolean othersUpdatesAreVisible(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean ownDeletesAreVisible(int type) throws SQLException {
+    public boolean ownDeletesAreVisible(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean ownInsertsAreVisible(int type) throws SQLException {
+    public boolean ownInsertsAreVisible(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean ownUpdatesAreVisible(int type) throws SQLException {
+    public boolean ownUpdatesAreVisible(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean storesLowerCaseIdentifiers() throws SQLException {
+    public boolean storesLowerCaseIdentifiers()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean storesLowerCaseQuotedIdentifiers() throws SQLException {
+    public boolean storesLowerCaseQuotedIdentifiers()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean storesMixedCaseIdentifiers() throws SQLException {
+    public boolean storesMixedCaseIdentifiers()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean storesMixedCaseQuotedIdentifiers() throws SQLException {
+    public boolean storesMixedCaseQuotedIdentifiers()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean storesUpperCaseIdentifiers() throws SQLException {
+    public boolean storesUpperCaseIdentifiers()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean storesUpperCaseQuotedIdentifiers() throws SQLException {
+    public boolean storesUpperCaseQuotedIdentifiers()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsANSI92EntryLevelSQL() throws SQLException {
+    public boolean supportsANSI92EntryLevelSQL()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsANSI92FullSQL() throws SQLException {
+    public boolean supportsANSI92FullSQL()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsANSI92IntermediateSQL() throws SQLException {
+    public boolean supportsANSI92IntermediateSQL()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsAlterTableWithAddColumn() throws SQLException {
+    public boolean supportsAlterTableWithAddColumn()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean supportsAlterTableWithDropColumn() throws SQLException {
+    public boolean supportsAlterTableWithDropColumn()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsBatchUpdates() throws SQLException {
+    public boolean supportsBatchUpdates()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsCatalogsInDataManipulation() throws SQLException {
+    public boolean supportsCatalogsInDataManipulation()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsCatalogsInIndexDefinitions() throws SQLException {
+    public boolean supportsCatalogsInIndexDefinitions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsCatalogsInPrivilegeDefinitions() throws SQLException {
+    public boolean supportsCatalogsInPrivilegeDefinitions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsCatalogsInProcedureCalls() throws SQLException {
+    public boolean supportsCatalogsInProcedureCalls()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsCatalogsInTableDefinitions() throws SQLException {
+    public boolean supportsCatalogsInTableDefinitions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsColumnAliasing() throws SQLException {
+    public boolean supportsColumnAliasing()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean supportsConvert() throws SQLException {
+    public boolean supportsConvert()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public boolean supportsConvert(int fromType, int toType)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsCoreSQLGrammar() throws SQLException {
+    public boolean supportsCoreSQLGrammar()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsCorrelatedSubqueries() throws SQLException {
+    public boolean supportsCorrelatedSubqueries()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public boolean supportsDataDefinitionAndDataManipulationTransactions()
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public boolean supportsDataManipulationTransactionsOnly()
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsDifferentTableCorrelationNames() throws SQLException {
+    public boolean supportsDifferentTableCorrelationNames()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsExpressionsInOrderBy() throws SQLException {
+    public boolean supportsExpressionsInOrderBy()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsExtendedSQLGrammar() throws SQLException {
+    public boolean supportsExtendedSQLGrammar()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsFullOuterJoins() throws SQLException {
+    public boolean supportsFullOuterJoins()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsGetGeneratedKeys() throws SQLException {
+    public boolean supportsGetGeneratedKeys()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsGroupBy() throws SQLException {
+    public boolean supportsGroupBy()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean supportsGroupByBeyondSelect() throws SQLException {
+    public boolean supportsGroupByBeyondSelect()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsGroupByUnrelated() throws SQLException {
+    public boolean supportsGroupByUnrelated()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsIntegrityEnhancementFacility() throws SQLException {
+    public boolean supportsIntegrityEnhancementFacility()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsLikeEscapeClause() throws SQLException {
+    public boolean supportsLikeEscapeClause()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsLimitedOuterJoins() throws SQLException {
+    public boolean supportsLimitedOuterJoins()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsMinimumSQLGrammar() throws SQLException {
+    public boolean supportsMinimumSQLGrammar()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsMixedCaseIdentifiers() throws SQLException {
+    public boolean supportsMixedCaseIdentifiers()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsMixedCaseQuotedIdentifiers() throws SQLException {
+    public boolean supportsMixedCaseQuotedIdentifiers()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsMultipleOpenResults() throws SQLException {
+    public boolean supportsMultipleOpenResults()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsMultipleResultSets() throws SQLException {
+    public boolean supportsMultipleResultSets()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsMultipleTransactions() throws SQLException {
+    public boolean supportsMultipleTransactions()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsNamedParameters() throws SQLException {
+    public boolean supportsNamedParameters()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsNonNullableColumns() throws SQLException {
+    public boolean supportsNonNullableColumns()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsOpenCursorsAcrossCommit() throws SQLException {
+    public boolean supportsOpenCursorsAcrossCommit()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsOpenCursorsAcrossRollback() throws SQLException {
+    public boolean supportsOpenCursorsAcrossRollback()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsOpenStatementsAcrossCommit() throws SQLException {
+    public boolean supportsOpenStatementsAcrossCommit()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsOpenStatementsAcrossRollback() throws SQLException {
+    public boolean supportsOpenStatementsAcrossRollback()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsOrderByUnrelated() throws SQLException {
+    public boolean supportsOrderByUnrelated()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsOuterJoins() throws SQLException {
+    public boolean supportsOuterJoins()
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean supportsPositionedDelete() throws SQLException {
+    public boolean supportsPositionedDelete()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsPositionedUpdate() throws SQLException {
+    public boolean supportsPositionedUpdate()
+            throws SQLException
+    {
         return false;
     }
 
     public boolean supportsResultSetConcurrency(int type, int concurrency)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public boolean supportsResultSetHoldability(int holdability)
-            throws SQLException {
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsResultSetType(int type) throws SQLException {
+    public boolean supportsResultSetType(int type)
+            throws SQLException
+    {
         return true;
     }
 
-    public boolean supportsSavepoints() throws SQLException {
+    public boolean supportsSavepoints()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSchemasInDataManipulation() throws SQLException {
+    public boolean supportsSchemasInDataManipulation()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSchemasInIndexDefinitions() throws SQLException {
+    public boolean supportsSchemasInIndexDefinitions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSchemasInPrivilegeDefinitions() throws SQLException {
+    public boolean supportsSchemasInPrivilegeDefinitions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSchemasInProcedureCalls() throws SQLException {
+    public boolean supportsSchemasInProcedureCalls()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSchemasInTableDefinitions() throws SQLException {
+    public boolean supportsSchemasInTableDefinitions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSelectForUpdate() throws SQLException {
+    public boolean supportsSelectForUpdate()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsStatementPooling() throws SQLException {
+    public boolean supportsStatementPooling()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException {
+    public boolean supportsStoredFunctionsUsingCallSyntax()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsStoredProcedures() throws SQLException {
+    public boolean supportsStoredProcedures()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsSubqueriesInComparisons() throws SQLException {
+    public boolean supportsSubqueriesInComparisons()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsSubqueriesInExists() throws SQLException {
+    public boolean supportsSubqueriesInExists()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsSubqueriesInIns() throws SQLException {
+    public boolean supportsSubqueriesInIns()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsSubqueriesInQuantifieds() throws SQLException {
+    public boolean supportsSubqueriesInQuantifieds()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsTableCorrelationNames() throws SQLException {
+    public boolean supportsTableCorrelationNames()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
     public boolean supportsTransactionIsolationLevel(int level)
-            throws SQLException {
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsTransactions() throws SQLException {
+    public boolean supportsTransactions()
+            throws SQLException
+    {
         return false;
     }
 
-    public boolean supportsUnion() throws SQLException {
+    public boolean supportsUnion()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean supportsUnionAll() throws SQLException {
+    public boolean supportsUnionAll()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean updatesAreDetected(int type) throws SQLException {
+    public boolean updatesAreDetected(int type)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean usesLocalFilePerTable() throws SQLException {
+    public boolean usesLocalFilePerTable()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean usesLocalFiles() throws SQLException {
+    public boolean usesLocalFiles()
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(Class<?> iface)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 
-    public <T> T unwrap(Class<T> iface) throws SQLException {
+    public <T> T unwrap(Class<T> iface)
+            throws SQLException
+    {
         throw new SQLException("Method not supported");
     }
 }

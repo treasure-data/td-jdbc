@@ -1,12 +1,13 @@
 package com.treasure_data.jdbc.model;
 
-public enum TDDataType {
+public enum TDDataType
+{
     LONG_VARCHAR("LONG VARCHAR", -1, 32700, ",", ",", null, (short) 1, true, (short) 1,
             true, false, false, "LONG VARCHAR", null, null, null, null, null),
     VARCHAR("VARCHAR", 12, 32672, ",", ",", "length", (short) 1, true, (short) 3,
             true, false, false, "VARCHAR", null, null, null, null, null),
     CHAR("CHAR", 1, 254, ",", ",", "length", (short) 1, true, (short) 3,
-            true, false, false, "CHAR",  null, null, null, null, null),
+            true, false, false, "CHAR", null, null, null, null, null),
     BIGINT("BIGINT", -5, 19, null, null, null, (short) 1, false, (short) 2,
             false, false, true, "BIGINT", (short) 0, (short) 0, null, null, 0),
     INTEGER("INTEGER", 4, 10, null, null, null, (short) 1, false, (short) 2,
@@ -42,7 +43,8 @@ public enum TDDataType {
             Short nullable, Boolean caseSensitive, Short searchable,
             Boolean unsignedAttr, Boolean fixedPrecScale, Boolean autoIncrement,
             String localTypeName, Short minimunScale, Short maximumScale,
-            Integer sqlDataType, Integer sqlDatetimeSub, Integer numPrecRadix) {
+            Integer sqlDataType, Integer sqlDatetimeSub, Integer numPrecRadix)
+    {
         this.typeName = name;
         this.dataType = dataType;
         this.precision = precision;
@@ -63,74 +65,93 @@ public enum TDDataType {
         this.numPrecRadix = numPrecRadix;
     }
 
-    public String typeName() { // 1, string
+    public String typeName()
+    { // 1, string
         return typeName;
     }
 
-    public int dataType() { // 2, int
+    public int dataType()
+    { // 2, int
         return dataType;
     }
 
-    public int precision() { // 3, int
+    public int precision()
+    { // 3, int
         return precision;
     }
 
-    public String literalPrefix() { // 4, string
+    public String literalPrefix()
+    { // 4, string
         return literalPrefix;
     }
 
-    public String literalSuffix() { // 5, string
+    public String literalSuffix()
+    { // 5, string
         return literalSuffix;
     }
 
-    public String createParams() { // 6, string
+    public String createParams()
+    { // 6, string
         return createParams;
     }
 
-    public short nullable() { // 7, short
+    public short nullable()
+    { // 7, short
         return nullable;
     }
 
-    public boolean caseSensitive() { // 8, boolean
+    public boolean caseSensitive()
+    { // 8, boolean
         return caseSensitive;
     }
 
-    public short searchable() { // 9, short
+    public short searchable()
+    { // 9, short
         return searchable;
     }
 
-    public boolean unsignedAttribute() { // 10, boolean
+    public boolean unsignedAttribute()
+    { // 10, boolean
         return unsignedAttr;
     }
 
-    public boolean fixedPrecScale() { // 11, boolean
+    public boolean fixedPrecScale()
+    { // 11, boolean
         return fixedPrecScale;
     }
 
-    public boolean autoIncrement() { // 12, boolean
+    public boolean autoIncrement()
+    { // 12, boolean
         return autoIncrement;
     }
 
-    public String localTypeName() { // 13, string
+    public String localTypeName()
+    { // 13, string
         return localTypeName;
     }
 
-    public short minimunScale() { // 14, short
+    public short minimunScale()
+    { // 14, short
         return minimumScale;
     }
-    public short maximumScale() { // 15, short
+
+    public short maximumScale()
+    { // 15, short
         return maximumScale;
     }
 
-    public int sqlDataType() { // 16, int
+    public int sqlDataType()
+    { // 16, int
         return sqlDataType;
     }
 
-    public int sqlDatetimeSub() { // 17, int
+    public int sqlDatetimeSub()
+    { // 17, int
         return sqlDatetimeSub;
     }
 
-    public int numPrecRadix() { // 18, int
+    public int numPrecRadix()
+    { // 18, int
         return numPrecRadix;
     }
 }

@@ -1,9 +1,11 @@
 package com.treasure_data.jdbc;
 
-public interface Constants extends com.treasure_data.client.Constants {
+public interface Constants
+        extends com.treasure_data.client.Constants
+{
 
     // The offset at which HSQLDB API Result mode values start.
-    int API_BASE = 0; 
+    int API_BASE = 0;
 
     // Not a result
     int NONE = API_BASE + 0;
@@ -167,7 +169,7 @@ public interface Constants extends com.treasure_data.client.Constants {
 
     // Constants above this limit are handled as non-HSQLDB results
     int MODE_UPPER_LIMIT = API_BASE + 48;
-    
+
     String VOID_TYPE_NAME = "void";
     String BOOLEAN_TYPE_NAME = "boolean";
     String TINYINT_TYPE_NAME = "tinyint";
@@ -251,5 +253,4 @@ public interface Constants extends com.treasure_data.client.Constants {
     int DRIVER_REVISION = 0;
     String DRIVER_FULL_VERSION = DRIVER_MAJOR_VERSION + "." + DRIVER_MINOR_VERSION + "." + DRIVER_REVISION;
     String DRIVER_NAME = TreasureDataDriver.class.getName();
-
 }

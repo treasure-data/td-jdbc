@@ -1,8 +1,8 @@
 package com.treasure_data.jdbc;
 
-import java.sql.SQLException;
-
 import com.treasure_data.model.Job;
+
+import java.sql.SQLException;
 
 //
 // jdbc:td://api.treasure-data.com:80/testdb;k1=v1;k2=v2
@@ -11,9 +11,11 @@ import com.treasure_data.model.Job;
 //           +----------------------+
 //           endpoint
 //
-public class JDBCURLParser {
+public class JDBCURLParser
+{
 
-    public static class Desc {
+    public static class Desc
+    {
         public String url = null;
         public String host = Constants.TD_JDBC_HOST_DEFAULT;
         public String port = null;
@@ -28,11 +30,14 @@ public class JDBCURLParser {
         public String httpProxyUser = null;
         public String httpProxyPassword = null;
 
-        public Desc() {
+        public Desc()
+        {
         }
     }
 
-    public static Desc parse(String url) throws SQLException {
+    public static Desc parse(String url)
+            throws SQLException
+    {
         Utils.validateJDBCType(url);
 
         Desc d = new Desc();
@@ -57,26 +62,34 @@ public class JDBCURLParser {
                 String k = kv[0].toLowerCase();
                 if (k.equals(Config.TD_JDBC_USER)) {
                     d.user = kv[1];
-                } else if (k.equals(Config.TD_JDBC_PASSWORD)) {
+                }
+                else if (k.equals(Config.TD_JDBC_PASSWORD)) {
                     d.password = kv[1];
-                } else if (k.equals(Config.TD_JDBC_TYPE)) {
+                }
+                else if (k.equals(Config.TD_JDBC_TYPE)) {
                     d.type = Job.toType(kv[1]);
                     if (d.type == null || !(d.type.equals(Job.Type.HIVE) || d.type.equals(Job.Type.IMPALA) || d.type.equals(Job.Type.PRESTO))) {
                         throw new SQLException("invalid job type within URL: " + kv[1]);
                     }
-                } else if (k.equals(Config.TD_CK_JDBC_USESSL)) {
+                }
+                else if (k.equals(Config.TD_CK_JDBC_USESSL)) {
                     d.ssl = Boolean.parseBoolean(kv[1].toLowerCase());
-                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_HOST)) {
+                }
+                else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_HOST)) {
                     d.httpProxyHost = kv[1];
-                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_PORT)) {
+                }
+                else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_PORT)) {
                     d.httpProxyPort = kv[1];
-                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_USER)) {
+                }
+                else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_USER)) {
                     d.httpProxyUser = kv[1];
-                } else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_PASSWORD)) {
+                }
+                else if (k.equals(Config.TD_CK_JDBC_HTTP_PROXY_PASSWORD)) {
                     d.httpProxyPassword = kv[1];
                 }
             }
-        } else {
+        }
+        else {
             semiPos = postUrlPos;
         }
 
@@ -87,7 +100,8 @@ public class JDBCURLParser {
                 if (rawDatabase != null && !rawDatabase.isEmpty()) {
                     d.database = rawDatabase;
                 }
-            } catch (Throwable t) {
+            }
+            catch (Throwable t) {
                 throw new SQLException("invalid database within URL: " + url);
             }
         }
@@ -98,7 +112,8 @@ public class JDBCURLParser {
         String endpoint = null;
         try {
             endpoint = url.substring(Constants.URL_PREFIX.length(), slashPos);
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             throw new SQLException("invalid endpoint within URL: " + url);
         }
         if (endpoint != null && !endpoint.isEmpty()) {
@@ -110,15 +125,16 @@ public class JDBCURLParser {
                 d.port = endpoint.substring(i + 1, endpoint.length());
                 try {
                     Integer.parseInt(d.port);
-                } catch (Throwable t) {
+                }
+                catch (Throwable t) {
                     throw new SQLException("invalid port within URL: " + url);
                 }
-            } else { // i < 0
+            }
+            else { // i < 0
                 d.host = endpoint;
             }
         }
-        
+
         return d;
     }
-
 }

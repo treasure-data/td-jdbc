@@ -3,6 +3,7 @@ package com.treasure_data.jdbc.command;
 import java.io.File;
 import java.util.List;
 
+import com.treasure_data.jdbc.TDResultSetMetaData;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
@@ -44,6 +45,8 @@ public interface ClientAPI {
     TDResultSetBase select(String sql) throws ClientException;
 
     TDResultSetBase select(String sql, int queryTimeout) throws ClientException;
+
+    TDResultSetMetaData getMetaDataWithSelect1();
 
     boolean flush(); // for debugging
 

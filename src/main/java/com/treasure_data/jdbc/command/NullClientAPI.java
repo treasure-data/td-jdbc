@@ -3,6 +3,7 @@ package com.treasure_data.jdbc.command;
 import java.util.List;
 import java.util.Map;
 
+import com.treasure_data.jdbc.TDResultSetMetaData;
 import org.msgpack.unpacker.Unpacker;
 
 import com.treasure_data.client.ClientException;
@@ -40,6 +41,10 @@ public class NullClientAPI implements ClientAPI {
 
     public TDResultSetBase select(String sql, int queryTimeout)
             throws ClientException {
+        return null;
+    }
+
+    public TDResultSetMetaData getMetaDataWithSelect1() {
         return null;
     }
 

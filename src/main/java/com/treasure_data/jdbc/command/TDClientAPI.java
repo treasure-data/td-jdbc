@@ -26,7 +26,6 @@ import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
 import com.treasure_data.jdbc.Config;
-import com.treasure_data.logger.TreasureDataLogger;
 import com.treasure_data.model.AuthenticateRequest;
 import com.treasure_data.model.Database;
 import com.treasure_data.model.DatabaseSummary;
@@ -82,17 +81,6 @@ public class TDClientAPI implements ClientAPI {
         } catch (ClientException e) {
             throw new SQLException(e);
         }
-
-        {
-            Properties sysprops = System.getProperties();
-            if (sysprops.getProperty(Config.TD_LOGGER_AGENTMODE) == null) {
-                sysprops.setProperty(Config.TD_LOGGER_AGENTMODE, "false");
-            }
-            if (sysprops.getProperty(Config.TD_LOGGER_API_KEY) == null) {
-                String apiKey = client.getTreasureDataCredentials().getAPIKey();
-                sysprops.setProperty(Config.TD_LOGGER_API_KEY, apiKey);
-            }
-        }
     }
 
     private void checkCredentials() throws ClientException {
@@ -136,13 +124,6 @@ public class TDClientAPI implements ClientAPI {
     public boolean create(String table) throws ClientException {
         client.createTable(database, table);
         return true;
-    }
-
-    public boolean insert(String tableName, Map<String, Object> record)
-            throws ClientException {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database
-                .getName());
-        return logger.log(tableName, record);
     }
 
     public TDResultSetBase select(String sql) throws ClientException {
@@ -327,18 +308,9 @@ public class TDClientAPI implements ClientAPI {
     }
 
     public boolean flush() {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database
-                .getName());
-        logger.flush();
         return true;
     }
 
     public void close() throws ClientException {
-        TreasureDataLogger logger = TreasureDataLogger.getLogger(database
-                .getName());
-        if (logger != null) {
-            logger.flush();
-            logger.close();
-        }
     }
 }

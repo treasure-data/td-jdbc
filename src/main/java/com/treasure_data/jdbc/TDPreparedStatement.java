@@ -30,30 +30,33 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     private static Logger LOG = Logger.getLogger(
             TDPreparedStatement.class.getName());
 
-    private CommandContext w;
-
-    private final HashMap<Integer, Object> params = new HashMap<Integer, Object>();
+    private CommandContext context;
+    private Map<Integer, String> preparedParameters = new HashMap<Integer, String>();
 
     public TDPreparedStatement(TDConnection conn, String sql)
             throws SQLException {
         super(conn);
-        w = fetchResult(sql, Constants.PREPARE);
+        context = createCommandContext(sql);
+    }
+
+    CommandContext getContext() {
+        return context;
+    }
+
+    Map<Integer, String> getParams() {
+        return preparedParameters;
     }
 
     public void clearParameters() throws SQLException {
-        for (Map<Integer, Object> params : w.params0) {
-            params.clear();
-        }
+        preparedParameters.clear();
     }
 
     public void addBatch() throws SQLException {
-        w.params0.add(deepCopy(params));
-        params.clear();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearBatch()"));
     }
 
     public void clearBatch() throws SQLException {
-        params.clear();
-        w.params0.clear();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearBatch()"));
     }
 
     public boolean execute() throws SQLException {
@@ -61,46 +64,63 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public synchronized ResultSet executeQuery() throws SQLException {
-        if (!params.isEmpty()) {
-            w.params0.add(deepCopy(params));
+        String sql = context.sql;
+        if (sql.contains("?")) {
+            sql = updateSql(sql, preparedParameters);
         }
-        fetchResult(w);
-        clearBatch();
-        return getResultSet();
+        return executeQuery(sql);
     }
 
-    private static Map<Integer, Object> deepCopy(Map<Integer, Object> map) {
-        Map<Integer, Object> ret = new HashMap<Integer, Object>(map.size());
-        if (map.isEmpty()) {
-            return ret;
+    String updateSql(final String sql, Map<Integer, String> parameters) {
+        StringBuffer newSql = new StringBuffer(sql);
+
+        int paramLoc = 1;
+        while (getCharIndexFromSqlByParamLocation(sql, '?', paramLoc) > 0) {
+            // check the user has set the needs parameters
+            if (parameters.containsKey(paramLoc)) {
+                int tt = getCharIndexFromSqlByParamLocation(newSql.toString(), '?', 1);
+                newSql.deleteCharAt(tt);
+                newSql.insert(tt, parameters.get(paramLoc));
+            }
+            paramLoc++;
         }
 
-        for (Map.Entry<Integer, Object> entry : map.entrySet()) {
-            Integer key = entry.getKey();
-            Object val = entry.getValue();
-            ret.put(key, val);
+        return newSql.toString();
+    }
+
+    private int getCharIndexFromSqlByParamLocation(final String sql,
+            final char cchar, final int paramLoc) {
+        int signalCount = 0;
+        int charIndex = -1;
+        int num = 0;
+        for (int i = 0; i < sql.length(); i++) {
+            char c = sql.charAt(i);
+            if (c == '\'' || c == '\\') {
+                // record the count of char "'" and char "\"
+                signalCount++;
+            } else if (c == cchar && signalCount % 2 == 0) {
+                // check if the ? is really the parameter
+                num++;
+                if (num == paramLoc) {
+                    charIndex = i;
+                    break;
+                }
+            }
         }
-        return ret;
+        return charIndex;
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        executeQuery();
-        //fetchResult(w);
-        int[] ret = new int[w.params0.size()];
-        for (int i = 0; i < ret.length; i++) {
-            ret[i] = -2;
-        }
-        return ret;
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeBatch()"));
     }
 
     public int executeUpdate() throws SQLException {
-        executeQuery();
-        return getUpdateCount();
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeUpdate()"));
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
-        return executeQuery().getMetaData();
+        return null;
     }
 
     public ParameterMetaData getParameterMetaData() throws SQLException {
@@ -153,11 +173,11 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setBoolean(int parameterIndex, boolean x) throws SQLException {
-        this.params.put(parameterIndex, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBoolean(int, boolean)"));
     }
 
     public void setByte(int i, byte x) throws SQLException {
-        this.params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setByte(int, byte)"));
     }
 
     public void setBytes(int i, byte[] x) throws SQLException {
@@ -189,7 +209,13 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDate(int i, Date x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setDate(int, Date)"));
+        String type = conn.getProperties().getProperty(Config.TD_JDBC_TYPE);
+        if (type != null && type.equals("presto")) {
+            preparedParameters.put(i, "DATE '"+x.toString()+"'");
+        } else {
+            throw new SQLException(new UnsupportedOperationException(
+                    "TDPreparedStatement#setDate(int, Date) is supported for Presto query only"));
+        }
     }
 
     public void setDate(int i, Date x, Calendar cal) throws SQLException {
@@ -197,19 +223,19 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setDouble(int i, double x) throws SQLException {
-        params.put(i, "" + x);
+        preparedParameters.put(i, Double.toString(x));
     }
 
     public void setFloat(int i, float x) throws SQLException {
-        params.put(i, "" + x);
+        preparedParameters.put(i, Float.toString(x));
     }
 
     public void setInt(int i, int x) throws SQLException {
-        params.put(i, "" + x);
+        preparedParameters.put(i, Integer.toString(x));
     }
 
     public void setLong(int i, long x) throws SQLException {
-        params.put(i, "" + x);
+        preparedParameters.put(i, Long.toString(x));
     }
 
     public void setNCharacterStream(int i, Reader value) throws SQLException {
@@ -233,21 +259,11 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setNString(int i, String value) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNString(int, String)"));
+        setString(i, value);
     }
 
     public void setNull(int i, int sqlType) throws SQLException {
-        switch (sqlType) {
-        case java.sql.Types.TINYINT:
-        case java.sql.Types.INTEGER:
-        case java.sql.Types.BIGINT:
-        case java.sql.Types.FLOAT:
-        case java.sql.Types.DOUBLE:
-        case java.sql.Types.VARCHAR:
-            params.put(i, "null");
-        default:
-            throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
-        }
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
     }
 
     public void setNull(int i, int sqlType, String typeName) throws SQLException {
@@ -279,12 +295,12 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setShort(int i, short x) throws SQLException {
-        params.put(i, "" + x);
+        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setShort(int, short)"));
     }
 
     public void setString(int i, String x) throws SQLException {
         x = x.replace("'", "\\'");
-        params.put(i, "'" + x + "'");
+        preparedParameters.put(i, "'" + x + "'");
     }
 
     public void setTime(int i, Time x) throws SQLException {
@@ -296,7 +312,13 @@ public class TDPreparedStatement extends TDStatement implements PreparedStatemen
     }
 
     public void setTimestamp(int i, Timestamp x) throws SQLException {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setTimestamp(int, Timestamp)"));
+        String type = conn.getProperties().getProperty(Config.TD_JDBC_TYPE);
+        if (type != null && type.equals("presto")) {
+            preparedParameters.put(i, "TIMESTAMP '"+x.toString()+"'");
+        } else {
+            throw new SQLException(new UnsupportedOperationException(
+                    "TDPreparedStatement#setTimestamp(int, Timestamp) is supported for Presto query only"));
+        }
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal) throws SQLException {

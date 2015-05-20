@@ -189,7 +189,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns false.
+            if (obj == null || obj instanceof NilValue) {
                 return false;
             }
 
@@ -243,7 +244,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -337,13 +339,14 @@ public abstract class TDResultSetBase implements ResultSet {
         // TODO should implement more carefully
         // TODO
         Object obj = getObject(index);
-        if (obj == null) {
+
+        // if obj is NULL (NilValue), it returns null.
+        if (obj == null || obj instanceof NilValue) {
             return null;
         }
 
         try {
-            Value v = (Value) obj;
-            return Date.valueOf(v.asRawValue().getString());
+            return Date.valueOf(((Value)obj).asRawValue().getString());
         } catch (Exception e) {
             String msg = String.format(
                     "Cannot convert column %d to date: %s",
@@ -381,7 +384,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0.0;
             }
 
@@ -444,7 +448,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.0f.
+            if (obj == null || obj instanceof NilValue) {
                 return 0.0f;
             }
 
@@ -503,7 +508,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -558,7 +564,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -690,7 +697,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns 0.
+            if (obj == null || obj instanceof NilValue) {
                 return 0;
             }
 
@@ -758,7 +766,8 @@ public abstract class TDResultSetBase implements ResultSet {
         try {
             obj = getObject(index);
 
-            if (obj == null) {
+            // if obj is null or NULL value (NilValue), it returns null.
+            if (obj == null || obj instanceof NilValue) {
                 return null;
             }
 
@@ -796,8 +805,6 @@ public abstract class TDResultSetBase implements ResultSet {
                 }
             } else if (obj instanceof RawValue) { // msgpack's raw type
                 return ((Value) obj).asRawValue().getString();
-            } else if (obj instanceof NilValue) { // msgpack's nil type
-                return null;
             } else { // java's raw type
                 return (String) obj;
             }
@@ -838,15 +845,16 @@ public abstract class TDResultSetBase implements ResultSet {
 
     public Timestamp getTimestamp(int index) throws SQLException {
         Object obj = getObject(index);
-        if (obj == null) {
+
+        // if obj is NULL (NilValue), it returns null.
+        if (obj == null || obj instanceof NilValue) {
             return null;
         }
 
         try {
             String type = columnTypes.get(index - 1);
             if (type.equalsIgnoreCase("timestamp")) {
-                Value v = (Value) obj;
-                return Timestamp.valueOf(v.asRawValue().getString());
+                return Timestamp.valueOf(((Value) obj).asRawValue().getString());
             } else {
                 throw new IllegalArgumentException(
                         "Expected column to be a timestamp type but is " + type);

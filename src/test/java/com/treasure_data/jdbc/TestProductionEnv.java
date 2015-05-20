@@ -1,5 +1,6 @@
 package com.treasure_data.jdbc;
 
+import com.treasure_data.client.ClientException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.msgpack.type.ArrayValue;
@@ -21,6 +22,7 @@ import java.util.Properties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test cases for integration testing with production API
@@ -171,6 +173,31 @@ public class TestProductionEnv
         rs.close();
         stat.close();
         conn.close();
+    }
+
+    @Ignore
+    @Test
+    public void testErrorMessage()
+            throws IOException, SQLException
+    {
+        try {
+            Connection conn = newPrestoConnection("leodb");
+            Statement stat = conn.createStatement();
+            boolean ret = stat.execute("select * from "); // incomplete statement
+            ResultSet rs = stat.getResultSet();
+            assertFalse(rs.next());
+            rs.close();
+            stat.close();
+            conn.close();
+
+            fail("Cannot reach here");
+        }
+        catch(Exception e) {
+            String msg = e.getMessage();
+            logger.debug("error message: {}", e.getMessage()); // This should contain meaningful error message
+            assertFalse("SQLException should have some error message", msg.isEmpty());
+        }
+
     }
 
 

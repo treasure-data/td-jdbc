@@ -90,22 +90,40 @@ public class TestProductionEnv
         Connection conn = newPrestoConnection("cs_modeanalytics");
         Statement stat = conn.createStatement();
         stat.execute("select time, id, nums from arraytest");
-        ResultSet rs = stat.getResultSet();
-        if(rs.next()) {
-            long time = rs.getLong(1);
-            assertEquals(1432099776L, time);
-            int id = rs.getInt(2);
-            assertEquals(1, id);
+        {
+            ResultSet rs = stat.getResultSet();
+            if (rs.next()) {
+                long time = rs.getLong(1);
+                assertEquals(1432099776L, time);
+                int id = rs.getInt(2);
+                assertEquals(1, id);
 
-            ArrayValue arr = (ArrayValue) rs.getObject(3);
-            logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
-            for(int i = 0; i < arr.size(); ++i) {
-                int v = arr.get(i).asIntegerValue().getInt();
-                assertEquals(i+1, v);
+                ArrayValue arr = (ArrayValue) rs.getObject(3);
+                logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
+                for (int i = 0; i < arr.size(); ++i) {
+                    int v = arr.get(i).asIntegerValue().getInt();
+                    assertEquals(i + 1, v);
+                }
             }
+            assertFalse(rs.next());
+            rs.close();
         }
-        assertFalse(rs.next());
-        rs.close();
+
+        stat.execute("select nums from arraytest");
+        {
+            ResultSet rs = stat.getResultSet();
+            if(rs.next()) {
+                ArrayValue arr = (ArrayValue) rs.getObject(1);
+                logger.debug("getObject result: {}, type: {}", arr, arr.getClass());
+                for (int i = 0; i < arr.size(); ++i) {
+                    int v = arr.get(i).asIntegerValue().getInt();
+                    assertEquals(i + 1, v);
+                }
+            }
+            assertFalse(rs.next());
+            rs.close();
+        }
+
         stat.close();
         conn.close();
     }

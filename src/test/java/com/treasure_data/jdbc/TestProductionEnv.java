@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for integration testing with production API
@@ -154,5 +155,26 @@ public class TestProductionEnv
         conn.close();
 
     }
+
+    @Ignore
+    @Test
+    public void select1()
+            throws IOException, SQLException
+    {
+        Connection conn = newPrestoConnection("leodb");
+        Statement stat = conn.createStatement();
+        stat.execute("select 1");
+        ResultSet rs = stat.getResultSet();
+        logger.debug("rs class: " + rs.getClass());
+        assertTrue(rs.next());
+        int one = rs.getInt(1);
+        assertEquals(1, one);
+
+        assertFalse(rs.next());
+        rs.close();
+        stat.close();
+        conn.close();
+    }
+
 
 }

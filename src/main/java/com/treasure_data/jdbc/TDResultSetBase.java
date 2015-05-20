@@ -1781,12 +1781,6 @@ public abstract class TDResultSetBase
         warningChain = null;
     }
 
-    public void close()
-            throws SQLException
-    {
-        throw new SQLException("TDResultSetBase#close()");
-    }
-
     public boolean wasNull()
             throws SQLException
     {

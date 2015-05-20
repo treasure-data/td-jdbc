@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @see org.hsqldb.Session
- * @see org.hsqldb.SessionInterface
  */
 public class CommandExecutor
         implements Constants
@@ -99,6 +97,13 @@ public class CommandExecutor
             }
             // NOTE: fetchOne dosn't throw new SQLException("Method not supported").
             return true;
+        }
+
+        @Override
+        public void close()
+                throws SQLException
+        {
+            // do nothing
         }
 
         @Override

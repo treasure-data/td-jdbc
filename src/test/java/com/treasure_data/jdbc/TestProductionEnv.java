@@ -51,8 +51,9 @@ public class TestProductionEnv
         StringBuilder extracted = new StringBuilder();
         String line = null;
         while((line = reader.readLine()) != null) {
-            if(line.trim().startsWith("[")) {
-                continue; // skip [... ] line
+            String trimmed = line.trim();
+            if(trimmed.startsWith("[") || trimmed.startsWith("#")) {
+                continue; // skip [... ] line or comment line
             }
             extracted.append(line.trim());
             extracted.append("\n");
@@ -134,7 +135,6 @@ public class TestProductionEnv
     public void readJsonArray()
             throws IOException, SQLException
     {
-
         Connection conn = newPrestoConnection("cs_modeanalytics");
         Statement stat = conn.createStatement();
 
@@ -183,7 +183,7 @@ public class TestProductionEnv
         try {
             Connection conn = newPrestoConnection("leodb");
             Statement stat = conn.createStatement();
-            boolean ret = stat.execute("select * from "); // incomplete statement
+            boolean ret = stat.execute("select * from unknown_table"); // incomplete statement
             ResultSet rs = stat.getResultSet();
             assertFalse(rs.next());
             rs.close();
@@ -193,9 +193,10 @@ public class TestProductionEnv
             fail("Cannot reach here");
         }
         catch(Exception e) {
+            e.printStackTrace();
             String msg = e.getMessage();
-            logger.debug("error message: {}", e.getMessage()); // This should contain meaningful error message
-            assertFalse("SQLException should have some error message", msg.isEmpty());
+            logger.warn("--error message:{}--", msg);
+            assertTrue("SQLException should report missing table", msg.toLowerCase().contains("unknown_table does not exist"));
         }
 
     }

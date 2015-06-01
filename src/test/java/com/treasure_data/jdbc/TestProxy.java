@@ -151,7 +151,7 @@ public class TestProxy
     }
 
 
-    @Ignore
+    @Ignore("failing test for CLT-735")
     @Test
     public void detectWrongProxyPassword()
             throws IOException, SQLException

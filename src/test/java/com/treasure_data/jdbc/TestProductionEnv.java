@@ -76,6 +76,18 @@ public class TestProductionEnv
         return "";
     }
 
+    public static Connection newConnection(String jdbcUrl, Properties config)
+            throws SQLException, IOException
+    {
+        Properties prop = readTDConf();
+        Map<String, String> env = System.getenv();
+        Properties connectionProp = new Properties(config);
+        connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
+        connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
+        Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
+        return conn;
+    }
+
     public static Connection newPrestoConnection(String database)
             throws IOException, SQLException
     {
@@ -85,16 +97,7 @@ public class TestProductionEnv
     public static Connection newPrestoConnection(String database, Properties config)
             throws IOException, SQLException
     {
-        Properties prop = readTDConf();
-        Map<String, String> env = System.getenv();
-        Properties connectionProp = new Properties(config);
-        connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
-        connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
-        Connection conn = DriverManager.getConnection(
-                String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database),
-                connectionProp
-        );
-        return conn;
+        return newConnection(String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database), config);
     }
 
     @Test

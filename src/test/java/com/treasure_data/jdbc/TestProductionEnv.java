@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -68,16 +69,15 @@ public class TestProductionEnv
             throws IOException, SQLException
     {
         Properties prop = readTDConf();
+        Map<String, String> env = System.getenv();
         Connection conn = DriverManager.getConnection(
                 String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database),
-                prop.getProperty("user", ""),
-                prop.getProperty("password", "")
+                prop.getProperty("user", env.containsKey("TD_USER") ?  env.get("TD_USER") : ""),
+                prop.getProperty("password", env.containsKey("TD_PASS") ? env.get("TD_PASS") : "")
         );
         return conn;
     }
 
-
-    @Ignore
     @Test
     public void readArrayType()
             throws SQLException, IOException
@@ -156,7 +156,6 @@ public class TestProductionEnv
 
     }
 
-    @Ignore
     @Test
     public void select1()
             throws IOException, SQLException
@@ -176,7 +175,6 @@ public class TestProductionEnv
         conn.close();
     }
 
-    @Ignore
     @Test
     public void testErrorMessage()
             throws IOException, SQLException
@@ -203,7 +201,6 @@ public class TestProductionEnv
     }
 
 
-    @Ignore
     @Test
     public void testPerformance()
             throws IOException, SQLException

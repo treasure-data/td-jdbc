@@ -65,15 +65,34 @@ public class TestProductionEnv
         return p;
     }
 
+    private static String firstNonNull(Object... keys) {
+        if(keys != null) {
+            for (Object k : keys) {
+                if (k != null) {
+                    return k.toString();
+                }
+            }
+        }
+        return "";
+    }
+
     public static Connection newPrestoConnection(String database)
+            throws IOException, SQLException
+    {
+        return newPrestoConnection(database, new Properties());
+    }
+
+    public static Connection newPrestoConnection(String database, Properties config)
             throws IOException, SQLException
     {
         Properties prop = readTDConf();
         Map<String, String> env = System.getenv();
+        Properties connectionProp = new Properties(config);
+        connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
+        connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
         Connection conn = DriverManager.getConnection(
                 String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database),
-                prop.getProperty("user", env.containsKey("TD_USER") ?  env.get("TD_USER") : ""),
-                prop.getProperty("password", env.containsKey("TD_PASS") ? env.get("TD_PASS") : "")
+                connectionProp
         );
         return conn;
     }
@@ -206,7 +225,7 @@ public class TestProductionEnv
             throws IOException, SQLException
     {
         Connection conn = newPrestoConnection("leodb");
-        for(int i=0; i<10; ++i) {
+        for(int i=0; i<3; ++i) {
             long started = System.currentTimeMillis();
             try {
                 Statement stat = conn.createStatement();

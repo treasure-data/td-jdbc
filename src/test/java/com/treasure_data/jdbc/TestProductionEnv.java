@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -199,6 +200,42 @@ public class TestProductionEnv
             assertTrue("SQLException should report missing table", msg.toLowerCase().contains("unknown_table does not exist"));
         }
 
+    }
+
+
+    @Ignore
+    @Test
+    public void testPerformance()
+            throws IOException, SQLException
+    {
+        Connection conn = newPrestoConnection("leodb");
+        for(int i=0; i<10; ++i) {
+            long started = System.currentTimeMillis();
+            try {
+                Statement stat = conn.createStatement();
+                boolean ret = stat.execute("select source_ip, dest_url, visit_date, ad_revenue, country_code from hivebench_tiny.uservisits limit 1000"); // incomplete statement
+                //boolean ret = stat.execute("select 2"); // incomplete statement
+                ResultSet rs = stat.getResultSet();
+                int count = 0;
+                while(rs.next()) {
+                    rs.getString(1);
+                    rs.getString(2);
+                    rs.getString(3);
+                    rs.getDouble(4);
+                    rs.getString(5);
+                    count++;
+                }
+                assertEquals(1000, count);
+                rs.close();
+                stat.close();
+            }
+            catch(Exception e) {
+                logger.error("failed", e);
+            }
+            long finished = System.currentTimeMillis();
+            logger.info(String.format("------------------------- %.2f sec.", (finished - started) / 1000.0));
+        }
+        conn.close();
     }
 
 

@@ -45,6 +45,9 @@ public class TestProxy
         }
     }
 
+    private static final String PROXY_USER = "test";
+    private static final String PROXY_PASS = "helloproxy";
+
     @Before
     public void setUp() throws Exception {
 
@@ -53,7 +56,7 @@ public class TestProxy
             @Override
             public boolean authenticate(String user, String pass)
             {
-                return user.equals("test") && pass.equals("helloproxy");
+                return user.equals(PROXY_USER) && pass.equals(PROXY_PASS);
             }
         }).start();
     }
@@ -72,8 +75,8 @@ public class TestProxy
         Connection conn = TestProductionEnv.newConnection(String.format(
                 "jdbc:td://api.treasuredata.com/hivebench_tiny;useSSL=true;type=presto;httpproxyhost=localhost;httpproxyport=%d;httpproxyuser=%s;httpproxypassword=%s",
                 proxyPort,
-                "test",
-                "helloproxy"),
+                PROXY_USER,
+                PROXY_PASS),
                 new Properties()
         );
         Statement stat = conn.createStatement();
@@ -109,8 +112,8 @@ public class TestProxy
         Properties prop = new Properties();
         prop.setProperty("httpproxyhost", "localhost");
         prop.setProperty("httpproxyport", Integer.toString(proxyPort));
-        prop.setProperty("httpproxyuser", "test");
-        prop.setProperty("httpproxypassword", "helloproxy");
+        prop.setProperty("httpproxyuser", PROXY_USER);
+        prop.setProperty("httpproxypassword", PROXY_PASS);
         return prop;
     }
 
@@ -128,8 +131,8 @@ public class TestProxy
         Properties prop = new Properties();
         String prevProxyHost = System.setProperty("http.proxyHost", "localhost");
         String prevProxyPort = System.setProperty("http.proxyPort", Integer.toString(proxyPort));
-        String prevProxyUser = System.setProperty("http.proxyUser", "test");
-        String prevProxyPass = System.setProperty("http.proxyPassword", "helloproxy");
+        String prevProxyUser = System.setProperty("http.proxyUser", PROXY_USER);
+        String prevProxyPass = System.setProperty("http.proxyPassword", PROXY_PASS);
 
         try {
             assertFunction(prop, "count(*)", "10000");
@@ -157,7 +160,7 @@ public class TestProxy
             throws IOException, SQLException
     {
         Properties prop = getJdbcProxyConfig();
-        prop.setProperty("httpproxyuser", "testtest"); // set wrong password
+        prop.setProperty("httpproxyuser", "testtest"); // set a wrong password
 
         Connection conn = TestProductionEnv.newPrestoConnection("hivebench_tiny", prop);
         Statement stat = conn.createStatement();

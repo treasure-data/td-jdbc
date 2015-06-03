@@ -86,6 +86,13 @@
       <version>1.7.12</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.littleshoot</groupId>
+      <artifactId>littleproxy</artifactId>
+      <version>1.0.0-beta8</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>

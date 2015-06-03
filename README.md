@@ -37,6 +37,15 @@ The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
 See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
 for more details.
 
+### Development
+
+To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
+```
+[account]
+  user = (e-mail)
+  password = (pass)
+```
+
 ## Configuration
 
 The principal options can all be provided as part of the JDBC custom URL. The

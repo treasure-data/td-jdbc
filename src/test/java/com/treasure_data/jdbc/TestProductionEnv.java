@@ -17,6 +17,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -64,20 +65,41 @@ public class TestProductionEnv
         return p;
     }
 
-    public static Connection newPrestoConnection(String database)
-            throws IOException, SQLException
+    private static String firstNonNull(Object... keys) {
+        if(keys != null) {
+            for (Object k : keys) {
+                if (k != null) {
+                    return k.toString();
+                }
+            }
+        }
+        return "";
+    }
+
+    public static Connection newConnection(String jdbcUrl, Properties config)
+            throws SQLException, IOException
     {
         Properties prop = readTDConf();
-        Connection conn = DriverManager.getConnection(
-                String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database),
-                prop.getProperty("user", ""),
-                prop.getProperty("password", "")
-        );
+        Map<String, String> env = System.getenv();
+        Properties connectionProp = new Properties(config);
+        connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
+        connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
+        Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
         return conn;
     }
 
+    public static Connection newPrestoConnection(String database)
+            throws IOException, SQLException
+    {
+        return newPrestoConnection(database, new Properties());
+    }
 
-    @Ignore
+    public static Connection newPrestoConnection(String database, Properties config)
+            throws IOException, SQLException
+    {
+        return newConnection(String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database), config);
+    }
+
     @Test
     public void readArrayType()
             throws SQLException, IOException
@@ -156,7 +178,6 @@ public class TestProductionEnv
 
     }
 
-    @Ignore
     @Test
     public void select1()
             throws IOException, SQLException
@@ -176,7 +197,6 @@ public class TestProductionEnv
         conn.close();
     }
 
-    @Ignore
     @Test
     public void testErrorMessage()
             throws IOException, SQLException
@@ -203,13 +223,12 @@ public class TestProductionEnv
     }
 
 
-    @Ignore
     @Test
     public void testPerformance()
             throws IOException, SQLException
     {
         Connection conn = newPrestoConnection("leodb");
-        for(int i=0; i<10; ++i) {
+        for(int i=0; i<3; ++i) {
             long started = System.currentTimeMillis();
             try {
                 Statement stat = conn.createStatement();

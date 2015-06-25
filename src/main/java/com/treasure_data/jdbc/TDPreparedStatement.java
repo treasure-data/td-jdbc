@@ -108,25 +108,34 @@ public class TDPreparedStatement
     private int getCharIndexFromSqlByParamLocation(final String sql,
             final char cchar, final int paramLoc)
     {
-        int signalCount = 0;
-        int charIndex = -1;
+        boolean escaping = false;
+        boolean quoted = false;
         int num = 0;
         for (int i = 0; i < sql.length(); i++) {
-            char c = sql.charAt(i);
-            if (c == '\'' || c == '\\') {
-                // record the count of char "'" and char "\"
-                signalCount++;
+            if (escaping) {
+                escaping = false;
+                continue;
             }
-            else if (c == cchar && signalCount % 2 == 0) {
-                // check if the ? is really the parameter
-                num++;
-                if (num == paramLoc) {
-                    charIndex = i;
-                    break;
+            char c = sql.charAt(i);
+            switch (c) {
+            case '\\':
+                escaping = true;
+                break;
+            case '\'':
+                // record the count of char "'"
+                quoted = !quoted;
+                break;
+            default:
+                if (c == cchar && !quoted) {
+                    num++;
+                    if (num == paramLoc) {
+                        return i;
+                    }
                 }
+                break;
             }
         }
-        return charIndex;
+        return -1;
     }
 
     @Override

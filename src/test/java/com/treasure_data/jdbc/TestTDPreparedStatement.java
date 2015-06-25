@@ -36,9 +36,9 @@ public class TestTDPreparedStatement
         // Oh boy, no such placeholder location...
         String actual = "SELECT ?, ? FROM table";
         Map<Integer, String> params = new HashMap<Integer, String>();
-        params.put(1, "foo");
-        params.put(2, "bar");
-        assertReplacedQuery(actual, params, "SELECT foo, bar FROM table");
+        params.put(1, "'foo'");
+        params.put(2, "'bar'");
+        assertReplacedQuery(actual, params, "SELECT 'foo', 'bar' FROM table");
     }
 
     @Test
@@ -47,8 +47,8 @@ public class TestTDPreparedStatement
     {
         String actual = "select * from www_access where path like ? or host = ?";
         Map<Integer, String> params = new HashMap<Integer, String>();
-        params.put(1, "\\%foo");
-        params.put(2, "\\%bar");
+        params.put(1, "'\\%foo'");
+        params.put(2, "'\\%bar'");
         assertReplacedQuery(actual, params, "select * from www_access where path like '\\%foo' or host = '\\%bar'");
     }
 }

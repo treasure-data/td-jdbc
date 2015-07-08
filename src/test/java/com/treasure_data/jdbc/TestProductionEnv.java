@@ -81,7 +81,8 @@ public class TestProductionEnv
     {
         Properties prop = readTDConf();
         Map<String, String> env = System.getenv();
-        Properties connectionProp = new Properties(config);
+        Properties connectionProp = new Properties();
+        connectionProp.putAll(config);
         connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
         connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
         Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);

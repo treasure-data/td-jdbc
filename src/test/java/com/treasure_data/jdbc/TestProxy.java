@@ -1,9 +1,13 @@
 package com.treasure_data.jdbc;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpRequest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.littleshoot.proxy.HttpFilters;
+import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
@@ -17,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,17 +53,36 @@ public class TestProxy
     private static final String PROXY_USER = "test";
     private static final String PROXY_PASS = "helloproxy";
 
+    private AtomicInteger proxyAccessCount = new AtomicInteger(0);
+
     @Before
     public void setUp() throws Exception {
-
+        proxyAccessCount.set(0);
         this.proxyPort = findAvailablePort();
-        this.proxyServer = DefaultHttpProxyServer.bootstrap().withPort(proxyPort).withProxyAuthenticator(new ProxyAuthenticator() {
+        this.proxyServer = DefaultHttpProxyServer.bootstrap().withPort(proxyPort).withProxyAuthenticator(new ProxyAuthenticator()
+        {
             @Override
             public boolean authenticate(String user, String pass)
             {
                 return user.equals(PROXY_USER) && pass.equals(PROXY_PASS);
             }
+        }).withFiltersSource(new HttpFiltersSourceAdapter()
+        {
+            @Override
+            public HttpFilters filterRequest(HttpRequest httpRequest, ChannelHandlerContext channelHandlerContext)
+            {
+                proxyAccessCount.incrementAndGet();
+                return super.filterRequest(httpRequest, channelHandlerContext);
+            }
         }).start();
+
+        // Unset proxy configuration
+        System.clearProperty("http.proxyHost");
+        System.clearProperty("https.proxyHost");
+        System.clearProperty("http.proxyPort");
+        System.clearProperty("https.proxyPort");
+        System.clearProperty("http.proxyUser");
+        System.clearProperty("http.proxyPassword");
     }
 
     @After
@@ -87,13 +111,13 @@ public class TestProxy
         assertEquals(10000, rowCount);
         stat.close();
         conn.close();
-    }
 
+        assertTrue("no proxy access", proxyAccessCount.get() > 0);
+    }
 
     private static void assertFunction(Properties prop, String sqlProjection, String expectedAnswer)
             throws IOException, SQLException
     {
-
         Connection conn = TestProductionEnv.newPrestoConnection("hivebench_tiny", prop);
         Statement stat = conn.createStatement();
         String sql = String.format("select %s from uservisits", sqlProjection);
@@ -122,37 +146,22 @@ public class TestProxy
             throws IOException, SQLException
     {
         assertFunction(getJdbcProxyConfig(), "count(*)", "10000");
+        assertTrue("no proxy access", proxyAccessCount.get() > 0);
     }
 
     @Test
     public void proxyConfigViaSystemProperties()
             throws IOException, SQLException
     {
-        Properties prop = new Properties();
-        String prevProxyHost = System.setProperty("http.proxyHost", "localhost");
-        String prevProxyPort = System.setProperty("http.proxyPort", Integer.toString(proxyPort));
-        String prevProxyUser = System.setProperty("http.proxyUser", PROXY_USER);
-        String prevProxyPass = System.setProperty("http.proxyPassword", PROXY_PASS);
+        System.setProperty("http.proxyHost", "localhost");
+        System.setProperty("http.proxyPort", Integer.toString(proxyPort));
+        System.setProperty("http.proxyUser", PROXY_USER);
+        System.setProperty("http.proxyPassword", PROXY_PASS);
 
-        try {
-            assertFunction(prop, "count(*)", "10000");
-        }
-        finally {
-            if(prevProxyHost != null) {
-                System.setProperty("http.proxyHost", prevProxyHost);
-            }
-            if(prevProxyPort != null) {
-                System.setProperty("http.proxyPort", prevProxyPort);
-            }
-            if(prevProxyUser != null) {
-                System.setProperty("http.proxyUser", prevProxyUser);
-            }
-            if(prevProxyPass != null) {
-                System.setProperty("http.proxyPassword", prevProxyPass);
-            }
-        }
+        Properties emptyProp = new Properties();
+        assertFunction(emptyProp, "count(*)", "10000");
+        assertTrue("no proxy access", proxyAccessCount.get() > 0);
     }
-
 
     @Ignore("failing test for CLT-735")
     @Test
@@ -173,11 +182,9 @@ public class TestProxy
             return;
         }
         ResultSet rs = stat.getResultSet();
-        String result = rs.getString(1);
+        rs.next();
+        int result = rs.getInt(1);
         logger.debug("result: " + result);
         fail("should not reach here");
     }
-
-
-
 }

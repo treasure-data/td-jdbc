@@ -26,9 +26,11 @@ public class ApiConfig
 
     public Properties toProperties() {
         Properties prop = new Properties();
+        prop.setProperty(Config.TD_CK_API_SERVER_SCHEME, scheme);
         prop.setProperty(Config.TD_JDBC_USESSL, Boolean.toString(useSSL));
-        prop.setProperty(com.treasure_data.client.Constants.TD_API_SERVER_HOST, endpoint);
-        prop.setProperty(Constants.TD_API_SERVER_PORT, Integer.toString(port));
+        prop.setProperty(Config.TD_API_SERVER_HOST, endpoint);
+        prop.setProperty(Config.TD_API_SERVER_PORT, Integer.toString(port));
+
         if(proxy.isDefined()) {
             Properties proxyProp = proxy.get().toProperties();
             prop.putAll(proxyProp);

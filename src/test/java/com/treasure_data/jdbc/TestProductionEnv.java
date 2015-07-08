@@ -102,6 +102,23 @@ public class TestProductionEnv
     }
 
     @Test
+    public void testNonSSLConnection()
+            throws IOException, SQLException
+    {
+        Connection conn = newConnection("jdbc:td://api.treasuredata.com/leodb", new Properties());
+        Statement stat = conn.createStatement();
+        stat.execute("select 1 + 1");
+        ResultSet rs = stat.getResultSet();
+        assertTrue(rs.next());
+        int result = rs.getInt(1);
+        assertEquals(2, result);
+        assertFalse(rs.next());
+        rs.close();
+        stat.close();
+        conn.close();
+    }
+
+    @Test
     public void readArrayType()
             throws SQLException, IOException
     {

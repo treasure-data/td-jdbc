@@ -79,14 +79,12 @@
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
       <version>1.7.12</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.littleshoot</groupId>
       <artifactId>littleproxy</artifactId>
@@ -184,8 +182,6 @@
         <version>${maven-surefire-plugin.version}</version>
         <configuration>
           <useSystemClassLoader>false</useSystemClassLoader>
-          <parallel>methods</parallel>
-          <threadCount>1</threadCount>
         </configuration>
         <dependencies>
           <dependency>

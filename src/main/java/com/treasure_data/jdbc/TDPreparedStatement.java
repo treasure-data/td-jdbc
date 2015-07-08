@@ -1,6 +1,7 @@
 package com.treasure_data.jdbc;
 
 import com.treasure_data.jdbc.command.CommandContext;
+import com.treasure_data.model.Job;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -277,8 +278,7 @@ public class TDPreparedStatement
     public void setDate(int i, Date x)
             throws SQLException
     {
-        String type = conn.getProperties().getProperty(Config.TD_JDBC_TYPE);
-        if (type != null && type.equals("presto")) {
+        if (conn.getConfig().type == Job.Type.PRESTO) {
             preparedParameters.put(i, "DATE '" + x.toString() + "'");
         }
         else {
@@ -429,8 +429,7 @@ public class TDPreparedStatement
     public void setTimestamp(int i, Timestamp x)
             throws SQLException
     {
-        String type = conn.getProperties().getProperty(Config.TD_JDBC_TYPE);
-        if (type != null && type.equals("presto")) {
+        if (conn.getConfig().type == Job.Type.PRESTO) {
             preparedParameters.put(i, "TIMESTAMP '" + x.toString() + "'");
         }
         else {

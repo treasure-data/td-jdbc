@@ -213,24 +213,12 @@ public interface Constants
     int MAX_COLUMNS_IN_SELECT = 256;
     int MAX_COLUMNS_IN_TABLE = 512;
 
-    public static final String TD_JDBC_HOST_DEFAULT = "api.treasuredata.com";
-    public static final String TD_JDBC_PORT_DEFAULT = DEFAULT_PORT;
-    public static final String TD_JDBC_USER = "user";
-    public static final String TD_JDBC_PASSWORD = "password";
-    public static final String TD_JDBC_TYPE = "type";
-    public static final String TD_CK_JDBC_USESSL = "usessl";
 
-    public static final String TD_CK_JDBC_HTTP_PROXY_HOST = "httpproxyhost";
-    public static final String TD_CK_JDBC_HTTP_PROXY_PORT = "httpproxyport";
-    public static final String TD_CK_JDBC_HTTP_PROXY_USER = "httpproxyuser";
-    public static final String TD_CK_JDBC_HTTP_PROXY_PASSWORD = "httpproxypassword";
+    String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD = "td.jdbc.result.retrycount.threshold";
+    int TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE = 0;
 
-    public static final String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD = "td.jdbc.result.retrycount.threshold";
-    public static final String TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE = "" + 0;
-
-    public static final String TD_JDBC_RESULT_RETRY_WAITTIME = "td.jdbc.result.retry.waittime";
-    public static final String TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE = ""
-            + (20 * 1000); // millis
+    String TD_JDBC_RESULT_RETRY_WAITTIME = "td.jdbc.result.retry.waittime";
+    long TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE = (20 * 1000); // millis
 
     // JDBC compliance
     boolean JDBC_COMPLIANT = false;

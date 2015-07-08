@@ -52,13 +52,8 @@ public class TreasureDataDriver
         }
 
         // a connection object is not singleton
-        return new TDConnection(parseURL(url), props);
-    }
-
-    private static JDBCURLParser.Desc parseURL(String url)
-            throws SQLException
-    {
-        return JDBCURLParser.parse(url);
+        Config config = Config.parseJdbcURL(url).setProperties(props);
+        return new TDConnection(config);
     }
 
     public boolean acceptsURL(String url)

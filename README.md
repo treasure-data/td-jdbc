@@ -79,11 +79,11 @@ The current engines are:
 * hive
 * pig
 
-e.g.
+To run Hive query, specify `type=hive`:
 
-    jdbc:td://api.treasuredata.com/mydb;type=presto
+    jdbc:td://api.treasuredata.com/mydb;type=hive
 
-If the 'type' parameter is not specified, the default 'type=hive' is assumed.
+If no 'type' parameter is specified, the default 'type=presto' will be used.
 
 ### HTTPS / SSL
 

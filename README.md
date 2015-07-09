@@ -75,21 +75,20 @@ capability to use such engine.
 
 The current engines are:
 
-* hive (default)
+* presto (default)
+* hive
 * pig
-* impala
-* presto
 
-E.g.
+e.g.
 
-    jdbc:td://api.treasuredata.com/mydb;type=impala
+    jdbc:td://api.treasuredata.com/mydb;type=presto
 
 If the 'type' parameter is not specified, the default 'type=hive' is assumed.
 
 ### HTTPS / SSL
 
 Specifying 'useSSL=true' in JDBC URL parameters tells the driver to communicate
-with the API server using HTTPS / SSL encription. E.g.:
+with the API server using HTTPS / SSL encription. e.g.:
 
     jdbc:td://api.treasuredata.com/mydb;useSSL=true
 

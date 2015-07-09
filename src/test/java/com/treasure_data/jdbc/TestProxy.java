@@ -163,17 +163,16 @@ public class TestProxy
         assertTrue("no proxy access", proxyAccessCount.get() > 0);
     }
 
-    @Ignore("failing test for CLT-735")
     @Test
     public void detectWrongProxyPassword()
             throws IOException, SQLException
     {
         Properties prop = getJdbcProxyConfig();
         prop.setProperty("httpproxyuser", "testtest"); // set a wrong password
-
-        Connection conn = TestProductionEnv.newPrestoConnection("hivebench_tiny", prop);
-        Statement stat = conn.createStatement();
+        Statement stat;
         try {
+            Connection conn = TestProductionEnv.newPrestoConnection("hivebench_tiny", prop);
+            stat = conn.createStatement();
             stat.execute("select count(*) from uservisits");
         }
         catch(SQLException e) {

@@ -134,13 +134,6 @@ The following program is a small example of the JDBC Driver.
 
       public static void main(String[] args) throws Exception {
         loadSystemProperties();
-        try {
-          Class.forName("com.treasure_data.jdbc.TreasureDataDriver");
-        } catch (ClassNotFoundException e) {
-          e.printStackTrace();
-          System.exit(1);
-        }
-
         Connection conn = DriverManager.getConnection(
           "jdbc:td://api.treasuredata.com/mydb",
           "YOUR_MAIL_ADDRESS_HERE",

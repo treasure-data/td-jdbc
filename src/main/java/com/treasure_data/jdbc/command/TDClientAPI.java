@@ -3,7 +3,6 @@ package com.treasure_data.jdbc.command;
 import com.treasure_data.client.ClientException;
 import com.treasure_data.client.TreasureDataClient;
 import com.treasure_data.jdbc.Config;
-import com.treasure_data.jdbc.JDBCURLParser;
 import com.treasure_data.jdbc.TDConnection;
 import com.treasure_data.jdbc.TDResultSet;
 import com.treasure_data.jdbc.TDResultSetBase;
@@ -35,7 +34,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -46,48 +44,35 @@ public class TDClientAPI
     private static final Logger LOG = Logger.getLogger(TDClientAPI.class
             .getName());
 
-    private TreasureDataClient client;
+    private final TreasureDataClient client;
+    private final Config config;
 
-    private JDBCURLParser.Desc desc;
-
-    private Properties props;
-
-    private Database database;
+    private final Database database;
 
     private int maxRows = 5000;
 
     public TDClientAPI(TDConnection conn)
             throws SQLException
     {
-        this(null, new TreasureDataClient(conn.getProperties()), conn
-                .getProperties(), conn.getDatabase(), conn.getMaxRows());
+        this(conn.getConfig(), new TreasureDataClient(conn.getConfig().toProperties()), conn.getDatabase(), conn.getMaxRows());
     }
 
-    public TDClientAPI(JDBCURLParser.Desc desc, TDConnection conn)
-            throws SQLException
+    TDClientAPI(Config config, TreasureDataClient client, Database database)
+        throws SQLException
     {
-        this(desc, new TreasureDataClient(conn.getProperties()), conn
-                .getProperties(), conn.getDatabase(), conn.getMaxRows());
+        this(config, client, database, 5000);
     }
 
-    public TDClientAPI(TreasureDataClient client, Properties props,
-            Database database)
+    TDClientAPI(Config config, TreasureDataClient client, Database database, int maxRows)
             throws SQLException
     {
-        this(null, client, props, database, 5000);
-    }
-
-    public TDClientAPI(JDBCURLParser.Desc desc, TreasureDataClient client,
-            Properties props, Database database, int maxRows)
-            throws SQLException
-    {
+        this.config = config;
         this.client = client;
-        this.props = props;
         this.database = database;
         this.maxRows = maxRows;
-        this.desc = desc;
-
         try {
+            // Enable proxy configuration
+            config.apply();
             checkCredentials();
         }
         catch (ClientException e) {
@@ -103,13 +88,7 @@ public class TDClientAPI
             return;
         }
 
-        if (props == null) {
-            return;
-        }
-
-        String user = props.getProperty("user");
-        String password = props.getProperty("password");
-        client.authenticate(new AuthenticateRequest(user, password));
+        client.authenticate(new AuthenticateRequest(config.user, config.password));
     }
 
     public List<DatabaseSummary> showDatabases()
@@ -161,13 +140,7 @@ public class TDClientAPI
     {
         TDResultSetBase rs = null;
 
-        Job job;
-        if (desc == null || desc.type == null) {
-            job = new Job(database, sql); // It's, by default, executed by hive.
-        }
-        else {
-            job = new Job(database, desc.type, sql, null);
-        }
+        Job job = new Job(database, config.type, sql, null);
         SubmitJobRequest request = new SubmitJobRequest(job);
         SubmitJobResult result = client.submitJob(request);
         job = result.getJob();
@@ -184,16 +157,18 @@ public class TDClientAPI
         //  https://console.treasuredata.com/jobs/24746696 Hive
         //  https://console.treasuredata.com/jobs/24745829 Presto
         List<String> names, types;
-        if (desc == null || desc.type == null || desc.type.equals(Job.Type.HIVE)) { // hive
-            names = Arrays.asList("_c0");
-            types = Arrays.asList("int");
-        }
-        else if (desc.type.equals(Job.Type.PRESTO)) {
-            names = Arrays.asList("_col0");
-            types = Arrays.asList("bigint");
-        }
-        else { // pig, etc.
-            throw new UnsupportedOperationException();
+        switch(config.type) {
+            case HIVE:
+                names = Arrays.asList("_c0");
+                types = Arrays.asList("int");
+                break;
+            case PRESTO:
+                names = Arrays.asList("_col0");
+                types = Arrays.asList("bigint");
+                break;
+            default:
+                // pig, etc.
+                throw new UnsupportedOperationException("Unsupported job type: " + config.type);
         }
         return new TDResultSetMetaData(new ArrayList<String>(names), new ArrayList<String>(types));
     }
@@ -261,9 +236,7 @@ public class TDClientAPI
         File file = null;
 
         int retryCount = 0;
-        int retryCountThreshold = Integer.parseInt(props.getProperty(
-                Config.TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD,
-                Config.TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE));
+        int retryCountThreshold = config.resultRetryCountThreshold;
         while (true) {
             try {
                 LOG.info("write the result to file");
@@ -284,9 +257,7 @@ public class TDClientAPI
                 retryCount++;
                 LOG.info("re-try writing: imcremented retryCount = "
                         + retryCount);
-                long retryWaitTime = Long.parseLong(props.getProperty(
-                        Config.TD_JDBC_RESULT_RETRY_WAITTIME,
-                        Config.TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE));
+                long retryWaitTime = config.resultRetryWaitTimeMs;
                 try {
                     LOG.info("wait for re-try: timeout = " + retryWaitTime);
                     Thread.sleep(retryWaitTime);

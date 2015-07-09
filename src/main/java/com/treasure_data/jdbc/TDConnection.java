@@ -1,6 +1,5 @@
 package com.treasure_data.jdbc;
 
-import com.treasure_data.client.ClientException;
 import com.treasure_data.jdbc.command.ClientAPI;
 import com.treasure_data.jdbc.command.TDClientAPI;
 import com.treasure_data.model.Database;
@@ -26,6 +25,7 @@ import java.util.Properties;
 public class TDConnection
         implements Connection, Constants
 {
+    private final Config config;
 
     private boolean autoCommit = false;
 
@@ -33,156 +33,40 @@ public class TDConnection
 
     private ClientAPI api;
 
-    private Properties props;
-
     private Database database;
 
-    private int maxRows = 50;
+    private int maxRows = 5000;
 
     private SQLWarning warnings = null;
 
     public TDConnection()
-    {
+            throws SQLException {
+        this(new ConfigBuilder().createConnectionConfig());
     }
 
-    public TDConnection(JDBCURLParser.Desc desc, Properties props)
-            throws SQLException
-    {
-        this.props = props;
-        overrideProperties(desc);
+    public TDConnection(String url, Properties props)
+         throws SQLException {
+        this(Config.newConfig(url, props));
+    }
 
+    public TDConnection(Config config)
+            throws SQLException  {
+        this.config = config;
         // create a Database object
-        database = new Database(desc.database);
+        database = new Database(config.database);
 
         // create a ClientAPI object
-        api = new TDClientAPI(desc, this);
-        try {
-            // check whether the specified database exists or not
-            if (api.showDatabase() == null) {
-                throw new SQLException("Database doesn't exist: " + desc.database);
-            }
-        }
-        catch (ClientException e) {
-            throw new SQLException(e.getMessage(), e);
-        }
+        api = new TDClientAPI(this);
     }
 
-    /**
-     * This method overrides system properties that are used for JDBC driver
-     *
-     * @param desc
-     * @throws SQLException
-     */
-    private void overrideProperties(JDBCURLParser.Desc desc)
-            throws SQLException
+    public Config getConfig()
     {
-        // host
-        String host = props.getProperty(Config.TD_API_SERVER_HOST);
-        if (host == null || host.isEmpty()) {
-            // if host name is specified as sysprop, the sysprop value is used
-            // in JDBC driver
-            props.setProperty(Config.TD_API_SERVER_HOST, desc.host);
-        }
-
-        // port
-        String port = props.getProperty(Config.TD_API_SERVER_PORT);
-        if (port == null || port.isEmpty()) {
-            // if port is specified as sysprops, the sysprop is used in JDBC
-            // driver
-            if (desc.port == null) {
-                if (desc.ssl) {
-                    port = Config.TD_API_SERVER_PORT_HTTPS;
-                }
-                else {
-                    port = Config.TD_API_SERVER_PORT_HTTP;
-                }
-            }
-            else {
-                port = desc.port;
-            }
-            props.setProperty(Config.TD_API_SERVER_PORT, port);
-        }
-        try {
-            // validate bad port number
-            Integer.parseInt(port);
-        }
-        catch (Throwable t) {
-            throw new SQLException("port number is invalid: " + port);
-        }
-
-        // query type
-        if (desc.type != null) {
-            props.setProperty(Config.TD_JDBC_TYPE, desc.type.type());
-        }
-
-        // scheme
-        if (!props.containsKey(Config.TD_CK_API_SERVER_SCHEME)) {
-            if (!desc.ssl) {
-                props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTP);
-            }
-            else {
-                props.setProperty(Config.TD_CK_API_SERVER_SCHEME, Config.TD_API_SERVER_SCHEME_HTTPS);
-            }
-        }
-
-        // database
-        if (desc.database == null) {
-            throw new SQLException("Database is not specified within URL: " + desc.url);
-        }
-
-        // user
-        String user = props.getProperty(Config.TD_JDBC_USER);
-        if (user == null || user.isEmpty()) {
-            if (desc.user == null || desc.user.isEmpty()) {
-                throw new SQLException("User is not specified");
-            }
-            props.setProperty(Config.TD_JDBC_USER, desc.user);
-        }
-
-        // password
-        String password = props.getProperty(Config.TD_JDBC_PASSWORD);
-        if (password == null || password.isEmpty()) {
-            if (desc.password == null || desc.password.isEmpty()) {
-                throw new SQLException("Password is not specified");
-            }
-            props.setProperty(Config.TD_JDBC_PASSWORD, desc.password);
-        }
-
-        // proxy settings: host and port are supported by Java runtime.
-        // http.proxyUser and http.proxyPassword are no longer supported but
-        // we set Authenticator by ourselves.
-        if (desc.httpProxyHost != null) {
-            props.setProperty("http.proxyHost", desc.httpProxyHost);
-            props.setProperty("https.proxyHost", desc.httpProxyHost);
-            System.setProperty("http.proxyHost", desc.httpProxyHost);
-            System.setProperty("https.proxyHost", desc.httpProxyHost);
-        }
-        if (desc.httpProxyPort != null) {
-            props.setProperty("http.proxyPort", desc.httpProxyPort);
-            props.setProperty("https.proxyPort", desc.httpProxyPort);
-            System.setProperty("http.proxyPort", desc.httpProxyPort);
-            System.setProperty("https.proxyPort", desc.httpProxyPort);
-        }
-        if (desc.httpProxyUser != null) {
-            props.setProperty("http.proxyUser", desc.httpProxyUser);
-            props.setProperty("https.proxyUser", desc.httpProxyUser);
-            System.setProperty("http.proxyUser", desc.httpProxyUser);
-        }
-        if (desc.httpProxyPassword != null) {
-            props.setProperty("http.proxyPassword", desc.httpProxyPassword);
-            props.setProperty("https.proxyPassword", desc.httpProxyPassword);
-            System.setProperty("http.proxyPassword", desc.httpProxyPassword);
-        }
+        return config;
     }
 
     public ClientAPI getClientAPI()
     {
         return api;
-    }
-
-    public Properties getProperties()
-    {
-        return props;
     }
 
     public Database getDatabase()

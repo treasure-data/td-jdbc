@@ -45,7 +45,7 @@ public class TestProductionEnv
         Properties p = new Properties();
         File file = new File(System.getProperty("user.home", "./"), String.format(".td/td.conf"));
         if(!file.exists()) {
-            logger.warn("config file %s is not found", file);
+            logger.warn(String.format("config file %s is not found", file));
             return p;
         }
 
@@ -81,7 +81,8 @@ public class TestProductionEnv
     {
         Properties prop = readTDConf();
         Map<String, String> env = System.getenv();
-        Properties connectionProp = new Properties(config);
+        Properties connectionProp = new Properties();
+        connectionProp.putAll(config);
         connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
         connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
         Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
@@ -98,6 +99,23 @@ public class TestProductionEnv
             throws IOException, SQLException
     {
         return newConnection(String.format("jdbc:td://api.treasuredata.com/%s;useSSL=true;type=presto", database), config);
+    }
+
+    @Test
+    public void testNonSSLConnection()
+            throws IOException, SQLException
+    {
+        Connection conn = newConnection("jdbc:td://api.treasuredata.com/leodb", new Properties());
+        Statement stat = conn.createStatement();
+        stat.execute("select 1 + 1");
+        ResultSet rs = stat.getResultSet();
+        assertTrue(rs.next());
+        int result = rs.getInt(1);
+        assertEquals(2, result);
+        assertFalse(rs.next());
+        rs.close();
+        stat.close();
+        conn.close();
     }
 
     @Test

@@ -1,14 +1,10 @@
 package com.treasure_data.jdbc;
 
-import com.treasure_data.jdbc.command.NullClientAPI;
 import org.junit.Test;
-import org.mockito.Mockito;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 
 public class TestTDPreparedStatement
 {
@@ -16,8 +12,7 @@ public class TestTDPreparedStatement
     private TDPreparedStatement createPreparedStatement(String query)
             throws Exception
     {
-        TDConnection conn = Mockito.spy(new TDConnection());
-        doReturn(new NullClientAPI()).when(conn).getClientAPI();
+        TDConnection conn = (TDConnection) TestProductionEnv.newPrestoConnection("default");
         return new TDPreparedStatement(conn, query);
     }
 

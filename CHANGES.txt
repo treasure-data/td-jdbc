@@ -1,3 +1,7 @@
+Release 0.4.0
+  Presto is now the default query engine
+  Defined the configuration order: System Properties -> Properties object -> URL parameter
+
 Release 0.3.4 - 2015/06/22
   Improves error message report
   Supports select 1 query

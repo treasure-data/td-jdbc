@@ -37,15 +37,6 @@ The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
 See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
 for more details.
 
-### Development
-
-To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
-```
-[account]
-  user = (e-mail)
-  password = (pass)
-```
-
 ## Configuration
 
 The principal options can all be provided as part of the JDBC custom URL. The
@@ -126,13 +117,7 @@ The following program is a small example of the JDBC Driver.
     import com.treasuredata.jdbc.TreasureDataDriver;
 
     public class JDBCSample {
-      public static void loadSystemProperties() throws IOException {
-        Properties props = System.getProperties();
-        props.load(TreasureDataDriver.class.getClassLoader().getResourceAsStream("treasure-data.properties"));
-      }
-
       public static void main(String[] args) throws Exception {
-        loadSystemProperties();
         Connection conn = DriverManager.getConnection(
           "jdbc:td://api.treasuredata.com/mydb",
           "YOUR_MAIL_ADDRESS_HERE",
@@ -223,3 +208,26 @@ Following methods have been implemented already.
 ## License
 
 Apache License, Version 2.0
+
+
+## For developers
+
+To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
+```
+[account]
+  user = (e-mail)
+  password = (pass)
+```
+
+### Buidling td-jdbc with JDK7 or higher
+
+jdbc-api-4.1.jar, which is contained in mvn-local, is necessary to build td-jdbc using an older version (4.1) of JDBC API.
+
+#### Building jdbc-api-4.1.jar on Mac OS X
+
+- Install jdk6 https://support.apple.com/kb/DL1572?locale=en_US
+```
+$ jar xvf jar xvf /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bundle/Classes/classes.jar java/sql javax/sql
+$ jar cvf jdbc-api-4.1.jar java javax
+$ mvn deploy:deploy-file -Durl=file://(path to td-jdbc folder)/mvn-local -Dfile=jdbc-api-4.1.jar -DgroupId=com.treasuredata.thirdparty -DartifactId=jdbc-api -Dpackaging=jar -Dversion=4.1
+``

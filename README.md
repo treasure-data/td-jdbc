@@ -1,41 +1,26 @@
 # Treasure Data JDBC Driver
 
-## Overview
+JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 
-Many web/mobile applications generate huge amount of event logs (c,f. login,
-logout, purchase, follow, etc).  Analyzing these event logs can be quite
-valuable for improving services.  However, collecting these logs easily and
-reliably is a challenging task.
+## Related Articles
 
-This driver enables you to use Treasure Data with a standard JDBC interface.
-
-  * Treasure Data website: [http://treasure-data.com/](http://treasure-data.com/)
-  * Treasure Data GitHub: [https://github.com/treasure-data/](https://github.com/treasure-data/)
-
-The following link is how to use the JDBC driver.
-
-  * Treasure Data JDBC Driver: [http://docs.treasure-data.com/articles/jdbc-driver](http://docs.treasure-data.com/articles/jdbc-driver)
-
-The `td-jdbc` library is based off the [`td-client-java` Java client library](https://github.com/treasure-data/td-client-java).
+- [Documentaiton](http://docs.treasure-data.com/articles/jdbc-driver)
+- [`td-client-java`](https://github.com/treasure-data/td-client-java) Java client for Treasure Data
+  - td-jdbc internally uses td-client-java to connect to Treasure Data
 
 ## Requirements
 
 Java >= 1.6
 
-## Install
+## For Maven users
 
-### Install from GitHub repository
-
-You can get latest source code using git.
-
-    $ git clone https://github.com/treasure-data/td-jdbc.git
-    $ cd td-jdbc
-    $ mvn package
-
-You will get the td-jdbc jar file in `td-jdbc/target` folder
-The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
-See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
-for more details.
+```
+<dependency>
+  <groupId>com.treasuredata</groupId>
+  <artifactId>td-jdbc</artifactId>
+  <version>0.5.0</version>
+</dependency>
+```
 
 ## Configuration
 
@@ -211,6 +196,19 @@ Apache License, Version 2.0
 
 
 ## For developers
+
+### Building
+
+You can get latest source code using git.
+
+    $ git clone git@github.com/treasure-data/td-jdbc.git
+    $ cd td-jdbc
+    $ mvn package
+
+You will get the td-jdbc jar file in `td-jdbc/target` folder
+The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
+See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
+for more details.
 
 To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
 ```

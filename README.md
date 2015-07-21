@@ -123,7 +123,7 @@ The following program is a small example of the JDBC Driver.
     import java.sql.ResultSet;
     import java.sql.Statement;
     import java.util.Properties;
-    import com.treasure_data.jdbc.TreasureDataDriver;
+    import com.treasuredata.jdbc.TreasureDataDriver;
 
     public class JDBCSample {
       public static void loadSystemProperties() throws IOException {

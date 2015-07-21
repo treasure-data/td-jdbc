@@ -4,7 +4,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.treasure_data</groupId>
+  <groupId>com.treasuredata</groupId>
   <name>JDBC Driver for Treasure Data Cloud</name>
   <description>JDBC Driver for Treasure Data Cloud.</description>
   <version>0.4.0</version>
@@ -62,7 +62,7 @@
     </dependency>
     <!-- for compiling td-jdbc with java7 or higher -->
     <dependency>
-      <groupId>com.treasure_data.third_party</groupId>
+      <groupId>com.treasuredata.thirdparty</groupId>
       <artifactId>jdbc-api</artifactId>
       <version>4.1</version>
       <scope>provided</scope>

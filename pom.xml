@@ -1,13 +1,31 @@
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.treasure_data</groupId>
-  <name>JDBC Driver for Treasure Data Cloud</name>
-  <description>JDBC Driver for Treasure Data Cloud.</description>
-  <version>0.4.0</version>
+  <groupId>com.treasuredata</groupId>
+  <name>Treasure Data JDBC Driver</name>
+  <description>JDBC Driver for Accessing Treasure Data</description>
+  <version>0.5.0-SNAPSHOT</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
   <url>https://github.com/treasure-data/td-jdbc</url>
@@ -16,26 +34,9 @@
     <!--  version properties for dependencies -->
     <td-client.version>0.5.7</td-client.version>
     <td-logger.version>0.2.0</td-logger.version>
-    <junit.version>4.8.2</junit.version>
-    <mockito.version>1.9.5</mockito.version>
-
-    <!-- version properties for plugins -->
-    <maven-surefire-plugin.version>2.13</maven-surefire-plugin.version>
-    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-    <maven-bundle-plugin.version>2.3.6</maven-bundle-plugin.version>
-    <maven-assembly-plugin.version>2.3</maven-assembly-plugin.version>
-    <maven-eclipse-plugin.version>2.5.1</maven-eclipse-plugin.version>
-    <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
-    <maven-javadoc-plugin.version>2.8.1</maven-javadoc-plugin.version>
-    <wagon-webdav-jackrabbit.version>1.0-beta-7</wagon-webdav-jackrabbit.version>
-    <maven-scm-plugin.version>1.6</maven-scm-plugin.version>
-    <maven-jxr-plugin.version>2.2</maven-jxr-plugin.version>
-    <maven-surefire-report-plugin.version>2.11</maven-surefire-report-plugin.version>
   </properties>
 
   <repositories>
-    <!-- mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lib/msgpack.jar -DgroupId=org.msgpack -DartifactId=msgpack -Dversion=0.6.0-devel -Dpackaging=jar -DlocalRepositoryPath=`pwd`/mvn-local -->
-    <!-- mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lib/mongo-2.7.2.jar -DgroupId=com.mongodb -DartifactId=mongodb -Dversion=2.7.2 -Dpackaging=jar -DlocalRepositoryPath=`pwd`/mvn-local -->
     <repository>
       <id>local-repo</id>
       <url>file://${basedir}/mvn-local</url>
@@ -46,15 +47,6 @@
   </distributionManagement>
 
   <dependencies>
-    <!-- need debug for integration with talend -->
-    <!--
-    <dependency>
-	  <groupId>log4j</groupId>
-	  <artifactId>log4j</artifactId>
-	  <version>1.2.17</version>
-    </dependency>
-     -->
-
     <dependency>
       <groupId>com.treasuredata</groupId>
       <artifactId>td-client</artifactId>
@@ -62,7 +54,7 @@
     </dependency>
     <!-- for compiling td-jdbc with java7 or higher -->
     <dependency>
-      <groupId>com.treasure_data.third_party</groupId>
+      <groupId>com.treasuredata.thirdparty</groupId>
       <artifactId>jdbc-api</artifactId>
       <version>4.1</version>
       <scope>provided</scope>
@@ -70,13 +62,13 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <version>${mockito.version}</version>
+      <version>1.9.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -108,10 +100,10 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin.version}</version>
+        <version>3.1</version>
         <configuration>
           <compilerArgs>
-            <arg>-Xbootclasspath/p:${basedir}/mvn-local/com/treasure_data/third_party/jdbc-api/4.1/jdbc-api-4.1.jar</arg>
+            <arg>-Xbootclasspath/p:${basedir}/mvn-local/com/treasuredata/thirdparty/jdbc-api/4.1/jdbc-api-4.1.jar</arg>
           </compilerArgs>
           <source>1.6</source>
           <target>1.6</target>
@@ -121,17 +113,13 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>${maven-bundle-plugin.version}</version>
+        <version>2.3.6</version>
         <extensions>true</extensions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-eclipse-plugin</artifactId>
-        <version>${maven-eclipse-plugin.version}</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>${maven-source-plugin.version}</version>
+        <version>2.1.2</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -143,7 +131,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>${maven-assembly-plugin.version}</version>
+        <version>2.3</version>
         <executions>
           <execution>
             <id>make-assembly</id>
@@ -160,7 +148,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-scm-plugin</artifactId>
-        <version>${maven-scm-plugin.version}</version>
+        <version>1.6</version>
         <configuration>
           <pushChanges>false</pushChanges>
         </configuration>
@@ -168,7 +156,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven-javadoc-plugin.version}</version>
+        <version>2.8.1</version>
         <configuration>
           <doctitle>${project.name} ${project.version} API</doctitle>
           <aggregate>true</aggregate>
@@ -179,17 +167,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin.version}</version>
-        <configuration>
-          <useSystemClassLoader>false</useSystemClassLoader>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.surefire</groupId>
-            <artifactId>surefire-junit47</artifactId>
-            <version>${maven-surefire-plugin.version}</version>
-          </dependency>
-        </dependencies>
+        <version>2.13</version>
       </plugin>
     </plugins>
 
@@ -210,12 +188,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>${maven-jxr-plugin.version}</version>
+        <version>2.2</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>${maven-surefire-report-plugin.version}</version>
+        <version>2.11</version>
       </plugin>
     </plugins>
   </reporting>

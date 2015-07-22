@@ -1,49 +1,25 @@
 # Treasure Data JDBC Driver
 
-## Overview
+JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 
-Many web/mobile applications generate huge amount of event logs (c,f. login,
-logout, purchase, follow, etc).  Analyzing these event logs can be quite
-valuable for improving services.  However, collecting these logs easily and
-reliably is a challenging task.
+## Related Articles
 
-This driver enables you to use Treasure Data with a standard JDBC interface.
-
-  * Treasure Data website: [http://treasure-data.com/](http://treasure-data.com/)
-  * Treasure Data GitHub: [https://github.com/treasure-data/](https://github.com/treasure-data/)
-
-The following link is how to use the JDBC driver.
-
-  * Treasure Data JDBC Driver: [http://docs.treasure-data.com/articles/jdbc-driver](http://docs.treasure-data.com/articles/jdbc-driver)
-
-The `td-jdbc` library is based off the [`td-client-java` Java client library](https://github.com/treasure-data/td-client-java).
+- [Documentaiton](http://docs.treasure-data.com/articles/jdbc-driver)
+- [`td-client-java`](https://github.com/treasure-data/td-client-java) Java client for Treasure Data
+  - td-jdbc internally uses td-client-java to connect to Treasure Data
 
 ## Requirements
 
 Java >= 1.6
 
-## Install
+## For Maven users
 
-### Install from GitHub repository
-
-You can get latest source code using git.
-
-    $ git clone https://github.com/treasure-data/td-jdbc.git
-    $ cd td-jdbc
-    $ mvn package
-
-You will get the td-jdbc jar file in `td-jdbc/target` folder
-The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
-See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
-for more details.
-
-### Development
-
-To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
 ```
-[account]
-  user = (e-mail)
-  password = (pass)
+<dependency>
+  <groupId>com.treasuredata</groupId>
+  <artifactId>td-jdbc</artifactId>
+  <version>0.5.0</version>
+</dependency>
 ```
 
 ## Configuration
@@ -123,16 +99,10 @@ The following program is a small example of the JDBC Driver.
     import java.sql.ResultSet;
     import java.sql.Statement;
     import java.util.Properties;
-    import com.treasure_data.jdbc.TreasureDataDriver;
+    import com.treasuredata.jdbc.TreasureDataDriver;
 
     public class JDBCSample {
-      public static void loadSystemProperties() throws IOException {
-        Properties props = System.getProperties();
-        props.load(TreasureDataDriver.class.getClassLoader().getResourceAsStream("treasure-data.properties"));
-      }
-
       public static void main(String[] args) throws Exception {
-        loadSystemProperties();
         Connection conn = DriverManager.getConnection(
           "jdbc:td://api.treasuredata.com/mydb",
           "YOUR_MAIL_ADDRESS_HERE",
@@ -223,3 +193,39 @@ Following methods have been implemented already.
 ## License
 
 Apache License, Version 2.0
+
+
+## For developers
+
+### Building
+
+You can get latest source code using git.
+
+    $ git clone git@github.com/treasure-data/td-jdbc.git
+    $ cd td-jdbc
+    $ mvn package
+
+You will get the td-jdbc jar file in `td-jdbc/target` folder
+The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
+See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
+for more details.
+
+To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
+```
+[account]
+  user = (e-mail)
+  password = (pass)
+```
+
+### Buidling td-jdbc with JDK7 or higher
+
+jdbc-api-4.1.jar, which is contained in mvn-local, is necessary to build td-jdbc using an older version (4.1) of JDBC API.
+
+#### Building jdbc-api-4.1.jar on Mac OS X
+
+- Install jdk6 https://support.apple.com/kb/DL1572?locale=en_US
+```
+$ jar xvf jar xvf /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Home/bundle/Classes/classes.jar java/sql javax/sql
+$ jar cvf jdbc-api-4.1.jar java javax
+$ mvn deploy:deploy-file -Durl=file://(path to td-jdbc folder)/mvn-local -Dfile=jdbc-api-4.1.jar -DgroupId=com.treasuredata.thirdparty -DartifactId=jdbc-api -Dpackaging=jar -Dversion=4.1
+``

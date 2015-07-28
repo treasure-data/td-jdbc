@@ -2,9 +2,7 @@
 
 JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 
-## Related Articles
-
-- [Documentaiton](http://docs.treasure-data.com/articles/jdbc-driver)
+- [Usage](http://docs.treasure-data.com/articles/jdbc-driver)
 - [`td-client-java`](https://github.com/treasure-data/td-client-java) Java client for Treasure Data
   - td-jdbc internally uses td-client-java to connect to Treasure Data
 
@@ -12,7 +10,7 @@ JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 
 Java >= 1.6
 
-## For Maven users
+## For Maven
 
 ```
 <dependency>

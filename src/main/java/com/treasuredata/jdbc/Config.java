@@ -309,6 +309,11 @@ public class Config
                 apiKey = System.getenv("TD_API_KEY");
             }
         }
+
+        if (apiKey != null && apiKey.isEmpty()) {
+            apiKey = null;
+        }
+
         if(apiKey != null) {
             apiConfig.setApiKey(apiKey);
         }

@@ -96,6 +96,11 @@ public class ApiConfig
             return this;
         }
 
+        public ApiConfigBuilder unsetApiKey() {
+            this.apiKey = Option.empty();
+            return this;
+        }
+
         public ApiConfigBuilder setProxyConfig(ProxyConfig proxyConfig) {
             this.proxy = Option.of(proxyConfig);
             return this;

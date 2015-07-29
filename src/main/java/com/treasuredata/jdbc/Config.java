@@ -256,6 +256,10 @@ public class Config
         return config.createConnectionConfig();
     }
 
+    private static boolean isEmptyString(String s) {
+        return s == null || (s != null && s.isEmpty());
+    }
+
     /**
      * Overwrite the configuration with given Properties then System properties.
      *
@@ -310,7 +314,7 @@ public class Config
             }
         }
 
-        if (apiKey != null && apiKey.isEmpty()) {
+        if(isEmptyString(apiKey)) {
             apiKey = null;
         }
 
@@ -320,17 +324,22 @@ public class Config
 
         // user
         String user = getJDBCProperty(props, TD_JDBC_USER);
-        if (apiKey == null && (user == null || user.isEmpty())) {
+        if (apiKey == null && isEmptyString(user)) {
             throw new SQLException("User is not specified. Use Properties object to set 'user'");
         }
         config.setUser(user);
 
         // password
         String password = getJDBCProperty(props, TD_JDBC_PASSWORD);
-        if (apiKey == null && (password == null || password.isEmpty())) {
+        if (apiKey == null && isEmptyString(password)) {
             throw new SQLException("Password is not specified. Use Properties object to set 'password'");
         }
         config.setPassword(password);
+
+        // If both user and password are specified, use this pair instead of TD_API_KEY
+        if(isEmptyString(apiKey) && !isEmptyString(user) && !isEmptyString(password)) {
+            apiConfig.unsetApiKey();
+        }
 
         // retry settings
         String retryCountThreshold = getJDBCProperty(props, TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD);

@@ -2,13 +2,10 @@
 
 JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 
-- [Usage](http://docs.treasure-data.com/articles/jdbc-driver)
-- [`td-client-java`](https://github.com/treasure-data/td-client-java) Java client for Treasure Data
-  - td-jdbc internally uses td-client-java to connect to Treasure Data
-
-## Requirements
-
-Java >= 1.6
+- Works with Java 1.6 or higher
+- [Genral Usage](http://docs.treasure-data.com/articles/jdbc-driver)
+- td-jdbc internally uses [`td-client-java`](https://github.com/treasure-data/td-client-java),
+a Java client for Treasure Data.
 
 ## For Maven
 
@@ -20,100 +17,77 @@ Java >= 1.6
 </dependency>
 ```
 
-## Configuration
+# Usage
 
-The principal options can all be provided as part of the JDBC custom URL. The
-information is parsed from the URL and used to configure the `td-client-java`
-library used to communicate with the Treasure Data service. See the
-[`td-client-java` README](https://github.com/treasure-data/td-client-java/blob/master/README.md#configuration)
-for more information.
+* [JDBC connection example](src/test/java/com/treasuredata/jdbc/Example.java)
 
-In its simplest form the URL is composed by:
+```java
+Properties props = new Properties();
+props.setProperty("user", "(your account e-mail)");
+props.setProperty("password", "(your password)");
 
-* URL prefix / custom protocol: 'jdbc:td://'
-* API endpoint: e.g. 'api.treasuredata.com'
-* database name: e.g. 'mydb'
+// Alternatively, you can use API key instead of user and password
+// props.setProperty("apikey", "(your API key)")
 
-For example:
+// Set the other options
 
-    jdbc:td://api.treasuredata.com/mydb
+// Use SSL (default) or not
+// props.setProperty("useSSL", "true");
 
-All the above information are required. Optionally, one can use the various URL
-options listed below.
+// Run Hive jobs. The default is "presto"
+// props.setProperty("type", "hive");
 
-### Engine Type
+// proxy configurarion (optional)
+// props.setProperty("httpproxyhost", "(proxy host)");
+// props.setProperty("httpproxyport", "(proxy port)");
+// props.setProperty("httpproxyuser", "(proxy username)");
+// props.setProperty("httpproxypassword", "(proxy password)");
 
-Specifying the 'type' parameter allows the user to select one of the optional
-querying  engines Treasure Data support if the user account is enable with
-capability to use such engine.
-
-The current engines are:
-
-* presto (default)
-* hive
-* pig
-
-To run Hive query, specify `type=hive`:
-
-    jdbc:td://api.treasuredata.com/mydb;type=hive
-
-If no 'type' parameter is specified, the default 'type=presto' will be used.
-
-### HTTPS / SSL
-
-Specifying 'useSSL=true' in JDBC URL parameters tells the driver to communicate
-with the API server using HTTPS / SSL encription. e.g.:
-
-    jdbc:td://api.treasuredata.com/mydb;useSSL=true
-
-SSL is off by default (useSSL=false is assumed when the parameter is not
-specified).
-
-### Proxy
-
-If you are trying to connect from behind a proxy, you can specify the proxy
-settings using the following properties:
-
-* host: e.g. 'httpproxyhost=10.20.30.40 or 'httpproxyhost=myproxy.com'
-* port: e.g. 'httpproxyport=80'
-
-If the proxy is private (public access disabled):
-
-* username: e.g. 'httpproxyuser=myusername'
-* password: e.g. 'httpproxypassword=mypassword'
-
-For example:
-
-    jdbc:td://api.treasuredata.com/mydb;httpproxyhost=myproxy.com;httpproxyport=myport;httpproxyuser=myusername;httpproxypassword=mypassword
-
-
-## Quickstart
-
-The following program is a small example of the JDBC Driver.
-
-    import java.io.IOException;
-    import java.sql.Connection;
-    import java.sql.DriverManager;
-    import java.sql.ResultSet;
-    import java.sql.Statement;
-    import java.util.Properties;
-    import com.treasuredata.jdbc.TreasureDataDriver;
-
-    public class JDBCSample {
-      public static void main(String[] args) throws Exception {
-        Connection conn = DriverManager.getConnection(
-          "jdbc:td://api.treasuredata.com/mydb",
-          "YOUR_MAIL_ADDRESS_HERE",
-          "YOUR_PASSWORD_HERE");
-        Statement stmt = conn.createStatement();
-        String sql = "SELECT count(1) FROM www_access";
-        System.out.println("Running: " + sql);
-        ResultSet res = stmt.executeQuery(sql);
-        while (res.next()) {
-          System.out.println(String.valueOf(res.getObject(1)));
-        }
-      }
+Connection conn = DriverManager.getConnection("jdbc:td://api.treasuredata.com/sample_datasets", props);
+Statement st = conn.createStatement();
+try {
+    ResultSet rs = st.executeQuery("SELECT count(1) FROM www_access");
+    while (rs.next()) {
+        int count = rs.getInt(1);
+        System.out.println("result = " + count);
     }
+    rs.close();
+}
+finally {
+    st.close();
+    conn.close();
+}
+```
+
+To configure td-jdbc connection parameters, you can use URL parameters, Properties object or System properties. The precedence of these properties is
+* System properties
+* Properties object passed by `DriverManager.getConnection(jdbc_url, Properties)`
+* JDBC URL parameters (e.g., `jdbc:td://api.treasuredata.com/mydb;useSSL=true`)
+
+## A list of JDBC Configurations
+
+You must provide `apikey` property or both `user` (your account e-mail) and `password` for the authentication:
+
+|key     | default value | description |
+|--------|---------------|-------------|
+|`apikey`  |               | API key to access Treasure Data. You can set this via TD_API_KEY environment variable.  |
+|`user`    |               | Account e-mail address |
+|`password`|               | Account password |
+|`type`    | presto        | Query engine. hive, preto or pig |
+|`useSSL`  | false         | Use SSL encryption for accessing Treasure Data |
+|`httpproxyhost` |         | Proxy host (optional) e.g., "myproxy.com"  |
+|`httpproxyposrt`|         | Proxy port (optional) e.g., "80" |
+|`httpproxyuser` |         | Proxy user (optional)  |
+|`httpproxypassword` |     | Proxy password (optional)  |
+
+
+You can also use [td-client-java specific options](https://github.com/treasure-data/td-client-java/blob/master/README.md#configuration)
+
+
+* Create a `Connection` object `jdbc:td://api.treasuredata.com/(database name)`.
+* You can specify query engine type, `presto` (default), `hive` or `pig`.
+To run Hive query, specify `type=hive` in the URL or Properties object:
+
 
 When a SELECT statement is sent to the driver, the driver will issue the
 query to the cloud. The driver will regularly poll the job results while
@@ -208,11 +182,10 @@ The file name will be `td-jdbc-${jdbc.version}-jar-with-dependencies.jar`.
 See the [pom.xml file](https://github.com/treasure-data/td-jdbc/blob/master/pom.xml)
 for more details.
 
-To run production tests, write your account e-mail and password to `$HOME/.td/td.conf`:
+To run production tests, write your apikey to `$HOME/.td/td.conf`:
 ```
 [account]
-  user = (e-mail)
-  password = (pass)
+  apikey = (apikey)
 ```
 
 ### Buidling td-jdbc with JDK7 or higher

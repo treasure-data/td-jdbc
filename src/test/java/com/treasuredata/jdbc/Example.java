@@ -91,3 +91,29 @@ public class Example
             conn.close();
         }
     }
+
+    public static void connectWithApiKey()
+            throws SQLException
+    {
+        Properties props = new Properties();
+        props.setProperty("apikey", "(your API key)");
+
+        Connection conn = DriverManager.getConnection(
+                "jdbc:td://api.treasuredata.com/sample_datasets",
+                props
+        );
+        Statement st = conn.createStatement();
+        try {
+            ResultSet rs = st.executeQuery("SELECT count(1) FROM www_access");
+            while (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("result = " + count);
+            }
+            rs.close();
+        }
+        finally {
+            st.close();
+            conn.close();
+        }
+    }
+}

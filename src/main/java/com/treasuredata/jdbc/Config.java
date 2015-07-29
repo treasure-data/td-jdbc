@@ -306,19 +306,19 @@ public class Config
         }
 
         // TD API key
-        String apiKey = getJDBCProperty(props, TD_JDBC_APIKEY, TD_API_KEY);
+        String apiKey = null;
+        // Check environment variable
+        if(System.getenv().containsKey("TD_API_KEY")) {
+            apiKey = System.getenv().get("TD_API_KEY");
+        }
         if(apiKey == null) {
-            // Check environment variable
-            if(System.getenv().containsKey("TD_API_KEY")) {
-                apiKey = System.getenv("TD_API_KEY");
-            }
+            apiKey = getJDBCProperty(props, TD_JDBC_APIKEY, TD_API_KEY);
         }
 
         if(isEmptyString(apiKey)) {
             apiKey = null;
         }
-
-        if(apiKey != null) {
+        else {
             apiConfig.setApiKey(apiKey);
         }
 

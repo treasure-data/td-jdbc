@@ -101,6 +101,7 @@ public class TestProductionEnv
         connectionProp.putAll(config);
         connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
         connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
+        connectionProp.setProperty("apikey", firstNonNull(config.getProperty("apikey"), prop.get("apikey")));
         Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
         return conn;
     }

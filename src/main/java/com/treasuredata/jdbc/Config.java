@@ -32,6 +32,7 @@ public class Config
     public static final String TD_JDBC_USESSL = "usessl";
     public static final String TD_JDBC_USER = "user";
     public static final String TD_JDBC_PASSWORD = "password";
+    public static final String TD_JDBC_APIKEY = "apikey";
     public static final String TD_JDBC_JOB_TYPE = "type";
     public static final String TD_JDBC_PROXY_HOST = "httpproxyhost";
     public static final String TD_JDBC_PROXY_PORT = "httpproxyport";
@@ -300,16 +301,28 @@ public class Config
             apiConfig.setUseSSL(Boolean.parseBoolean(useSSL));
         }
 
+        // TD API key
+        String apiKey = getJDBCProperty(props, TD_JDBC_APIKEY, TD_API_KEY);
+        if(apiKey == null) {
+            // Check environment variable
+            if(System.getenv().containsKey("TD_API_KEY")) {
+                apiKey = System.getenv("TD_API_KEY");
+            }
+        }
+        if(apiKey != null) {
+            apiConfig.setApiKey(apiKey);
+        }
+
         // user
         String user = getJDBCProperty(props, TD_JDBC_USER);
-        if (user == null || user.isEmpty()) {
+        if (apiKey == null && (user == null || user.isEmpty())) {
             throw new SQLException("User is not specified. Use Properties object to set 'user'");
         }
         config.setUser(user);
 
         // password
         String password = getJDBCProperty(props, TD_JDBC_PASSWORD);
-        if (password == null || password.isEmpty()) {
+        if (apiKey == null && (password == null || password.isEmpty())) {
             throw new SQLException("Password is not specified. Use Properties object to set 'password'");
         }
         config.setPassword(password);

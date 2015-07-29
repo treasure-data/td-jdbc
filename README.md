@@ -85,12 +85,9 @@ You must provide `apikey` property or both `user` (your account e-mail) and `pas
 |`httpproxyuser` |         | Proxy user (optional)  |
 |`httpproxypassword` |     | Proxy password (optional)  |
 
+If both `user` and `password` are given, td-jdbc uses this pair instead of `apikey`. 
 
-You can also use [td-client-java specific options](https://github.com/treasure-data/td-client-java/blob/master/README.md#configuration)
-
-* You can specify query engine type, `presto` (default), `hive` or `pig`.
-To run Hive query, specify `type=hive` in the URL or Properties object:
-
+You can also use [td-client-java specific options](https://github.com/treasure-data/td-client-java/blob/master/README.md#configuration).
 
 # Internals
 

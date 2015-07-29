@@ -7,7 +7,7 @@ JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 - td-jdbc internally uses [`td-client-java`](https://github.com/treasure-data/td-client-java),
 a Java client for Treasure Data.
 
-## For Maven
+## For Maven Users
 
 ```
 <dependency>
@@ -18,6 +18,8 @@ a Java client for Treasure Data.
 ```
 
 # Usage
+
+Create a `java.sql.Connection` object using JDBC address `jdbc:td://api.treasuredata.com/(database name)`.
 
 * [JDBC connection example](src/test/java/com/treasuredata/jdbc/Example.java)
 
@@ -59,10 +61,13 @@ finally {
 }
 ```
 
-To configure td-jdbc connection parameters, you can use URL parameters, Properties object or System properties. The precedence of these properties is
-* System properties
-* Properties object passed by `DriverManager.getConnection(jdbc_url, Properties)`
-* JDBC URL parameters (e.g., `jdbc:td://api.treasuredata.com/mydb;useSSL=true`)
+To configure td-jdbc connection parameters, use URL parameters, Properties object or System properties. The precedence of these properties is:
+1. Environment variable (only for TD_API_KEY parameter)
+1. System properties
+1. Properties object passed by `DriverManager.getConnection(jdbc_url, Properties)`
+1. JDBC URL parameters (e.g., `jdbc:td://api.treasuredata.com/mydb;type=hive;useSSL=true`), separated by semi-colon `;`
+
+If your environment defines TD_API_KEY variable, td-jdbc uses it. For the other properties, System properties have the highest priority.
 
 ## A list of JDBC Configurations
 
@@ -83,24 +88,23 @@ You must provide `apikey` property or both `user` (your account e-mail) and `pas
 
 You can also use [td-client-java specific options](https://github.com/treasure-data/td-client-java/blob/master/README.md#configuration)
 
-
-* Create a `Connection` object `jdbc:td://api.treasuredata.com/(database name)`.
 * You can specify query engine type, `presto` (default), `hive` or `pig`.
 To run Hive query, specify `type=hive` in the URL or Properties object:
 
 
-When a SELECT statement is sent to the driver, the driver will issue the
-query to the cloud. The driver will regularly poll the job results while
-the jobs run on the cloud. The query may take several hours, we recommend
-that you use a background thread.
+# Internals
 
-When a INSERT statement is sent to the driver, the data is first buffered
-in local memory. The data is uploaded into the cloud every 5 minutes.
-Please note that the upload doesn't occur in realtime.
+When running a query (e.g. SELECT), the driver submits a job request to
+Treasure Data. td-jdbc periodically monitors the job progress and fetches the
+result after the job completion.
+
+For INSERT statement, td-jdbc buffers the data into local memory,
+then flushes it to Treasure Data every 5 minutes, so there will be a delay
+until your data becomes accessible in Treasure Data.
 
 ## Implementation Status
 
-Following methods have been implemented already.
+Following methods have been implemented.
 
 ### java.sql.Connection
 
@@ -165,7 +169,6 @@ Following methods have been implemented already.
 ## License
 
 Apache License, Version 2.0
-
 
 ## For developers
 

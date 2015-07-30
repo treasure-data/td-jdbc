@@ -32,6 +32,7 @@ public class Config
     public static final String TD_JDBC_USESSL = "usessl";
     public static final String TD_JDBC_USER = "user";
     public static final String TD_JDBC_PASSWORD = "password";
+    public static final String TD_JDBC_APIKEY = "apikey";
     public static final String TD_JDBC_JOB_TYPE = "type";
     public static final String TD_JDBC_PROXY_HOST = "httpproxyhost";
     public static final String TD_JDBC_PROXY_PORT = "httpproxyport";
@@ -255,6 +256,10 @@ public class Config
         return config.createConnectionConfig();
     }
 
+    private static boolean isEmptyString(String s) {
+        return s == null || (s != null && s.isEmpty());
+    }
+
     /**
      * Overwrite the configuration with given Properties then System properties.
      *
@@ -300,19 +305,41 @@ public class Config
             apiConfig.setUseSSL(Boolean.parseBoolean(useSSL));
         }
 
+        // TD API key
+        String apiKey = null;
+        // Check environment variable
+        if(System.getenv().containsKey("TD_API_KEY")) {
+            apiKey = System.getenv().get("TD_API_KEY");
+        }
+        if(apiKey == null) {
+            apiKey = getJDBCProperty(props, TD_JDBC_APIKEY, TD_API_KEY);
+        }
+
+        if(isEmptyString(apiKey)) {
+            apiKey = null;
+        }
+        else {
+            apiConfig.setApiKey(apiKey);
+        }
+
         // user
         String user = getJDBCProperty(props, TD_JDBC_USER);
-        if (user == null || user.isEmpty()) {
+        if (apiKey == null && isEmptyString(user)) {
             throw new SQLException("User is not specified. Use Properties object to set 'user'");
         }
         config.setUser(user);
 
         // password
         String password = getJDBCProperty(props, TD_JDBC_PASSWORD);
-        if (password == null || password.isEmpty()) {
+        if (apiKey == null && isEmptyString(password)) {
             throw new SQLException("Password is not specified. Use Properties object to set 'password'");
         }
         config.setPassword(password);
+
+        // If both user and password are specified, use this pair instead of TD_API_KEY
+        if(isEmptyString(apiKey) && !isEmptyString(user) && !isEmptyString(password)) {
+            apiConfig.unsetApiKey();
+        }
 
         // retry settings
         String retryCountThreshold = getJDBCProperty(props, TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD);

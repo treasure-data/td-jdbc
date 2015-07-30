@@ -52,6 +52,7 @@ public class TestProductionEnv
 
     /**
      * Read user user (e-mail address and password properties from $HOME/.td/td.conf
+     *
      * @return
      * @throws IOException
      */
@@ -60,7 +61,7 @@ public class TestProductionEnv
     {
         Properties p = new Properties();
         File file = new File(System.getProperty("user.home", "./"), String.format(".td/td.conf"));
-        if(!file.exists()) {
+        if (!file.exists()) {
             logger.warn(String.format("config file %s is not found", file));
             return p;
         }
@@ -68,9 +69,9 @@ public class TestProductionEnv
         BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder extracted = new StringBuilder();
         String line = null;
-        while((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             String trimmed = line.trim();
-            if(trimmed.startsWith("[") || trimmed.startsWith("#")) {
+            if (trimmed.startsWith("[") || trimmed.startsWith("#")) {
                 continue; // skip [... ] line or comment line
             }
             extracted.append(line.trim());
@@ -81,8 +82,9 @@ public class TestProductionEnv
         return p;
     }
 
-    private static String firstNonNull(Object... keys) {
-        if(keys != null) {
+    private static String firstNonNull(Object... keys)
+    {
+        if (keys != null) {
             for (Object k : keys) {
                 if (k != null) {
                     return k.toString();
@@ -93,6 +95,32 @@ public class TestProductionEnv
     }
 
     public static Connection newConnection(String jdbcUrl, Properties config)
+            throws SQLException, IOException
+    {
+        Properties prop = readTDConf();
+        Map<String, String> env = System.getenv();
+        Properties connectionProp = new Properties();
+        connectionProp.putAll(config);
+        connectionProp.setProperty("user", firstNonNull(config.getProperty("user"), prop.get("user"), env.get("TD_USER")));
+        connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
+        connectionProp.setProperty("apikey", firstNonNull(config.getProperty("apikey"), prop.get("apikey")));
+        Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
+        return conn;
+    }
+
+    public static Connection newAPIKeyBasedConnection(String jdbcUrl, Properties config)
+            throws SQLException, IOException
+    {
+        Properties prop = readTDConf();
+        Map<String, String> env = System.getenv();
+        Properties connectionProp = new Properties();
+        connectionProp.putAll(config);
+        connectionProp.setProperty("apikey", firstNonNull(config.getProperty("apikey"), prop.get("apikey")));
+        Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
+        return conn;
+    }
+
+    public static Connection newUserPasswordBasedConnection(String jdbcUrl, Properties config)
             throws SQLException, IOException
     {
         Properties prop = readTDConf();
@@ -140,11 +168,11 @@ public class TestProductionEnv
     {
         /**
          * <pre>
-            presto:cs_modeanalytics> select * from arraytest;
-            id |   nums    |    time
-            ----+-----------+------------
-            1 | [1, 2, 3] | 1432099776
-            (1 row)
+         presto:cs_modeanalytics> select * from arraytest;
+         id |   nums    |    time
+         ----+-----------+------------
+         1 | [1, 2, 3] | 1432099776
+         (1 row)
          </pre>
          */
 
@@ -209,7 +237,6 @@ public class TestProductionEnv
         rs.close();
         stat.close();
         conn.close();
-
     }
 
     @Test
@@ -247,22 +274,20 @@ public class TestProductionEnv
 
             fail("Cannot reach here");
         }
-        catch(Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
             String msg = e.getMessage();
             logger.warn("--error message:{}--", msg);
             assertTrue("SQLException should report missing table", msg.toLowerCase().contains("unknown_table does not exist"));
         }
-
     }
-
 
     @Test
     public void testPerformance()
             throws IOException, SQLException
     {
         Connection conn = newPrestoConnection("leodb");
-        for(int i=0; i<3; ++i) {
+        for (int i = 0; i < 3; ++i) {
             long started = System.currentTimeMillis();
             try {
                 Statement stat = conn.createStatement();
@@ -270,7 +295,7 @@ public class TestProductionEnv
                 //boolean ret = stat.execute("select 2"); // incomplete statement
                 ResultSet rs = stat.getResultSet();
                 int count = 0;
-                while(rs.next()) {
+                while (rs.next()) {
                     rs.getString(1);
                     rs.getString(2);
                     rs.getString(3);
@@ -282,7 +307,7 @@ public class TestProductionEnv
                 rs.close();
                 stat.close();
             }
-            catch(Exception e) {
+            catch (Exception e) {
                 logger.error("failed", e);
             }
             long finished = System.currentTimeMillis();
@@ -291,5 +316,36 @@ public class TestProductionEnv
         conn.close();
     }
 
+    private static void runPrestoQuery(Connection conn)
+            throws Exception
+    {
+        Statement st = conn.createStatement();
+        try {
+            st.executeQuery("select count(*) from www_access");
+            ResultSet rs = st.getResultSet();
+            assertTrue(rs.next());
+            int count = rs.getInt(1);
+            assertEquals(5000, count);
+        }
+        finally {
+            st.close();
+        }
+    }
+
+    @Test
+    public void testApiKeyBasedAuthentication()
+            throws Exception
+    {
+        Connection conn = newAPIKeyBasedConnection("jdbc:td://api.treasuredata.com/sample_datasets", new Properties());
+        runPrestoQuery(conn);
+    }
+
+    @Test
+    public void testUserPasswordAuthentication()
+            throws Exception
+    {
+        Connection conn = newUserPasswordBasedConnection("jdbc:td://api.treasuredata.com/sample_datasets", new Properties());
+        runPrestoQuery(conn);
+    }
 
 }

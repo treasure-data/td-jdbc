@@ -29,14 +29,16 @@ public class ApiConfig
     public final String endpoint;
     public final int port;
     public final boolean useSSL;
+    public final Option<String> apiKey;
     public final Option<ProxyConfig> proxy;
 
-    public ApiConfig(String endpoint, Option<Integer> port, boolean useSSL, Option<ProxyConfig> proxy)
+    public ApiConfig(String endpoint, Option<Integer> port, boolean useSSL, Option<String> apiKey, Option<ProxyConfig> proxy)
     {
         this.scheme = useSSL ? "https://" : "http://";
         this.endpoint = endpoint == null? "api.treasuredata.com" : endpoint;
         this.port = port.getOrElse(useSSL ? 443 : 80);
         this.useSSL = useSSL;
+        this.apiKey = apiKey;
         this.proxy = proxy;
     }
 
@@ -46,6 +48,10 @@ public class ApiConfig
         prop.setProperty(Config.TD_JDBC_USESSL, Boolean.toString(useSSL));
         prop.setProperty(Config.TD_API_SERVER_HOST, endpoint);
         prop.setProperty(Config.TD_API_SERVER_PORT, Integer.toString(port));
+
+        if(apiKey.isDefined()) {
+            prop.setProperty(Config.TD_API_KEY, apiKey.get());
+        }
 
         if(proxy.isDefined()) {
             Properties proxyProp = proxy.get().toProperties();
@@ -58,6 +64,7 @@ public class ApiConfig
         public String endpoint;
         public Option<Integer> port = Option.empty();
         public boolean useSSL = false;
+        public Option<String> apiKey = Option.empty();
         public Option<ProxyConfig> proxy = Option.empty();
 
         public ApiConfigBuilder() {}
@@ -84,13 +91,23 @@ public class ApiConfig
             return this;
         }
 
+        public ApiConfigBuilder setApiKey(String apiKey) {
+            this.apiKey = Option.of(apiKey);
+            return this;
+        }
+
+        public ApiConfigBuilder unsetApiKey() {
+            this.apiKey = Option.empty();
+            return this;
+        }
+
         public ApiConfigBuilder setProxyConfig(ProxyConfig proxyConfig) {
             this.proxy = Option.of(proxyConfig);
             return this;
         }
 
         public ApiConfig createApiConfig() {
-            return new ApiConfig(endpoint, port, useSSL, proxy);
+            return new ApiConfig(endpoint, port, useSSL, apiKey, proxy);
         }
     }
 }

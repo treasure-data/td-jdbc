@@ -114,18 +114,18 @@ public class TestProxy
             throws IOException, SQLException
     {
         Connection conn = TestProductionEnv.newConnection(String.format(
-                "jdbc:td://api.treasuredata.com/hivebench_tiny;useSSL=true;type=presto;httpproxyhost=localhost;httpproxyport=%d;httpproxyuser=%s;httpproxypassword=%s",
+                "jdbc:td://api.treasuredata.com/sample_datasets;useSSL=true;type=presto;httpproxyhost=localhost;httpproxyport=%d;httpproxyuser=%s;httpproxypassword=%s",
                 proxyPort,
                 PROXY_USER,
                 PROXY_PASS),
                 new Properties()
         );
         Statement stat = conn.createStatement();
-        stat.execute("select count(*) from hivebench_tiny.uservisits");
+        stat.execute("select count(*) from www_access");
         ResultSet rs = stat.getResultSet();
         assertTrue(rs.next());
         int rowCount = rs.getInt(1);
-        assertEquals(10000, rowCount);
+        assertEquals(5000, rowCount);
         stat.close();
         conn.close();
 
@@ -135,9 +135,9 @@ public class TestProxy
     private static void assertFunction(Properties prop, String sqlProjection, String expectedAnswer)
             throws IOException, SQLException
     {
-        Connection conn = TestProductionEnv.newPrestoConnection("hivebench_tiny", prop);
+        Connection conn = TestProductionEnv.newPrestoConnection("sample_datasets", prop);
         Statement stat = conn.createStatement();
-        String sql = String.format("select %s from uservisits", sqlProjection);
+        String sql = String.format("select %s from www_access", sqlProjection);
         stat.execute(sql);
         ResultSet rs = stat.getResultSet();
         assert(rs.next());
@@ -175,9 +175,17 @@ public class TestProxy
         System.setProperty("http.proxyUser", PROXY_USER);
         System.setProperty("http.proxyPassword", PROXY_PASS);
 
-        Properties emptyProp = new Properties();
-        assertFunction(emptyProp, "count(*)", "10000");
-        assertTrue("no proxy access", proxyAccessCount.get() > 0);
+        try {
+            Properties emptyProp = new Properties();
+            assertFunction(emptyProp, "count(*)", "5000");
+            assertTrue("no proxy access", proxyAccessCount.get() > 0);
+        }
+        finally {
+            System.clearProperty("http.proxyHost");
+            System.clearProperty("http.proxyPort");
+            System.clearProperty("http.proxyUser");
+            System.clearProperty("http.proxyPassword");
+        }
     }
 
     @Test
@@ -188,9 +196,9 @@ public class TestProxy
         prop.setProperty("httpproxyuser", "testtest"); // set a wrong password
         Statement stat;
         try {
-            Connection conn = TestProductionEnv.newPrestoConnection("hivebench_tiny", prop);
+            Connection conn = TestProductionEnv.newPrestoConnection("sample_datasets", prop);
             stat = conn.createStatement();
-            stat.execute("select count(*) from uservisits");
+            stat.execute("select count(*) from www_access");
         }
         catch(SQLException e) {
             // Should display authentication failure message here

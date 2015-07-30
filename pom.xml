@@ -25,12 +25,46 @@
   <groupId>com.treasuredata</groupId>
   <name>Treasure Data JDBC Driver</name>
   <description>JDBC Driver for Accessing Treasure Data</description>
-  <version>0.5.0-SNAPSHOT</version>
+  <version>0.5.0</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
   <url>https://github.com/treasure-data/td-jdbc</url>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>9</version>
+  </parent>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>muga</id>
+      <name>Muga Nishizawa</name>
+      <url>https://github.com/muga</url>
+    </developer>
+    <developer>
+      <id>leo</id>
+      <name>Taro L. Saito</name>
+      <url>http://xerial.org/leo</url>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/treasure-data/td-jdbc.git</connection>
+    <developerConnection>scm:git:git@github.com:treasure-data/td-jdbc.git</developerConnection>
+    <url>https://github.com/treasure-data/td-jdbc</url>
+  </scm>
+
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--  version properties for dependencies -->
     <td-client.version>0.5.7</td-client.version>
     <td-logger.version>0.2.0</td-logger.version>
@@ -197,5 +231,35 @@
       </plugin>
     </plugins>
   </reporting>
+
+  <profiles>
+    <profile>
+      <id>release-sign-artifacts</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

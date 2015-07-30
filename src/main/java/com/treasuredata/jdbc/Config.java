@@ -351,7 +351,7 @@ public class Config
                 throw new SQLException("Invalid value for td.jdbc.result.retrycount.threshold: " + retryCountThreshold);
             }
         }
-        String retryWaitTimeMs = getJDBCProperty(props, TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD);
+        String retryWaitTimeMs = getJDBCProperty(props, TD_JDBC_RESULT_RETRY_WAITTIME);
         if(retryWaitTimeMs != null) {
             try {
                 config.setResultRetryWaitTimeMs(Long.parseLong(retryWaitTimeMs));

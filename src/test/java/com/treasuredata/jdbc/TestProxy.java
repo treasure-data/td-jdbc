@@ -175,17 +175,9 @@ public class TestProxy
         System.setProperty("http.proxyUser", PROXY_USER);
         System.setProperty("http.proxyPassword", PROXY_PASS);
 
-        try {
-            Properties emptyProp = new Properties();
-            assertFunction(emptyProp, "count(*)", "5000");
-            assertTrue("no proxy access", proxyAccessCount.get() > 0);
-        }
-        finally {
-            System.clearProperty("http.proxyHost");
-            System.clearProperty("http.proxyPort");
-            System.clearProperty("http.proxyUser");
-            System.clearProperty("http.proxyPassword");
-        }
+        Properties emptyProp = new Properties();
+        assertFunction(emptyProp, "count(*)", "5000");
+        assertTrue("no proxy access", proxyAccessCount.get() > 0);
     }
 
     @Test
@@ -194,6 +186,7 @@ public class TestProxy
     {
         Properties prop = getJdbcProxyConfig();
         prop.setProperty("httpproxyuser", "testtest"); // set a wrong password
+        System.setProperty("td.client.retry.count", "2"); // For workaround of #1
         Statement stat;
         try {
             Connection conn = TestProductionEnv.newPrestoConnection("sample_datasets", prop);

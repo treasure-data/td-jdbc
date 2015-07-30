@@ -76,13 +76,13 @@ You must provide `apikey` property or both `user` (your account e-mail) and `pas
 
 |key     | default value | description |
 |--------|---------------|-------------|
-|`apikey`  |               | API key to access Treasure Data. You can set this via TD_API_KEY environment variable.  |
+|`apikey`  |               | API key to access Treasure Data. You can also set this via TD_API_KEY environment variable.  |
 |`user`    |               | Account e-mail address (unnecessary if `apikey` is set) |
 |`password`|               | Account password (unnecessary if `apikey` is set) |
 |`type`    | presto        | Query engine. hive, preto or pig |
 |`useSSL`  | false         | Use SSL encryption for accessing Treasure Data |
 |`httpproxyhost` |         | Proxy host (optional) e.g., "myproxy.com"  |
-|`httpproxyposrt`|         | Proxy port (optional) e.g., "80" |
+|`httpproxyport`|         | Proxy port (optional) e.g., "80" |
 |`httpproxyuser` |         | Proxy user (optional)  |
 |`httpproxypassword` |     | Proxy password (optional)  |
 

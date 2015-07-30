@@ -62,6 +62,7 @@ finally {
 ```
 
 To configure td-jdbc connection parameters, use URL parameters, Properties object or System properties. The precedence of these properties is:
+
 1. Environment variable (only for TD_API_KEY parameter)
 1. System properties
 1. Properties object passed by `DriverManager.getConnection(jdbc_url, Properties)`

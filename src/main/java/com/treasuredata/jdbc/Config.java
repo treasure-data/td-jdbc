@@ -337,7 +337,7 @@ public class Config
         config.setPassword(password);
 
         // If both user and password are specified, use this pair instead of TD_API_KEY
-        if(isEmptyString(apiKey) && !isEmptyString(user) && !isEmptyString(password)) {
+        if(!isEmptyString(user) && !isEmptyString(password)) {
             apiConfig.unsetApiKey();
         }
 

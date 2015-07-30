@@ -117,12 +117,13 @@ public class Config
      * Create a new connection configuration from a given JDBC URL and custom Properties.
      * The precedence of properties is:
      *
+     * <p>
      *  <li> 1. System properties </li>
      *  <li> 2. Properties object </li>
      *  <li> 3. URL parameters </li>
-     *
-     * @param jdbcUrl
-     * @param props
+     * </p>
+     * @param jdbcUrl jdbc url
+     * @param props jdbc properties
      * @return connection configuration
      * @throws SQLException
      */

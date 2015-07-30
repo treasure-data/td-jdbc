@@ -186,7 +186,9 @@ for more details.
 To run production tests, write your apikey to `$HOME/.td/td.conf`:
 ```
 [account]
+  user = (e-mail address)
   apikey = (apikey)
+  password = (password)
 ```
 
 ### Buidling td-jdbc with JDK7 or higher

@@ -148,7 +148,7 @@ public class TestProductionEnv
     public void testNonSSLConnection()
             throws IOException, SQLException
     {
-        Connection conn = newConnection("jdbc:td://api.treasuredata.com/leodb", new Properties());
+        Connection conn = newConnection("jdbc:td://api.treasuredata.com/sample_datasets", new Properties());
         Statement stat = conn.createStatement();
         stat.execute("select 1 + 1");
         ResultSet rs = stat.getResultSet();
@@ -262,7 +262,7 @@ public class TestProductionEnv
             throws IOException, SQLException
     {
         try {
-            Connection conn = newPrestoConnection("leodb");
+            Connection conn = newPrestoConnection("sample_datasets");
             Statement stat = conn.createStatement();
             boolean ret = stat.execute("select * from unknown_table"); // incomplete statement
             ResultSet rs = stat.getResultSet();
@@ -285,12 +285,12 @@ public class TestProductionEnv
     public void testPerformance()
             throws IOException, SQLException
     {
-        Connection conn = newPrestoConnection("leodb");
+        Connection conn = newPrestoConnection("sample_datasets");
         for (int i = 0; i < 3; ++i) {
             long started = System.currentTimeMillis();
             try {
                 Statement stat = conn.createStatement();
-                boolean ret = stat.execute("select source_ip, dest_url, visit_date, ad_revenue, country_code from hivebench_tiny.uservisits limit 1000"); // incomplete statement
+                boolean ret = stat.execute("select user, host, path, code, size from www_access limit 1000"); // incomplete statement
                 //boolean ret = stat.execute("select 2"); // incomplete statement
                 ResultSet rs = stat.getResultSet();
                 int count = 0;
@@ -298,8 +298,8 @@ public class TestProductionEnv
                     rs.getString(1);
                     rs.getString(2);
                     rs.getString(3);
-                    rs.getDouble(4);
-                    rs.getString(5);
+                    rs.getInt(4);
+                    rs.getLong(5);
                     count++;
                 }
                 assertEquals(1000, count);

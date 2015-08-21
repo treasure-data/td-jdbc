@@ -25,7 +25,7 @@
     <groupId>com.treasuredata</groupId>
     <name>Treasure Data JDBC Driver</name>
     <description>JDBC Driver for Accessing Treasure Data</description>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>0.5.1</version>
     <artifactId>td-jdbc</artifactId>
     <packaging>jar</packaging>
     <url>https://github.com/treasure-data/td-jdbc</url>
@@ -116,6 +116,12 @@
             <artifactId>littleproxy</artifactId>
             <version>1.0.0-beta8</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

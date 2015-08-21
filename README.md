@@ -13,7 +13,7 @@ a Java client for Treasure Data.
 <dependency>
   <groupId>com.treasuredata</groupId>
   <artifactId>td-jdbc</artifactId>
-  <version>0.5.0</version>
+  <version>0.5.1</version>
 </dependency>
 ```
 

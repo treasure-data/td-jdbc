@@ -29,9 +29,6 @@ import java.util.logging.Logger;
 /**
  * TreasureDataDriver.
  *
- * @see org.apache.hadoop.hive.jdbc.HiveDriver
- * @see org.apache.derby.jdbc.ClientDriver
- * @see org.hsqldb.jdbc.JDBCDriver
  */
 public class TreasureDataDriver
         implements Driver

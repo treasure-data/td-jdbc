@@ -2,6 +2,7 @@
 
 JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
 
+- Driver class name: `com.treasuredata.jdbc.TreasureDataDriver`
 - Works with Java 1.6 or higher
 - [Genral Usage](http://docs.treasure-data.com/articles/jdbc-driver)
 - td-jdbc internally uses [`td-client-java`](https://github.com/treasure-data/td-client-java),

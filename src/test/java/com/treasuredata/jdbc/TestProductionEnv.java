@@ -288,9 +288,9 @@ public class TestProductionEnv
         Connection conn = newPrestoConnection("sample_datasets");
         for (int i = 0; i < 3; ++i) {
             long started = System.currentTimeMillis();
+            Statement stat = conn.createStatement();
             try {
-                Statement stat = conn.createStatement();
-                boolean ret = stat.execute("select user, host, path, code, size from www_access limit 1000"); // incomplete statement
+                boolean ret = stat.execute("select method, host, path, code, size from www_access limit 1000"); // incomplete statement
                 //boolean ret = stat.execute("select 2"); // incomplete statement
                 ResultSet rs = stat.getResultSet();
                 int count = 0;

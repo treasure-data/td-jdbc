@@ -294,11 +294,9 @@ public class TDClientAPI
         try {
             LOG.info("read the result to file: path = "
                     + file.getAbsolutePath());
-            InputStream fin = new GZIPInputStream(new BufferedInputStream(
+            InputStream fin = new BufferedInputStream(new GZIPInputStream(
                     new FileInputStream(file)));
-            return new ExtUnpacker(file,
-                    new MessagePack().createUnpacker(new BufferedInputStream(
-                            fin)));
+            return new ExtUnpacker(file, new MessagePack().createUnpacker(fin));
         }
         catch (IOException e) {
             throw new ClientException(e);

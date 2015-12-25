@@ -1,3 +1,12 @@
+Release 0.5.2 (2015-12-25)
+  Upgrade to msgpack-0.6.9 to support reading STR type
+  Upgrade to td-client-java-0.5.10 to support large query strings
+  Improve buffering when downloading query results
+  
+Release 0.5.1
+  Remove slf4j logger binding
+  Add driver name for backward compatibility
+
 Release 0.5.0
   td-jdbc is now an open-source project
   Publishing to Maven central

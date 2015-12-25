@@ -86,6 +86,11 @@
             <artifactId>td-client</artifactId>
             <version>${td-client.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.msgpack</groupId>
+            <artifactId>msgpack</artifactId>
+            <version>0.6.9</version>
+        </dependency>
         <!-- for compiling td-jdbc with java7 or higher -->
         <dependency>
             <groupId>com.treasuredata.thirdparty</groupId>

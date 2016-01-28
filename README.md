@@ -14,7 +14,7 @@ a Java client for Treasure Data.
 <dependency>
   <groupId>com.treasuredata</groupId>
   <artifactId>td-jdbc</artifactId>
-  <version>0.5.2</version>
+  <version>0.5.3</version>
 </dependency>
 ```
 

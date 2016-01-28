@@ -1190,7 +1190,7 @@ public class TDDatabaseMetaData
     public String getURL()
             throws SQLException
     {
-        throw new SQLException("Method not supported");
+        return "jdbc:td://api.treasuredata.com/";
     }
 
     public String getUserName()

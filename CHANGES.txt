@@ -1,3 +1,6 @@
+Release 0.5.3 (2016-01-28)
+  Return jdbc url prefix with DatabaeMetadata.getURL
+
 Release 0.5.2 (2015-12-25)
   Upgrade to msgpack-0.6.9 to support reading STR type
   Upgrade to td-client-java-0.5.10 to support large query strings

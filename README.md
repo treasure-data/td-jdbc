@@ -10,11 +10,16 @@ a Java client for Treasure Data.
 
 ## For Maven Users
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.treasuredata/td-jdbc/badge.svg)](https://maven-badges.herokuapp.com/maven-ce\
+ntral/com.treasuredata/td-jdbc/)
+[![Javadoc](https://javadoc-emblem.rhcloud.com/doc/com.treasuredata/td-jdbc/badge.svg)](http://www.javadoc.io/doc/com.treasuredata/td-jdbc\
+)
+
 ```
 <dependency>
   <groupId>com.treasuredata</groupId>
   <artifactId>td-jdbc</artifactId>
-  <version>0.5.3</version>
+  <version>(version)</version>
 </dependency>
 ```
 

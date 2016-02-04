@@ -188,7 +188,7 @@ public class TDResultSet
         try {
             JobSummary jobSummary = clientApi.waitJobResult(job);
             initColumnNamesAndTypes(jobSummary.getResultSchema());
-            return super.getMetaData();
+            return new TDResultSetMetaData(job.getJobID(), columnNames, columnTypes);
         }
         catch (ClientException e) {
             throw new SQLException(e);

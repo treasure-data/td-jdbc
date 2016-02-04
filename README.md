@@ -50,6 +50,12 @@ Connection conn = DriverManager.getConnection("jdbc:td://api.treasuredata.com/sa
 Statement st = conn.createStatement();
 try {
     ResultSet rs = st.executeQuery("SELECT count(1) FROM www_access");
+    
+    // You can see the job ID of the query
+    TDResultSetMetaData rsmd = (TDResultSetMetaData) rs.getResultSetMetaData();
+    System.out.println("job id: " + rsmd.getJobId());
+
+    // Getting the result rows
     while (rs.next()) {
         int count = rs.getInt(1);
         System.out.println("result = " + count);

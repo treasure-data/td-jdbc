@@ -725,7 +725,8 @@ public class TestTDResultSet
         };
         Job job = new Job("12345");
         TDResultSet rs = new TDResultSet(clientApi, 50, job);
-        ResultSetMetaData rsMetaData = rs.getMetaData();
+        TDResultSetMetaData rsMetaData = (TDResultSetMetaData) rs.getMetaData();
+        assertEquals("12345", rsMetaData.getJobId());
         { // getColumnType(int)
             try {
                 rsMetaData.getColumnType(0);

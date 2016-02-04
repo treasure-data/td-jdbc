@@ -27,14 +27,26 @@ import java.util.List;
 public class TDResultSetMetaData
         implements java.sql.ResultSetMetaData
 {
+    private final String jobId;
     private final List<String> columnNames;
     private final List<String> columnTypes;
 
     public TDResultSetMetaData(List<String> columnNames,
             List<String> columnTypes)
     {
+        this("", columnNames, columnTypes);
+    }
+
+    public TDResultSetMetaData(String jobId, List<String> columnNames,
+            List<String> columnTypes)
+    {
+        this.jobId = jobId;
         this.columnNames = columnNames;
         this.columnTypes = columnTypes;
+    }
+
+    public String getJobId() {
+        return jobId;
     }
 
     public String getCatalogName(int column)

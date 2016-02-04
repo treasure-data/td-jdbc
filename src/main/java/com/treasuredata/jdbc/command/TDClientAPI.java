@@ -188,6 +188,7 @@ public class TDClientAPI
                 // pig, etc.
                 throw new UnsupportedOperationException("Unsupported job type: " + config.type);
         }
+        // SELECT 1 is a dummy operation and has no job ID
         return new TDResultSetMetaData(new ArrayList<String>(names), new ArrayList<String>(types));
     }
 

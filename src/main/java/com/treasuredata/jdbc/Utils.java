@@ -27,47 +27,48 @@ public class Utils
     /**
      * Convert hive types to sql types.
      *
-     * @param type
+     * @param t
      * @return Integer java.sql.Types values
      * @throws SQLException
      */
-    public static int TDTypeToSqlType(String type)
+    public static int TDTypeToSqlType(String t)
             throws SQLException
     {
-        if ("string".equalsIgnoreCase(type)) {
+        String type = t.toLowerCase();
+        if ("string".equals(type)) {
             return Types.VARCHAR;
         }
-        else if ("varchar".equalsIgnoreCase(type)) {
+        else if ("varchar".equals(type) || type.startsWith("varchar(")) {
             return Types.VARCHAR;
         }
-        else if ("float".equalsIgnoreCase(type)) {
+        else if ("float".equals(type)) {
             return Types.FLOAT;
         }
-        else if ("double".equalsIgnoreCase(type)) {
+        else if ("double".equals(type)) {
             return Types.DOUBLE;
         }
-        else if ("boolean".equalsIgnoreCase(type)) {
+        else if ("boolean".equals(type)) {
             return Types.BOOLEAN;
         }
-        else if ("tinyint".equalsIgnoreCase(type)) {
+        else if ("tinyint".equals(type)) {
             return Types.TINYINT;
         }
-        else if ("smallint".equalsIgnoreCase(type)) {
+        else if ("smallint".equals(type)) {
             return Types.SMALLINT;
         }
-        else if ("int".equalsIgnoreCase(type)) {
+        else if ("int".equals(type)) {
             return Types.INTEGER;
         }
-        else if ("long".equalsIgnoreCase(type)) {
+        else if ("long".equals(type)) {
             return Types.BIGINT;
         }
-        else if ("bigint".equalsIgnoreCase(type)) {
+        else if ("bigint".equals(type)) {
             return Types.BIGINT;
         }
-        else if ("date".equalsIgnoreCase(type)) {
+        else if ("date".equals(type)) {
             return Types.DATE;
         }
-        else if ("timestamp".equalsIgnoreCase(type)) {
+        else if ("timestamp".equals(type)) {
             return Types.TIMESTAMP;
         }
         else if (type.startsWith("map<")) {

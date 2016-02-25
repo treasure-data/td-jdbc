@@ -1,3 +1,6 @@
+Release 0.5.5 (2016-02-24)
+  Support varchar(n) type of Presto
+
 Release 0.5.4 (2016-02-04)
   Add TDResultSetMetaData.getJobId
 

@@ -347,4 +347,24 @@ public class TestProductionEnv
         runPrestoQuery(conn);
     }
 
+    @Test
+    public void testFixedVarcharType()
+            throws Exception
+    {
+        Connection conn = newPrestoConnection("sample_datasets");
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery("select 'test' AS name");
+        int rowCount = 0;
+        int colummType = rs.getMetaData().getColumnType(1);
+        while(rs.next()) {
+            String col = rs.getString(1);
+            assertEquals("test", col);
+            rowCount++;
+        }
+        assertEquals(1, rowCount);
+        rs.close();
+        st.close();
+        conn.close();
+    }
+
 }

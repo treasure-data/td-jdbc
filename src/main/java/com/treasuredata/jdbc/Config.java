@@ -286,12 +286,12 @@ public class Config
 
         // api endpoint
         String apiHost = getJDBCProperty(props, TD_API_SERVER_HOST);
-        if(apiHost != null) {
+        if (!isEmptyString(apiHost)) {
             apiConfig.setEndpoint(apiHost);
         }
         // api port
         String apiPortStr = getJDBCProperty(props, TD_API_SERVER_PORT);
-        if(apiPortStr != null) {
+        if (!isEmptyString(apiPortStr)) {
             try {
                 apiConfig.setPort(Integer.parseInt(apiPortStr));
             }
@@ -302,7 +302,7 @@ public class Config
 
         // API scheme (HTTP or HTTPS)
         String useSSL = getJDBCProperty(props, TD_JDBC_USESSL);
-        if (useSSL != null) {
+        if (!isEmptyString(useSSL)) {
             apiConfig.setUseSSL(Boolean.parseBoolean(useSSL));
         }
 
@@ -344,7 +344,7 @@ public class Config
 
         // retry settings
         String retryCountThreshold = getJDBCProperty(props, TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD);
-        if(retryCountThreshold != null) {
+        if (!isEmptyString(retryCountThreshold)) {
             try {
                 config.setResultRetryCountThreshold(Integer.parseInt(retryCountThreshold));
             }
@@ -353,7 +353,7 @@ public class Config
             }
         }
         String retryWaitTimeMs = getJDBCProperty(props, TD_JDBC_RESULT_RETRY_WAITTIME);
-        if(retryWaitTimeMs != null) {
+        if (!isEmptyString(retryWaitTimeMs)) {
             try {
                 config.setResultRetryWaitTimeMs(Long.parseLong(retryWaitTimeMs));
             }
@@ -367,12 +367,12 @@ public class Config
         // we set Authenticator by ourselves.
 
         String httpProxyHost = getJDBCProperty(props, TD_JDBC_PROXY_HOST, "http.proxyHost");
-        if (httpProxyHost != null) {
+        if (!isEmptyString(httpProxyHost)) {
             hasProxyConfig = true;
             proxyConfig.setHost(httpProxyHost);
         }
         String httpProxyPort = getJDBCProperty(props, TD_JDBC_PROXY_PORT, "http.proxyPort");
-        if (httpProxyPort != null) {
+        if (!isEmptyString(httpProxyPort)) {
             hasProxyConfig = true;
             try {
                 proxyConfig.setPort(Integer.parseInt(httpProxyPort));
@@ -382,12 +382,12 @@ public class Config
             }
         }
         String httpProxyUser = getJDBCProperty(props, TD_JDBC_PROXY_USER, "http.proxyUser");
-        if (httpProxyUser != null) {
+        if (!isEmptyString(httpProxyUser)) {
             hasProxyConfig = true;
             proxyConfig.setUser(httpProxyUser);
         }
         String httpProxyPassword = getJDBCProperty(props, TD_JDBC_PROXY_PASSWORD, "http.proxyPassword");
-        if (httpProxyPassword != null) {
+        if (!isEmptyString(httpProxyPassword)) {
             hasProxyConfig = true;
             proxyConfig.setPassword(httpProxyPassword);
         }

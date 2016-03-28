@@ -21,6 +21,7 @@ package com.treasuredata.jdbc;
 import org.junit.Test;
 
 import java.sql.SQLException;
+import java.util.Properties;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -178,5 +179,30 @@ public class TestConfig
             assertEquals(null, config.user);
             assertEquals(null, config.password);
         }
+    }
+
+    @Test
+    public void testEmptyParameters()
+            throws Exception
+    {
+        Properties props = System.getProperties();
+        props.setProperty("user",  "user01");
+        props.setProperty("password",  "pass01");
+        props.setProperty("td.jdbc.result.retrycount.threshold", "");
+        props.setProperty("td.jdbc.result.retry.waittime", "");
+        props.setProperty("usessl", "");
+        props.setProperty("httpproxyhost", "");
+        props.setProperty("httpproxyport", "");
+        props.setProperty("httpproxyuser", "");
+        props.setProperty("httpproxypassword", "");
+
+        String url = "jdbc:td://host01:9999/db01";
+        Config config = Config.newConfig(url, props);
+        assertEquals(url, config.url);
+        assertEquals("host01", config.apiConfig.endpoint);
+        assertEquals(9999, config.apiConfig.port);
+        assertEquals("db01", config.database);
+        assertEquals("user01", config.user);
+        assertEquals("pass01", config.password);
     }
 }

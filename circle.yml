@@ -1,6 +1,9 @@
 test:
+  override:
+    - mvn package
   post:
     - cp -af target/site/* $CIRCLE_ARTIFACTS
+    - cp target/*.jar $CIRCLE_ARTIFACTS
 
 notify:
   webhooks:

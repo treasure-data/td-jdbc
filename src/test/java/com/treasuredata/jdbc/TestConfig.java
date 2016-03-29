@@ -185,7 +185,9 @@ public class TestConfig
     public void testEmptyParameters()
             throws Exception
     {
-        Properties props = System.getProperties();
+        Properties props = new Properties();
+        props.putAll(System.getProperties());
+
         props.setProperty("user",  "user01");
         props.setProperty("password",  "pass01");
         props.setProperty("td.jdbc.result.retrycount.threshold", "");

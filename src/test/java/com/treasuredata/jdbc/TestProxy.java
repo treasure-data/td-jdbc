@@ -73,7 +73,9 @@ public class TestProxy
     private AtomicInteger proxyAccessCount = new AtomicInteger(0);
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()
+            throws Exception
+    {
         proxyAccessCount.set(0);
         this.proxyPort = findAvailablePort();
         this.proxyServer = DefaultHttpProxyServer.bootstrap().withPort(proxyPort).withProxyAuthenticator(new ProxyAuthenticator()
@@ -103,8 +105,10 @@ public class TestProxy
     }
 
     @After
-    public void tearDown() throws Exception {
-        if(this.proxyServer != null) {
+    public void tearDown()
+            throws Exception
+    {
+        if (this.proxyServer != null) {
             proxyServer.stop();
         }
     }
@@ -140,7 +144,7 @@ public class TestProxy
         String sql = String.format("select %s from www_access", sqlProjection);
         stat.execute(sql);
         ResultSet rs = stat.getResultSet();
-        assert(rs.next());
+        assert (rs.next());
         String col = rs.getString(1);
         logger.debug("result: " + col);
         rs.close();
@@ -148,8 +152,8 @@ public class TestProxy
         conn.close();
     }
 
-
-    private Properties getJdbcProxyConfig() {
+    private Properties getJdbcProxyConfig()
+    {
         Properties prop = new Properties();
         prop.setProperty("httpproxyhost", "localhost");
         prop.setProperty("httpproxyport", Integer.toString(proxyPort));
@@ -193,7 +197,7 @@ public class TestProxy
             stat = conn.createStatement();
             stat.execute("select count(*) from www_access");
         }
-        catch(SQLException e) {
+        catch (SQLException e) {
             // Should display authentication failure message here
             logger.error("authentication failure", e);
             return;
@@ -205,3 +209,4 @@ public class TestProxy
         fail("should not reach here");
     }
 }
+

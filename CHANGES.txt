@@ -1,3 +1,6 @@
+Release 0.5.7 (2016-05-25)
+  [experimental] Add support of executeUpdate 
+
 Release 0.5.5 (2016-02-24)
   Support varchar(n) type of Presto
 

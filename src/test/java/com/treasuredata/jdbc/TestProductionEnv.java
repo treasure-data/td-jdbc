@@ -36,6 +36,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -356,7 +357,7 @@ public class TestProductionEnv
         ResultSet rs = st.executeQuery("select 'test' AS name");
         int rowCount = 0;
         int colummType = rs.getMetaData().getColumnType(1);
-        while(rs.next()) {
+        while (rs.next()) {
             String col = rs.getString(1);
             assertEquals("test", col);
             rowCount++;
@@ -367,4 +368,34 @@ public class TestProductionEnv
         conn.close();
     }
 
+    @Test
+    public void testUpdate()
+            throws Exception
+    {
+        Connection conn = newPrestoConnection("_td_jdbc_test");
+        String testTableName = "updatetest_" + UUID.randomUUID().toString().replaceAll("-", "_");
+        logger.info(testTableName);
+
+        Statement st = conn.createStatement();
+        String dropSql = "drop table if exists " + testTableName;
+
+        try {
+            int ret = st.executeUpdate(dropSql);
+            ret = st.executeUpdate("create table if not exists " + testTableName + "(time integer)");
+            assertEquals(0, ret);
+            ret = st.executeUpdate("insert into " + testTableName + " select 1 a , 'hello' b");
+            assertEquals(1, ret);
+            ResultSet rs = st.executeQuery("select * from " + testTableName);
+            int count = 0;
+            while (rs.next()) {
+                assertEquals(1, rs.getInt("a"));
+                assertEquals("hello", rs.getString("b"));
+                count += 1;
+            }
+            assertEquals(1, count);
+        }
+        finally {
+            st.executeUpdate(dropSql);
+        }
+    }
 }

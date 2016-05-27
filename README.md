@@ -1,12 +1,12 @@
 # Treasure Data JDBC Driver
 
-JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com).
+JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com). This works with Java 1.6 or higher.
 
-- Driver class name: `com.treasuredata.jdbc.TreasureDataDriver`
-- Works with Java 1.6 or higher
-- [General Usage](http://docs.treasure-data.com/articles/jdbc-driver)
-- td-jdbc internally uses [`td-client-java`](https://github.com/treasure-data/td-client-java),
-a Java client for Treasure Data.
+- [Download](http://central.maven.org/maven2/com/treasuredata/td-jdbc/) td-jdbc-jar-with-dependencies-(version).jar
+- Use driver class name: `com.treasuredata.jdbc.TreasureDataDriver`
+- Read [Quick Start](#quickstart) or [General Usage](http://docs.treasure-data.com/articles/jdbc-driver)
+
+td-jdbc internally uses [`td-client-java`](https://github.com/treasure-data/td-client-java), a Java client for Treasure Data.
 
 ## For Maven Users
 
@@ -23,7 +23,7 @@ ntral/com.treasuredata/td-jdbc/)
 </dependency>
 ```
 
-# Usage
+# Quick Start
 
 Create a `java.sql.Connection` object using JDBC address `jdbc:td://api.treasuredata.com/(database name)`.
 

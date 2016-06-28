@@ -78,36 +78,31 @@ public abstract class TDResultSetBase
     public boolean absolute(int row)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#absolute(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#absolute(int)");
     }
 
     public void afterLast()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#afterLast()"));
+        throw new SQLException("Unsupported TDResultSetBase#afterLast()");
     }
 
     public void beforeFirst()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#beforeFirst()"));
+        throw new SQLException("Unsupported TDResultSetBase#beforeFirst()");
     }
 
     public void cancelRowUpdates()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#cancelRowUpdates()"));
+        throw new SQLException("Unsupported TDResultSetBase#cancelRowUpdates()");
     }
 
     public void deleteRow()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#deleteRow()"));
+        throw new SQLException("Unsupported TDResultSetBase#deleteRow()");
     }
 
     public int findColumn(String columnName)
@@ -125,120 +120,103 @@ public abstract class TDResultSetBase
     public boolean first()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#first()"));
+        throw new SQLException("Unsupported TDResultSetBase#first()");
     }
 
     public InputStream getAsciiStream(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getAsciiStream(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getAsciiStream(int)");
     }
 
     public InputStream getAsciiStream(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getAsciiStream(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getAsciiStream(String)");
     }
 
     public InputStream getBinaryStream(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBinaryStream(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBinaryStream(int)");
     }
 
     public InputStream getBinaryStream(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBinaryStream(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBinaryStream(String)");
     }
 
     public Reader getCharacterStream(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getCharacterStream(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getCharacterStream(String)");
     }
 
     public Reader getCharacterStream(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getCharacterStream(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getCharacterStream(String)");
     }
 
     public Reader getNCharacterStream(int index)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getNCharacterStream(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getNCharacterStream(int)");
     }
 
     public Reader getNCharacterStream(String name)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getNCharacterStream(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getNCharacterStream(String)");
     }
 
     public Array getArray(int i)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getArray(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getArray(int)");
     }
 
     public Array getArray(String colName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getArray(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getArray(String)");
     }
 
     public BigDecimal getBigDecimal(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBigDecimal(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBigDecimal(int)");
     }
 
     public BigDecimal getBigDecimal(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBigDecimal(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBigDecimal(String)");
     }
 
     public BigDecimal getBigDecimal(int columnIndex, int scale)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBigDecimal(int, int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBigDecimal(int, int)");
     }
 
     public BigDecimal getBigDecimal(String columnName, int scale)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBigDecimal(String, int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBigDecimal(String, int)");
     }
 
     public Blob getBlob(int i)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBlob(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBlob(int)");
     }
 
     public Blob getBlob(String colName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBlob(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBlob(String)");
     }
 
     public boolean getBoolean(int index)
@@ -384,57 +362,49 @@ public abstract class TDResultSetBase
     public byte[] getBytes(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBytes(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBytes(int)");
     }
 
     public byte[] getBytes(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getBytes(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getBytes(String)");
     }
 
     public Clob getClob(int i)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getClob(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getClob(int)");
     }
 
     public Clob getClob(String colName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getClob(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getClob(String)");
     }
 
     public NClob getNClob(int index)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getNClob(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getNClob(int)");
     }
 
     public NClob getNClob(String columnLabel)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getNClob(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getNClob(String)");
     }
 
     public String getNString(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getNString(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getNString(int)");
     }
 
     public String getNString(String columnLabel)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getNString(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getNString(String)");
     }
 
     public int getConcurrency()
@@ -446,8 +416,7 @@ public abstract class TDResultSetBase
     public String getCursorName()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getCursorName()"));
+        throw new SQLException("Unsupported TDResultSetBase#getCursorName()");
     }
 
     public Date getDate(int index)
@@ -482,15 +451,13 @@ public abstract class TDResultSetBase
     public Date getDate(int columnIndex, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getDate(int, Calendar)"));
+        throw new SQLException("Unsupported TDResultSetBase#getDate(int, Calendar)");
     }
 
     public Date getDate(String columnName, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getDate(String, Calendar)"));
+        throw new SQLException("Unsupported TDResultSetBase#getDate(String, Calendar)");
     }
 
     public double getDouble(int index)
@@ -830,64 +797,55 @@ public abstract class TDResultSetBase
     public Object getObject(int i, Map<String, Class<?>> map)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getObject(int, Map)"));
+        throw new SQLException("Unsupported TDResultSetBase#getObject(int, Map)");
     }
 
     public Object getObject(String colName, Map<String, Class<?>> map)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getObject(String, Map)"));
+        throw new SQLException("Unsupported TDResultSetBase#getObject(String, Map)");
     }
 
     public Ref getRef(int i)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getRef(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getRef(int)");
     }
 
     public Ref getRef(String colName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getRef(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getRef(String)");
     }
 
     public int getRow()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getRow(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getRow(int)");
     }
 
     public RowId getRowId(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getRowId(int)"));
+        throw new SQLException("Unsupported TDRsultSetBase#getRowId(int)");
     }
 
     public RowId getRowId(String columnLabel)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getRowId(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getRowId(String)");
     }
 
     public SQLXML getSQLXML(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getSQLXML(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getSQLXML(int)");
     }
 
     public SQLXML getSQLXML(String columnLabel)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getSQLXML(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getSQLXML(String)");
     }
 
     public short getShort(int index)
@@ -1069,29 +1027,25 @@ public abstract class TDResultSetBase
     public Time getTime(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTime(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getTime(int)");
     }
 
     public Time getTime(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTime(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getTime(String)");
     }
 
     public Time getTime(int columnIndex, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTime(int, Calendar)"));
+        throw new SQLException("Unsupported TDResultSetBase#getTime(int, Calendar)");
     }
 
     public Time getTime(String columnName, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTime(String, Calendar)"));
+        throw new SQLException("Unsupported TDResultSetBase#getTime(String, Calendar)");
     }
 
     public Timestamp getTimestamp(int index)
@@ -1131,15 +1085,13 @@ public abstract class TDResultSetBase
     public Timestamp getTimestamp(int columnIndex, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTimestamp(int, Calendar)"));
+        throw new SQLException("Unsupported TDResultSetBase#getTimestamp(int, Calendar)");
     }
 
     public Timestamp getTimestamp(String columnName, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getTimestamp(String, Calendar)"));
+        throw new SQLException("Unsupported TDResultSetBase#getTimestamp(String, Calendar)");
     }
 
     public int getType()
@@ -1151,71 +1103,61 @@ public abstract class TDResultSetBase
     public URL getURL(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getURL(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getURL(int)");
     }
 
     public URL getURL(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getURL(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getURL(String)");
     }
 
     public InputStream getUnicodeStream(int columnIndex)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getUnicodeStream(int)"));
+        throw new SQLException("Unsupported TDResultSetBase#getUnicodeStream(int)");
     }
 
     public InputStream getUnicodeStream(String columnName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#getUnicodeStream(String)"));
+        throw new SQLException("Unsupported TDResultSetBase#getUnicodeStream(String)");
     }
 
     public void insertRow()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#insertRow()"));
+        throw new SQLException("Unsupported TDResultSetBase#insertRow()");
     }
 
     public boolean isAfterLast()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#isAfterLast()"));
+        throw new SQLException("Unsupported TDResultSetBase#isAfterLast()");
     }
 
     public boolean isLast()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#isLast()"));
+        throw new SQLException("Unsupported TDResultSetBase#isLast()");
     }
 
     public boolean last()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#last()"));
+        throw new SQLException("Unsupported TDResultSetBase#last()");
     }
 
     public boolean isBeforeFirst()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#isBeforeFirst()"));
+        throw new SQLException("Unsupported TDResultSetBase#isBeforeFirst()");
     }
 
     public boolean isFirst()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException(
-                "TDResultSetBase#isFirst()"));
+        throw new SQLException("Unsupported TDResultSetBase#isFirst()");
     }
 
     public boolean isClosed()

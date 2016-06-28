@@ -81,13 +81,13 @@ public class TDPreparedStatement
     public void addBatch()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearBatch()"));
+        throw new SQLException("Unsupported TDPreparedStatement#clearBatch()");
     }
 
     public void clearBatch()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#clearBatch()"));
+        throw new SQLException("Unsupported TDPreparedStatement#clearBatch()");
     }
 
     public boolean execute()
@@ -161,13 +161,13 @@ public class TDPreparedStatement
     public int[] executeBatch()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeBatch()"));
+        throw new SQLException("Unsupported TDPreparedStatement#executeBatch()");
     }
 
     public int executeUpdate()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#executeUpdate()"));
+        throw new SQLException("Unsupported TDPreparedStatement#executeUpdate()");
     }
 
     public ResultSetMetaData getMetaData()
@@ -179,127 +179,127 @@ public class TDPreparedStatement
     public ParameterMetaData getParameterMetaData()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#getParameterMetaData()"));
+        throw new SQLException("Unsupported TDPreparedStatement#getParameterMetaData()");
     }
 
     public void setArray(int i, Array x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setArray(int, Array)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setArray(int, Array)");
     }
 
     public void setAsciiStream(int i, InputStream in)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setAsciiStream(int, InputStream)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setAsciiStream(int, InputStream)");
     }
 
     public void setAsciiStream(int i, InputStream in, int length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setAsciiStream(int, InputStream, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setAsciiStream(int, InputStream, int)");
     }
 
     public void setAsciiStream(int i, InputStream in, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setAsciiStream(int, InputStream, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setAsciiStream(int, InputStream, long)");
     }
 
     public void setBigDecimal(int parameterIndex, BigDecimal x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBigDecimal(int, BigDecimal)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBigDecimal(int, BigDecimal)");
     }
 
     public void setBinaryStream(int i, InputStream x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBinaryStream(int, InputStream)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBinaryStream(int, InputStream)");
     }
 
     public void setBinaryStream(int i, InputStream in, int length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBinaryStream(int, InputStream, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBinaryStream(int, InputStream, int)");
     }
 
     public void setBinaryStream(int i, InputStream in, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBinaryStream(int, InputStream, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBinaryStream(int, InputStream, long)");
     }
 
     public void setBlob(int i, Blob x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBlob(int, Blob)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBlob(int, Blob)");
     }
 
     public void setBlob(int i, InputStream inputStream)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBlob(int, InputStream)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBlob(int, InputStream)");
     }
 
     public void setBlob(int i, InputStream inputStream, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBlob(int, InputStream, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBlob(int, InputStream, long)");
     }
 
     public void setBoolean(int parameterIndex, boolean x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBoolean(int, boolean)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBoolean(int, boolean)");
     }
 
     public void setByte(int i, byte x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setByte(int, byte)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setByte(int, byte)");
     }
 
     public void setBytes(int i, byte[] x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setBytes(int, byte[])"));
+        throw new SQLException("Unsupported TDPreparedStatement#setBytes(int, byte[])");
     }
 
     public void setCharacterStream(int i, Reader reader)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setCharacterStream(int, Reader)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setCharacterStream(int, Reader)");
     }
 
     public void setCharacterStream(int i, Reader reader, int length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setCharacterStream(int, Reader, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setCharacterStream(int, Reader, int)");
     }
 
     public void setCharacterStream(int i, Reader reader, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setCharacterStream(int, Reader, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setCharacterStream(int, Reader, long)");
     }
 
     public void setClob(int i, Clob x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setClob(int, Clob)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setClob(int, Clob)");
     }
 
     public void setClob(int i, Reader reader)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setClob(int, Reader)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setClob(int, Reader)");
     }
 
     public void setClob(int i, Reader reader, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setClob(int, Reader, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setClob(int, Reader, long)");
     }
 
     public void setDate(int i, Date x)
@@ -309,15 +309,14 @@ public class TDPreparedStatement
             preparedParameters.put(i, "DATE '" + x.toString() + "'");
         }
         else {
-            throw new SQLException(new UnsupportedOperationException(
-                    "TDPreparedStatement#setDate(int, Date) is supported for Presto query only"));
+            throw new SQLException("Unsupported TDPreparedStatement#setDate(int, Date) is supported for Presto query only");
         }
     }
 
     public void setDate(int i, Date x, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setDate(int, Date, Calender)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setDate(int, Date, Calender)");
     }
 
     public void setDouble(int i, double x)
@@ -347,31 +346,31 @@ public class TDPreparedStatement
     public void setNCharacterStream(int i, Reader value)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNCharacterStream(int, Reader)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNCharacterStream(int, Reader)");
     }
 
     public void setNCharacterStream(int i, Reader value, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNCharacterStream(int, Reader, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNCharacterStream(int, Reader, long)");
     }
 
     public void setNClob(int i, NClob value)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNClob(int, NClob)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNClob(int, NClob)");
     }
 
     public void setNClob(int i, Reader reader)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNClob(int, Reader)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNClob(int, Reader)");
     }
 
     public void setNClob(int i, Reader reader, long length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNClob(int, Reader, long)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNClob(int, Reader, long)");
     }
 
     public void setNString(int i, String value)
@@ -383,55 +382,55 @@ public class TDPreparedStatement
     public void setNull(int i, int sqlType)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNull(int, int)");
     }
 
     public void setNull(int i, int sqlType, String typeName)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setNull(int, int, String)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setNull(int, int, String)");
     }
 
     public void setObject(int i, Object x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setObject(int, Object)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setObject(int, Object)");
     }
 
     public void setObject(int i, Object x, int targetSqlType)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setObject(int, Object, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setObject(int, Object, int)");
     }
 
     public void setObject(int i, Object x, int targetSqlType, int scale)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setObject(int, Object, int, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setObject(int, Object, int, int)");
     }
 
     public void setRef(int i, Ref x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setRef(int, Ref)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setRef(int, Ref)");
     }
 
     public void setRowId(int i, RowId x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setRowId(int, RowId)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setRowId(int, RowId)");
     }
 
     public void setSQLXML(int i, SQLXML xmlObject)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setSQLXML(int, SQLXML)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setSQLXML(int, SQLXML)");
     }
 
     public void setShort(int i, short x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setShort(int, short)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setShort(int, short)");
     }
 
     public void setString(int i, String x)
@@ -444,13 +443,13 @@ public class TDPreparedStatement
     public void setTime(int i, Time x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setTime(int, Time)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setTime(int, Time)");
     }
 
     public void setTime(int i, Time x, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setTime(int, Time, Calendar)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setTime(int, Time, Calendar)");
     }
 
     public void setTimestamp(int i, Timestamp x)
@@ -460,26 +459,25 @@ public class TDPreparedStatement
             preparedParameters.put(i, "TIMESTAMP '" + x.toString() + "'");
         }
         else {
-            throw new SQLException(new UnsupportedOperationException(
-                    "TDPreparedStatement#setTimestamp(int, Timestamp) is supported for Presto query only"));
+            throw new SQLException("Unsupported TDPreparedStatement#setTimestamp(int, Timestamp) is supported for Presto query only");
         }
     }
 
     public void setTimestamp(int i, Timestamp x, Calendar cal)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setTimestamp(int, Timestamp, Calendar)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setTimestamp(int, Timestamp, Calendar)");
     }
 
     public void setURL(int i, URL x)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setURL(int, URL)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setURL(int, URL)");
     }
 
     public void setUnicodeStream(int i, InputStream x, int length)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDPreparedStatement#setUnicodeStream(int, InputStream, int)"));
+        throw new SQLException("Unsupported TDPreparedStatement#setUnicodeStream(int, InputStream, int)");
     }
 }

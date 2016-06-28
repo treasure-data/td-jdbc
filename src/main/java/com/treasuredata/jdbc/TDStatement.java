@@ -39,7 +39,7 @@ public class TDStatement
     public void addBatch(String sql)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#addBatch()"));
+        throw new SQLException("TDStatement#addBatch()");
     }
 
     public void cancel()
@@ -50,7 +50,7 @@ public class TDStatement
     public void clearBatch()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#clearBatch()"));
+        throw new SQLException("Unsupported TDStatement#clearBatch()");
     }
 
     public boolean execute(String sql)
@@ -82,7 +82,7 @@ public class TDStatement
     public int[] executeBatch()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#executeBatch()"));
+        throw new SQLException("Unsupported TDStatement#executeBatch()");
     }
 
     public synchronized ResultSet executeQuery(String sql)
@@ -131,7 +131,7 @@ public class TDStatement
     public int getFetchDirection()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getFetchDirection()"));
+        throw new SQLException("Unsupported TDStatement#getFetchDirection()");
     }
 
     public int getFetchSize()
@@ -143,13 +143,13 @@ public class TDStatement
     public ResultSet getGeneratedKeys()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getGeneratedKeys()"));
+        throw new SQLException("Unsupported TDStatement#getGeneratedKeys()");
     }
 
     public int getMaxFieldSize()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getMaxFieldSize()"));
+        throw new SQLException("Unsupported TDStatement#getMaxFieldSize()");
     }
 
     public boolean getMoreResults()
@@ -167,37 +167,37 @@ public class TDStatement
     public int getResultSetConcurrency()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetConcurrency()"));
+        throw new SQLException("Unsupported TDStatement#getResultSetConcurrency()");
     }
 
     public int getResultSetHoldability()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetHoldability()"));
+        throw new SQLException("Unsupported TDStatement#getResultSetHoldability()");
     }
 
     public int getResultSetType()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#getResultSetType()"));
+        throw new SQLException("Unsupported TDStatement#getResultSetType()");
     }
 
     public boolean isPoolable()
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#isPoolable()"));
+        throw new SQLException("Unsupported TDStatement#isPoolable()");
     }
 
     public void setCursorName(String name)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#setCursorName(String)"));
+        throw new SQLException("Unsupported TDStatement#setCursorName(String)");
     }
 
     public void setFetchDirection(int direction)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#setFetchDirection(int)"));
+        throw new SQLException("Unsupported TDStatement#setFetchDirection(int)");
     }
 
     public void setFetchSize(int rows)
@@ -209,24 +209,24 @@ public class TDStatement
     public void setMaxFieldSize(int max)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#setMaxFieldSize(int)"));
+        throw new SQLException("Unsupported TDStatement#setMaxFieldSize(int)");
     }
 
     public void setPoolable(boolean poolable)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#setPoolable(boolean)"));
+        throw new SQLException("Unsupported TDStatement#setPoolable(boolean)");
     }
 
     public boolean isWrapperFor(Class<?> iface)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#isWrapperFor(Class)"));
+        throw new SQLException("Unsupported TDStatement#isWrapperFor(Class)");
     }
 
     public <T> T unwrap(Class<T> iface)
             throws SQLException
     {
-        throw new SQLException(new UnsupportedOperationException("TDStatement#unwrap(Class)"));
+        throw new SQLException("Unsupported TDStatement#unwrap(Class)");
     }
 }

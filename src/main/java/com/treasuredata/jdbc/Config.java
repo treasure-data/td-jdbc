@@ -178,6 +178,9 @@ public class Config
                 else if (k.equals(TD_JDBC_PASSWORD)) {
                     config.setPassword(v);
                 }
+                else if (k.equals(TD_JDBC_APIKEY)) {
+                    apiConfig.setApiKey(v);
+                }
                 else if (k.equals(TD_JDBC_JOB_TYPE)) {
                     config.setType(Job.toType(v));
                 }

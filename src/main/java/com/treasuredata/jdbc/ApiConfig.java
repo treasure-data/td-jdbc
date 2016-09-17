@@ -63,7 +63,7 @@ public class ApiConfig
     public static class ApiConfigBuilder {
         public String endpoint;
         public Option<Integer> port = Option.empty();
-        public boolean useSSL = false;
+        public boolean useSSL = true;
         public Option<String> apiKey = Option.empty();
         public Option<ProxyConfig> proxy = Option.empty();
 

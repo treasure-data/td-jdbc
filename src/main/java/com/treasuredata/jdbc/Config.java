@@ -88,12 +88,9 @@ public class Config
         return prop;
     }
 
-    public static void validateJDBCUrl(String url)
-            throws SQLException
+    public static boolean isValidJDBCUrl(String url)
     {
-        if (url == null || url.isEmpty() || !url.startsWith(URL_PREFIX)) {
-            throw new SQLException("Invalid JDBC URL: " + url + ". URL prefix must be jdbc:td://");
-        }
+        return url != null && !url.isEmpty() && url.startsWith(URL_PREFIX);
     }
 
     private static String getJDBCProperty(Properties prop, String key) {
@@ -143,7 +140,9 @@ public class Config
     public static Config parseJdbcURL(String jdbcUrl)
             throws SQLException
     {
-        validateJDBCUrl(jdbcUrl);
+        if(!isValidJDBCUrl(jdbcUrl)) {
+            throw new SQLException("Invalid JDBC URL: " + jdbcUrl + ". URL prefix must be jdbc:td://");
+        }
 
         ConfigBuilder config = new ConfigBuilder();
         boolean hasProxyConfig = false;

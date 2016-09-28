@@ -62,6 +62,11 @@ public class TreasureDataDriver
     public static Connection getConnection(String url, Properties props)
             throws SQLException
     {
+        if(!Config.isValidJDBCUrl(url)) {
+            // Non supported driver
+            return null;
+        }
+
         if (props == null) {
             throw new SQLException("invalid arguments: properties is null");
         }

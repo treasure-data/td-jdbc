@@ -18,14 +18,18 @@
  */
 package com.treasuredata.jdbc;
 
+import com.mysql.jdbc.exceptions.jdbc4.CommunicationsException;
+import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class TestTDConnection
 {
-
     @Test
     @Ignore
     public void testSimple()
@@ -45,5 +49,25 @@ public class TestTDConnection
         }
         ps.getCommandExecutor().getAPI().flush();
         System.out.println("fin");
+    }
+
+    @Test
+    public void returnNullForNonSupportedJDBC()
+            throws SQLException
+    {
+        Connection conn = TreasureDataDriver.getConnection("jdbc:mysql://localhost:1234/dbname", new Properties());
+        Assert.assertNull(conn);
+    }
+
+    @Test
+    public void supportMultipleJDBCDriverInClasspaths()
+            throws SQLException
+    {
+        try {
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:99999/dbname", new Properties());
+        }
+        catch (CommunicationsException e) {
+            // OK since mysql doesn't exist
+        }
     }
 }

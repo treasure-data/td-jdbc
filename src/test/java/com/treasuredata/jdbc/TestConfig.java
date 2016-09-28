@@ -93,7 +93,7 @@ public class TestConfig
         Config config = Config.parseJdbcURL(url);
         assertEquals(url, config.url);
         assertEquals("host01", config.apiConfig.endpoint);
-        assertEquals(80, config.apiConfig.port);
+        assertEquals(443, config.apiConfig.port);
         assertEquals("db01", config.database);
         assertEquals("user01", config.user);
         assertEquals("pass01", config.password);
@@ -133,7 +133,7 @@ public class TestConfig
         Config config = Config.parseJdbcURL(url);
         assertEquals(url, config.url);
         assertEquals("api.treasuredata.com", config.apiConfig.endpoint);
-        assertEquals(80, config.apiConfig.port);
+        assertEquals(443, config.apiConfig.port);
         assertEquals("db01", config.database);
         assertEquals("user01", config.user);
         assertEquals("pass01", config.password);
@@ -174,7 +174,7 @@ public class TestConfig
             Config config = Config.parseJdbcURL(url);
             assertEquals(url, config.url);
             assertEquals("api.treasuredata.com", config.apiConfig.endpoint);
-            assertEquals(80, config.apiConfig.port);
+            assertEquals(443, config.apiConfig.port);
             assertEquals("db01", config.database);
             assertEquals(null, config.user);
             assertEquals(null, config.password);

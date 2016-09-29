@@ -81,7 +81,7 @@ public class ConfigBuilder
     }
 
     public ConfigBuilder setApiConfig(ApiConfig apiConfig) {
-        this.apiConfig =apiConfig;
+        this.apiConfig = apiConfig;
         return this;
     }
 

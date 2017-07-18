@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.msgpack</groupId>
       <artifactId>msgpack</artifactId>
-      <version>0.6.9</version>
+      <version>0.6.12</version>
     </dependency>
     <!-- for compiling td-jdbc with java7 or higher -->
     <dependency>

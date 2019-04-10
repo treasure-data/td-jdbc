@@ -1,0 +1,34 @@
+---
+version: 2
+jobs:
+  build:
+    working_directory: ~/treasure-data/td-jdbc
+    environment:
+      CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
+      CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
+    docker:
+      - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
+      - restore_cache:
+          keys:
+            - td-jdbc-{{ .Branch }}-{{ epoch }}
+      - run: mvn dependency:go-offline || true
+      # Save dependency cache
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: td-jdbc-{{ .Branch }}-{{ epoch }}
+      # Test
+      # This is based on your 1.0 configuration file or project settings
+      - run: mvn package
+      # This is based on your 1.0 configuration file or project settings
+      - run: cp -af target/site/* $CIRCLE_ARTIFACTS
+      - run: cp target/*.jar $CIRCLE_ARTIFACTS
+      # Save artifacts
+      - store_artifacts:
+          path: /tmp/circleci-artifacts
+      - store_artifacts:
+          path: /tmp/circleci-test-results

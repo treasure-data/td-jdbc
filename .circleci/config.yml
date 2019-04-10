@@ -2,15 +2,14 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/treasure-data/td-jdbc
+    working_directory: /tmp/td-jdbc
     environment:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     docker:
-      - image: circleci/build-image:ubuntu-14.04-XXL-upstart-1189-5614f37
+      - image: circleci/openjdk:8-jdk-node-browsers
     steps:
       - checkout
-      - setup_remote_docker
       - run: mkdir -p $CIRCLE_ARTIFACTS $CIRCLE_TEST_REPORTS
       - restore_cache:
           keys:

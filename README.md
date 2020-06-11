@@ -5,7 +5,7 @@ __NOTE: We no longer maintain td-jdbc driver for Presto now that [we support nat
 
 JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com). This works with Java 1.6 or higher.
 
-- [Download](http://central.maven.org/maven2/com/treasuredata/td-jdbc/) td-jdbc-jar-with-dependencies-(version).jar
+- [Download](https://repo1.maven.org/maven2/com/treasuredata/td-jdbc/) td-jdbc-jar-with-dependencies-(version).jar
 - Use driver class name: `com.treasuredata.jdbc.TreasureDataDriver`
 - Read [Quick Start](#quick-start) or [General Usage](http://docs.treasure-data.com/articles/jdbc-driver)
 

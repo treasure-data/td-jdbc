@@ -29,6 +29,7 @@ public class ConfigBuilder
     private String user;
     private String password;
     private Job.Type type = Job.Type.PRESTO; // Use presto by default
+    private boolean useApiKey;
     private ApiConfig apiConfig;
     private int resultRetryCountThreshold = Config.TD_JDBC_RESULT_RETRYCOUNT_THRESHOLD_DEFAULTVALUE;
     private long resultRetryWaitTimeMs = Config.TD_JDBC_RESULT_RETRY_WAITTIME_DEFAULTVALUE;
@@ -40,6 +41,7 @@ public class ConfigBuilder
         this.database = config.database;
         this.user = config.user;
         this.password = config.password;
+        this.useApiKey = config.useApiKey;
         this.type = config.type;
         this.apiConfig = config.apiConfig;
         this.resultRetryCountThreshold = config.resultRetryCountThreshold;
@@ -80,6 +82,10 @@ public class ConfigBuilder
         return this;
     }
 
+    public void setUseApiKey(boolean useApiKey) {
+        this.useApiKey = useApiKey;
+    }
+
     public ConfigBuilder setApiConfig(ApiConfig apiConfig) {
         this.apiConfig = apiConfig;
         return this;
@@ -102,6 +108,7 @@ public class ConfigBuilder
                 user,
                 password,
                 type,
+                useApiKey,
                 apiConfig != null ? apiConfig : new ApiConfig.ApiConfigBuilder().createApiConfig(),
                 resultRetryCountThreshold,
                 resultRetryWaitTimeMs

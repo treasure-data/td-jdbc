@@ -30,6 +30,7 @@ public class Config
         implements Constants
 {
     public static final String TD_JDBC_USESSL = "usessl";
+    public static final String TD_JDBC_USEAPIKEY = "useapikey";
     public static final String TD_JDBC_USER = "user";
     public static final String TD_JDBC_PASSWORD = "password";
     public static final String TD_JDBC_APIKEY = "apikey";
@@ -46,6 +47,7 @@ public class Config
     public final String user;
     public final String password;
     public final Job.Type type;
+    public final boolean useApiKey;
     public final ApiConfig apiConfig;
     public final int resultRetryCountThreshold;
     public final long resultRetryWaitTimeMs;
@@ -56,6 +58,7 @@ public class Config
             String user,
             String password,
             Job.Type type,
+            boolean useApiKey,
             ApiConfig apiConfig,
             int resultRetryCountThreshold,
             long resultRetryWaitTimeMs
@@ -70,6 +73,7 @@ public class Config
             throw new SQLException("invalid job type within URL: " + type);
         }
         this.type = type;
+        this.useApiKey = useApiKey;
         this.apiConfig = apiConfig;
         this.resultRetryCountThreshold = resultRetryCountThreshold;
         this.resultRetryWaitTimeMs = resultRetryWaitTimeMs;
@@ -182,6 +186,9 @@ public class Config
                 }
                 else if (k.equals(TD_JDBC_JOB_TYPE)) {
                     config.setType(Job.toType(v));
+                }
+                else if (k.equals(TD_JDBC_USEAPIKEY)) {
+                    config.setUseApiKey(Boolean.parseBoolean(kv[1].toLowerCase()));
                 }
                 else if (k.equals(TD_JDBC_USESSL)) {
                     apiConfig.setUseSSL(Boolean.parseBoolean(kv[1].toLowerCase()));
@@ -341,7 +348,9 @@ public class Config
 
         // If both user and password are specified, use this pair instead of TD_API_KEY
         if(!isEmptyString(user) && !isEmptyString(password)) {
-            apiConfig.unsetApiKey();
+            if (!useApiKey) {
+                apiConfig.unsetApiKey();
+            }
         }
 
         // retry settings

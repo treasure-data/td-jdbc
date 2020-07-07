@@ -48,7 +48,6 @@ public class ApiConfig
         prop.setProperty(Config.TD_JDBC_USESSL, Boolean.toString(useSSL));
         prop.setProperty(Config.TD_API_SERVER_HOST, endpoint);
         prop.setProperty(Config.TD_API_SERVER_PORT, Integer.toString(port));
-
         if(apiKey.isDefined()) {
             prop.setProperty(Config.TD_API_KEY, apiKey.get());
         }
@@ -73,6 +72,7 @@ public class ApiConfig
             this.endpoint = config.endpoint;
             this.port = Option.of(config.port);
             this.useSSL = config.useSSL;
+            this.apiKey = config.apiKey;
             this.proxy = config.proxy;
         }
 

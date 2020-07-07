@@ -363,7 +363,7 @@ public class TDConnection
     public void setCatalog(String catalog)
             throws SQLException
     {
-        throw new SQLException("Unsupported TDConnection#setCatalog(String)");
+        // "If the driver does not support catalogs, it will silently ignore this request."
     }
 
     public void setClientInfo(Properties properties)

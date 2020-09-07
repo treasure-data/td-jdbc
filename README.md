@@ -94,6 +94,7 @@ You must provide `apikey` property or both `user` (your account e-mail) and `pas
 |`password`|               | Account password (unnecessary if `apikey` is set) |
 |`type`    | presto        | Query engine. hive, preto or pig |
 |`useSSL`  | false         | Use SSL encryption for accessing Treasure Data |
+|`useapikey=true`  | false | Use API key to access Treasure Data even if `user` or `password` is set |
 |`httpproxyhost` |         | Proxy host (optional) e.g., "myproxy.com"  |
 |`httpproxyport`|         | Proxy port (optional) e.g., "80" |
 |`httpproxyuser` |         | Proxy user (optional)  |

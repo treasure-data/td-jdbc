@@ -98,6 +98,7 @@ public class TestProductionEnv
     public static Connection newConnection(String jdbcUrl, Properties config)
             throws SQLException, IOException
     {
+        /*
         Properties prop = readTDConf();
         Map<String, String> env = System.getenv();
         Properties connectionProp = new Properties();
@@ -106,6 +107,9 @@ public class TestProductionEnv
         connectionProp.setProperty("password", firstNonNull(config.getProperty("password"), prop.get("password"), env.get("TD_PASS")));
         Connection conn = DriverManager.getConnection(jdbcUrl, connectionProp);
         return conn;
+         */
+        // We can't test using email/password login now
+        return newAPIKeyBasedConnection(jdbcUrl, config);
     }
 
     public static Connection newAPIKeyBasedConnection(String jdbcUrl, Properties config)
@@ -340,7 +344,8 @@ public class TestProductionEnv
         runPrestoQuery(conn);
     }
 
-    @Test
+    // We can't test using email/password login now
+    // @Test
     public void testUserPasswordAuthentication()
             throws Exception
     {

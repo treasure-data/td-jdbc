@@ -21,7 +21,7 @@
   <groupId>com.treasuredata</groupId>
   <name>Treasure Data JDBC Driver</name>
   <description>JDBC Driver for Accessing Treasure Data</description>
-  <version>0.5.11-SNAPSHOT</version>
+  <version>0.5.11</version>
   <artifactId>td-jdbc</artifactId>
   <packaging>jar</packaging>
   <url>https://github.com/treasure-data/td-jdbc</url>
@@ -57,7 +57,7 @@
     <connection>scm:git:git://github.com/treasure-data/td-jdbc.git</connection>
     <developerConnection>scm:git:git@github.com:treasure-data/td-jdbc.git</developerConnection>
     <url>https://github.com/treasure-data/td-jdbc</url>
-    <tag>HEAD</tag>
+    <tag>0.5.11</tag>
   </scm>
 
   <properties>

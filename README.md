@@ -217,3 +217,28 @@ $ jar xvf jar xvf /System/Library/Java/JavaVirtualMachines/1.6.0.jdk/Contents/Ho
 $ jar cvf jdbc-api-4.1.jar java javax
 $ mvn deploy:deploy-file -Durl=file://(path to td-jdbc folder)/mvn-local -Dfile=jdbc-api-4.1.jar -DgroupId=com.treasuredata.thirdparty -DartifactId=jdbc-api -Dpackaging=jar -Dversion=4.1
 ``
+
+### Publish to Sonatype
+
+The following operations basically follows [this document](https://central.sonatype.org/pages/apache-maven.html)
+
+- Setup your Sonatype account and GPG key
+- Prepare `~/.m2/settings.xml` like this
+
+```
+ <settings>
+   <servers>
+      <server>
+          <id>sonatype-nexus-staging</id>
+          <username>$(your oss.sonatype.org account)</username>
+          <password>**********</password>
+      </server>
+   </servers>
+ </settings>
+```
+- Execute these commands
+
+```
+$ mvn release:clean release:prepare
+$ mvn release:perform
+```

@@ -1,6 +1,6 @@
 # Treasure Data JDBC Driver
 
-__NOTE: We no longer maintain td-jdbc driver for Presto now that [we support native trino-jdbc drivers](https://trino.io/docs/current/client/jdbc.html)
+__NOTE__: We no longer maintain td-jdbc driver for Presto now that [we support native trino-jdbc drivers](https://trino.io/docs/current/client/jdbc.html)
 
 
 JDBC Driver for accessing [Treasure Data](http://www.treasuredata.com). This works with Java 1.6 or higher.

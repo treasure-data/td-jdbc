@@ -64,7 +64,7 @@ public class TestTDConnection
             throws SQLException
     {
         try {
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:99999/dbname", new Properties());
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:12345/dbname", new Properties());
         }
         catch (CommunicationsException e) {
             // OK since mysql doesn't exist

@@ -17,6 +17,8 @@ jobs:
       - run:
           name: Save test results
           command: cp -af target/site/* $CIRCLE_ARTIFACTS
+      - store_test_results:
+          path: ./target/surefire-reports
 
 workflows:
   version: 2

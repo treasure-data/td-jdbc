@@ -63,7 +63,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--  version properties for dependencies -->
-    <td-client.version>0.5.10</td-client.version>
+    <td-client.version>0.9.6</td-client.version>
     <td-logger.version>0.2.0</td-logger.version>
   </properties>
 
@@ -79,7 +79,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.treasuredata</groupId>
+      <groupId>com.treasuredata.client</groupId>
       <artifactId>td-client</artifactId>
       <version>${td-client.version}</version>
     </dependency>

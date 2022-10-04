@@ -282,7 +282,8 @@ public class TestProductionEnv
             e.printStackTrace();
             String msg = e.getMessage();
             logger.warn("--error message:{}--", msg);
-            assertTrue("SQLException should report missing table", msg.toLowerCase().contains("unknown_table does not exist"));
+            assertTrue("SQLException should report missing table", msg.toLowerCase()
+                .contains("'td-presto.sample_datasets.unknown_table' does not exist"));
         }
     }
 

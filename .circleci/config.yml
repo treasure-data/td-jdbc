@@ -22,6 +22,7 @@ jobs:
 
 workflows:
   version: 2
+  circleci_ip_ranges: true
   test:
     jobs:
       - test # for all branches

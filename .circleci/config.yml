@@ -7,7 +7,7 @@ jobs:
         environment:
           TERM: dumb
           CIRCLE_ARTIFACTS: "/tmp/circle_artifacts"
-
+    circleci_ip_ranges: true
     steps:
       - checkout
       - run: # Run test

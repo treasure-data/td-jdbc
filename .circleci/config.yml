@@ -3,7 +3,7 @@ version: 2.0
 jobs:
   test:
     docker:
-      - image: cimg/openjdk:8-jdk-browsers
+      - image: cimg/openjdk:8.0-browsers
         environment:
           TERM: dumb
           CIRCLE_ARTIFACTS: "/tmp/circle_artifacts"

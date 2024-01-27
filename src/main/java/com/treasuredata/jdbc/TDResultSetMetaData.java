@@ -228,10 +228,18 @@ public class TDResultSetMetaData
         return ResultSetMetaData.columnNullable;
     }
 
+    /*
+     * Indicates whether the designated column is definitely not writable.
+     * We support to read column only via JDBC Driver for now.
+     *
+     * @param column the first column is 1, the second is 2, etc.
+     * @return true if so
+     * @exception SQLException if a database access error occurs
+     */
     public boolean isReadOnly(int column)
             throws SQLException
     {
-        throw new SQLException("Method not supported");
+        return true;
     }
 
     public boolean isSearchable(int column)
@@ -280,7 +288,7 @@ public class TDResultSetMetaData
     public boolean isWritable(int column)
             throws SQLException
     {
-        throw new SQLException("Method not supported");
+        return !isReadOnly(column);
     }
 
     public boolean isWrapperFor(Class<?> iface)
